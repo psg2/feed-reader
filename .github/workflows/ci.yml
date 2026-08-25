@@ -94,8 +94,14 @@ jobs:
           PGPASSWORD=dev psql -h localhost -p 5435 -U dev -d app -c "CREATE DATABASE app_test OWNER dev;"
           PGPASSWORD=dev psql -h localhost -p 5435 -U dev -d app -c "CREATE EXTENSION IF NOT EXISTS unaccent;"
           PGPASSWORD=dev psql -h localhost -p 5435 -U dev -d app_test -c "CREATE EXTENSION IF NOT EXISTS unaccent;"
-      - name: Migrate test database
-        run: cd packages/db && POSTGRES_URL=postgres://dev:dev@localhost:5435/app_test pnpm exec drizzle-kit migrate
+      # Both databases: the suites run against app_test, but importing
+      # `lib/auth.ts` also instantiates BetterAuth on POSTGRES_URL (app), and
+      # since 1.7 the OAuth provider writes its configured resources there.
+      - name: Migrate databases
+        run: |
+          cd packages/db
+          pnpm exec drizzle-kit migrate
+          POSTGRES_URL=postgres://dev:dev@localhost:5435/app_test pnpm exec drizzle-kit migrate
       # Same suites as `pnpm test`, with coverage on the unit run so the
       # suite executes once.
       - name: Unit tests (with coverage)
