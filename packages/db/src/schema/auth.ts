@@ -12,11 +12,14 @@ import { relations, sql } from "drizzle-orm";
 import {
 	bigint,
 	boolean,
+	foreignKey,
 	index,
 	integer,
+	jsonb,
 	pgTable,
 	text,
 	timestamp,
+	uniqueIndex,
 	uuid,
 } from "drizzle-orm/pg-core";
 import { users } from "./users";
@@ -45,6 +48,9 @@ export const authAccounts = pgTable(
 	"auth_accounts",
 	{
 		id: text().primaryKey(),
+		// BetterAuth 1.7 identifies an external account by (issuer, accountId):
+		// `local:credential` for passwords, the OIDC issuer for Google.
+		issuer: text().notNull(),
 		accountId: text().notNull(),
 		providerId: text().notNull(),
 		userId: uuid()
@@ -63,7 +69,10 @@ export const authAccounts = pgTable(
 			.$onUpdate(() => new Date())
 			.notNull(),
 	},
-	(t) => [index("account_user_id_idx").on(t.userId)],
+	(t) => [
+		index("account_user_id_idx").on(t.userId),
+		uniqueIndex("account_issuer_account_id_uidx").on(t.issuer, t.accountId),
+	],
 );
 
 export const verifications = pgTable(
@@ -91,6 +100,9 @@ export const twoFactors = pgTable(
 		userId: uuid()
 			.notNull()
 			.references(() => users.id, { onDelete: "cascade" }),
+		verified: boolean().default(true),
+		failedVerificationCount: integer().default(0),
+		lockedUntil: timestamp(),
 	},
 	(t) => [index("two_factor_user_id_idx").on(t.userId)],
 );
@@ -167,14 +179,23 @@ export const oauthClients = pgTable("oauth_clients", {
 	grantTypes: text().array(),
 	responseTypes: text().array(),
 	scopes: text().array(),
-	metadata: text(),
-	type: text(),
+	metadata: jsonb(),
+	// 1.7 replaced the `type` / `public` pair with RFC 7591 application_type;
+	// public-ness is now derived from tokenEndpointAuthMethod === "none".
+	applicationType: text(),
+	clientDiscoveryId: text(),
+	clientCredentialsScopes: text().array().default([]),
+	backchannelLogoutUri: text(),
+	backchannelLogoutSessionRequired: boolean(),
+	jwks: text(),
+	jwksUri: text(),
+	dpopBoundAccessTokens: boolean().default(false),
 	disabled: boolean().default(false),
 	skipConsent: boolean().default(false),
 	enableEndSession: boolean().default(false),
 	subjectType: text(),
-	requirePkce: boolean().default(true),
-	public: boolean().default(false),
+	// The plugin looks the column up by its model field name (`requirePKCE`).
+	requirePKCE: boolean("require_pkce").default(true),
 	userId: uuid().references(() => users.id, { onDelete: "cascade" }),
 	referenceId: text(),
 	createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
@@ -185,13 +206,19 @@ export const oauthAccessTokens = pgTable("oauth_access_tokens", {
 	id: uuid()
 		.primaryKey()
 		.default(sql`gen_random_uuid()`),
-	token: text().notNull(),
+	token: text().notNull().unique(),
 	clientId: text().notNull(),
 	sessionId: text(),
 	refreshId: text(),
 	userId: uuid().references(() => users.id, { onDelete: "cascade" }),
 	referenceId: text(),
 	scopes: text().array().notNull(),
+	// RFC 8707 resource indicators bound to the grant at authorization time.
+	resources: text().array(),
+	requestedUserInfoClaims: text().array(),
+	authorizationCodeId: text(),
+	confirmation: jsonb(),
+	revoked: timestamp({ withTimezone: true }),
 	createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
 	expiresAt: timestamp({ withTimezone: true }).notNull(),
 });
@@ -200,7 +227,7 @@ export const oauthRefreshTokens = pgTable("oauth_refresh_tokens", {
 	id: uuid()
 		.primaryKey()
 		.default(sql`gen_random_uuid()`),
-	token: text().notNull(),
+	token: text().notNull().unique(),
 	clientId: text().notNull(),
 	sessionId: text().notNull(),
 	userId: uuid()
@@ -208,7 +235,16 @@ export const oauthRefreshTokens = pgTable("oauth_refresh_tokens", {
 		.references(() => users.id, { onDelete: "cascade" }),
 	referenceId: text(),
 	scopes: text().array().notNull(),
+	resources: text().array(),
+	requestedUserInfoClaims: text().array(),
+	authorizationCodeId: text(),
+	confirmation: jsonb(),
 	revoked: timestamp({ withTimezone: true }),
+	// Rotation reuse window: a replayed rotation within the grace period gets
+	// the cached response instead of revoking the whole token family.
+	rotatedAt: timestamp({ withTimezone: true }),
+	rotationReplayResponse: text(),
+	rotationReplayExpiresAt: timestamp({ withTimezone: true }),
 	authTime: timestamp({ withTimezone: true }),
 	createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
 	expiresAt: timestamp({ withTimezone: true }).notNull(),
@@ -224,8 +260,68 @@ export const oauthConsents = pgTable("oauth_consents", {
 		.references(() => users.id, { onDelete: "cascade" }),
 	referenceId: text(),
 	scopes: text().array().notNull(),
+	resources: text().array(),
+	requestedUserInfoClaims: text().array(),
 	createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
 	updatedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+});
+
+/**
+ * Protected resources (RFC 8707 audiences) the provider issues tokens for.
+ * Seeded from the `resources` option in lib/auth.ts on boot.
+ */
+export const oauthResources = pgTable("oauth_resources", {
+	id: uuid()
+		.primaryKey()
+		.default(sql`gen_random_uuid()`),
+	identifier: text().notNull().unique(),
+	name: text().notNull(),
+	accessTokenTtl: integer(),
+	refreshTokenTtl: integer(),
+	signingAlgorithm: text(),
+	signingKeyId: text(),
+	allowedScopes: text().array(),
+	customClaims: jsonb(),
+	dpopBoundAccessTokensRequired: boolean().default(false),
+	disabled: boolean().default(false),
+	policyVersion: integer().default(1),
+	metadata: jsonb(),
+	createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+	updatedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+});
+
+export const oauthClientResources = pgTable(
+	"oauth_client_resources",
+	{
+		id: uuid()
+			.primaryKey()
+			.default(sql`gen_random_uuid()`),
+		clientId: text()
+			.notNull()
+			.references(() => oauthClients.clientId, { onDelete: "cascade" }),
+		// The plugin links by the resource `identifier`, not its row id.
+		resourceId: text().notNull(),
+		metadata: jsonb(),
+		createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+	},
+	(t) => [
+		// Named by hand: the generated name exceeds Postgres' 63-char limit.
+		foreignKey({
+			name: "oauth_client_resources_resource_id_fk",
+			columns: [t.resourceId],
+			foreignColumns: [oauthResources.identifier],
+		}).onDelete("cascade"),
+		uniqueIndex("oauth_client_resources_client_resource_uidx").on(
+			t.clientId,
+			t.resourceId,
+		),
+	],
+);
+
+/** Replay protection for `private_key_jwt` client assertions (`jti`). */
+export const oauthClientAssertions = pgTable("oauth_client_assertions", {
+	id: text().primaryKey(),
+	expiresAt: timestamp({ withTimezone: true }).notNull(),
 });
 
 // ── Relations ──────────────────────────────────────────────────────────────

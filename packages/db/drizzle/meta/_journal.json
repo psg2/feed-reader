@@ -71,6 +71,13 @@
       "when": 1787676677814,
       "tag": "0009_invites",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1787685507429,
+      "tag": "0010_better_auth_17",
+      "breakpoints": true
     }
   ]
 }
