@@ -28,6 +28,22 @@ function signUp(
 	});
 }
 
+/**
+ * Since BetterAuth 1.7 a 403 from the `user.create.before` hook no longer
+ * surfaces on sign-up-email: with email verification on, the endpoint answers
+ * a synthetic "check your inbox" response so it can't be used to enumerate
+ * accounts. The policy still holds — nothing is written — so the tests assert
+ * the user count instead of the error.
+ */
+async function expectRefused(
+	auth: ReturnType<typeof createAuth>,
+	email: string,
+	cookie?: string,
+) {
+	const res = await signUp(auth, email, cookie);
+	expect(res.token).toBeNull();
+}
+
 describe("BetterAuth sign-up policy", () => {
 	it("creates the first account even with sign-ups closed", async () => {
 		const db = getTestDb();
@@ -41,10 +57,7 @@ describe("BetterAuth sign-up policy", () => {
 		const db = getTestDb();
 		await createTestUser(db);
 		const auth = createAuth(db, { allowSignup: "false" });
-		await expect(signUp(auth, "second@example.com")).rejects.toMatchObject({
-			status: "FORBIDDEN",
-			message: expect.stringContaining("Sign-ups are closed"),
-		});
+		await expectRefused(auth, "second@example.com");
 		expect(await userRepo.countUsers(db)).toBe(1);
 	});
 
@@ -68,9 +81,12 @@ describe("BetterAuth sign-up policy", () => {
 		const auth = createAuth(db, { allowSignup: "false" });
 
 		// Same token, other address: still closed.
-		await expect(
-			signUp(auth, "intruder@example.com", `${INVITE_COOKIE}=${token}`),
-		).rejects.toMatchObject({ status: "FORBIDDEN" });
+		await expectRefused(
+			auth,
+			"intruder@example.com",
+			`${INVITE_COOKIE}=${token}`,
+		);
+		expect(await userRepo.countUsers(db)).toBe(1);
 
 		const res = await signUp(
 			auth,
@@ -83,8 +99,63 @@ describe("BetterAuth sign-up policy", () => {
 		expect(row.acceptedAt).toBeInstanceOf(Date);
 
 		// A used invite doesn't open the door again.
-		await expect(
-			signUp(auth, "guest2@example.com", `${INVITE_COOKIE}=${token}`),
-		).rejects.toMatchObject({ status: "FORBIDDEN" });
+		await expectRefused(
+			auth,
+			"guest2@example.com",
+			`${INVITE_COOKIE}=${token}`,
+		);
+		expect(await userRepo.countUsers(db)).toBe(2);
+	});
+});
+
+function register(
+	auth: ReturnType<typeof createAuth>,
+	body: Record<string, unknown>,
+) {
+	return auth.handler(
+		new Request("https://feedreader.localhost/api/auth/oauth2/register", {
+			method: "POST",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({
+				client_name: "test",
+				token_endpoint_auth_method: "none",
+				grant_types: ["authorization_code", "refresh_token"],
+				response_types: ["code"],
+				...body,
+			}),
+		}),
+	);
+}
+
+describe("OAuth dynamic client registration", () => {
+	it("treats a loopback-only registration as a native client", async () => {
+		const auth = createAuth(getTestDb(), { allowSignup: "true" });
+		const res = await register(auth, {
+			redirect_uris: [
+				"http://localhost:6274/callback",
+				"http://127.0.0.1:6274/callback",
+			],
+		});
+		expect(res.status).toBe(201);
+		const client = (await res.json()) as { application_type?: string };
+		expect(client.application_type).toBe("native");
+	});
+
+	it("keeps rejecting plain http on non-loopback hosts", async () => {
+		const auth = createAuth(getTestDb(), { allowSignup: "true" });
+		const res = await register(auth, {
+			redirect_uris: ["http://example.com/callback"],
+		});
+		expect(res.status).toBe(400);
+		expect(await res.json()).toMatchObject({ error: "invalid_redirect_uri" });
+	});
+
+	it("leaves an explicit application_type alone", async () => {
+		const auth = createAuth(getTestDb(), { allowSignup: "true" });
+		const res = await register(auth, {
+			application_type: "web",
+			redirect_uris: ["http://localhost:6274/callback"],
+		});
+		expect(res.status).toBe(400);
 	});
 });
