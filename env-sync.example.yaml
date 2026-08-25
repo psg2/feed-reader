@@ -1,0 +1,110 @@
+# ─── env-sync config (example) ───────────────────────────────────────────────
+# Optional: keep every env var for local, Vercel preview and production in one
+# file, with secrets resolved from 1Password (op:// references) at sync time.
+# Copy to env-sync.yaml (gitignored) and replace the vault/item names below.
+#
+# Usage:
+#   env-sync              # Sync all targets
+#   env-sync local        # Just local .env.local
+#   env-sync preview      # Push to Vercel preview
+#   env-sync production   # Push to Vercel production
+#   env-sync --dry-run    # Preview without changes
+#
+# Setup:
+#   1. Install 1Password CLI: https://1password.com/downloads/command-line/
+#   2. Install env-sync: https://github.com/psg2/env-sync
+#   3. Create the vault items referenced below
+#   4. cp env-sync.example.yaml env-sync.yaml && env-sync local
+#
+# apps/web/lib/env.ts is the authoritative list of variables; docs/deploy.md
+# explains each one.
+# ─────────────────────────────────────────────────────────────────────────────
+
+groups:
+  # ── Local development ────────────────────────────────────────────────────
+  local:
+    # POSTGRES_URL / TEST_DATABASE_URL are NOT managed here: `pnpm deps:up`
+    # writes them into .env.docker with the Docker-assigned port. Setting
+    # them in .env.local (which loads last) would override that value.
+
+    BETTER_AUTH_SECRET: op://<vault>/<item>/BETTER_AUTH_SECRET
+    BETTER_AUTH_URL: https://feedreader.localhost
+
+    # Google OAuth (optional — social login disabled if missing)
+    # GOOGLE_CLIENT_ID: op://<vault>/<item>/GOOGLE_CLIENT_ID
+    # GOOGLE_CLIENT_SECRET: op://<vault>/<item>/GOOGLE_CLIENT_SECRET
+
+    # Email (Resend — optional in dev, OTP codes log to console)
+    # RESEND_API_KEY: op://<vault>/<item>/RESEND_API_KEY
+
+    # Observability (all optional)
+    # VITE_PUBLIC_POSTHOG_KEY: op://<vault>/<item>/VITE_PUBLIC_POSTHOG_KEY
+    # VITE_PUBLIC_AXIOM_TOKEN: op://<vault>/<item>/VITE_PUBLIC_AXIOM_TOKEN
+    # VITE_PUBLIC_AXIOM_DATASET: op://<vault>/<item>/VITE_PUBLIC_AXIOM_DATASET
+    # VITE_PUBLIC_SENTRY_DSN: op://<vault>/<item>/VITE_PUBLIC_SENTRY_DSN
+
+  # ── Vercel Preview ──────────────────────────────────────────────────────
+  preview:
+    BETTER_AUTH_SECRET: op://<vault>/<item-preview>/BETTER_AUTH_SECRET
+    # GOOGLE_CLIENT_ID: op://<vault>/<item-preview>/GOOGLE_CLIENT_ID
+    # GOOGLE_CLIENT_SECRET: op://<vault>/<item-preview>/GOOGLE_CLIENT_SECRET
+    # RESEND_API_KEY: op://<vault>/<item-preview>/RESEND_API_KEY
+    # VITE_PUBLIC_POSTHOG_KEY: op://<vault>/<item-preview>/VITE_PUBLIC_POSTHOG_KEY
+    # VITE_PUBLIC_SENTRY_DSN: op://<vault>/<item-preview>/VITE_PUBLIC_SENTRY_DSN
+
+  # ── Vercel Production ───────────────────────────────────────────────────
+  production:
+    BETTER_AUTH_SECRET: op://<vault>/<item-production>/BETTER_AUTH_SECRET
+    BETTER_AUTH_URL: https://reader.example.com
+
+    # Vercel sends this as a Bearer token to /api/cron/refresh
+    CRON_SECRET: op://<vault>/<item-production>/CRON_SECRET
+
+    # Single-user instance: flip to "false" after creating your account.
+    ALLOW_SIGNUP: "true"
+
+    # GOOGLE_CLIENT_ID: op://<vault>/<item-production>/GOOGLE_CLIENT_ID
+    # GOOGLE_CLIENT_SECRET: op://<vault>/<item-production>/GOOGLE_CLIENT_SECRET
+
+    # Email + newsletters (Resend)
+    # RESEND_API_KEY: op://<vault>/<item-production>/RESEND_API_KEY
+    # EMAIL_FROM: "Feed Reader <noreply@reader.example.com>"
+    # RESEND_WEBHOOK_SECRET: op://<vault>/<item-production>/RESEND_WEBHOOK_SECRET
+    # INBOUND_EMAIL_DOMAIN: news.reader.example.com
+    # INBOUND_ALLOWED_SENDERS: "hello@newsletter.com,@substack.com"
+
+    # Observability
+    # VITE_PUBLIC_POSTHOG_KEY: op://<vault>/<item-production>/VITE_PUBLIC_POSTHOG_KEY
+    # VITE_PUBLIC_AXIOM_TOKEN: op://<vault>/<item-production>/VITE_PUBLIC_AXIOM_TOKEN
+    # VITE_PUBLIC_AXIOM_DATASET: op://<vault>/<item-production>/VITE_PUBLIC_AXIOM_DATASET
+    # VITE_PUBLIC_SENTRY_DSN: op://<vault>/<item-production>/VITE_PUBLIC_SENTRY_DSN
+    # SENTRY_AUTH_TOKEN: op://<vault>/<item-production>/SENTRY_AUTH_TOKEN
+    # SENTRY_ORG: op://<vault>/<item-production>/SENTRY_ORG
+    # SENTRY_PROJECT: op://<vault>/<item-production>/SENTRY_PROJECT
+
+  # ── CI (GitHub Actions secrets) ─────────────────────────────────────────
+  # Only needed for the manual deploy workflow (.github/workflows/deploy.yml).
+  ci:
+    VERCEL_TOKEN: op://<vault>/vercel/CI_TOKEN
+
+targets:
+  local:
+    type: file
+    path: .env.local
+    groups: [local]
+
+  preview:
+    type: vercel
+    environments: [preview]
+    groups: [preview]
+
+  production:
+    type: vercel
+    environments: [production]
+    groups: [production]
+
+  # Run `env-sync github-secrets` (needs `op signin` + `gh` auth).
+  github-secrets:
+    type: github
+    secretType: actions
+    groups: [ci]

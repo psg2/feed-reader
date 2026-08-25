@@ -1,0 +1,48 @@
+# CodeRabbit configuration — https://docs.coderabbit.ai/reference/configuration
+language: "en"
+
+reviews:
+  profile: "chill"
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: true
+  auto_review:
+    enabled: true
+    drafts: false
+  path_filters:
+    - "!**/routeTree.gen.ts"
+    - "!**/*.gen.ts"
+    - "!packages/db/drizzle/**"
+    - "!macos/Tests/**/__Snapshots__/**"
+    - "!pnpm-lock.yaml"
+    - "!macos/Package.resolved"
+    - "!apps/web/tests/fixtures/**"
+    - "!**/fixtures/**"
+  path_instructions:
+    - path: "macos/**"
+      instructions: |
+        Swift 6 with strict concurrency: flag data races, missing actor
+        isolation, non-Sendable values crossing isolation boundaries, and
+        `@unchecked Sendable` without justification. Code must pass
+        `make lint` (swift-format, config in macos/.swift-format); do not
+        suggest style that swift-format would rewrite. Local writes go to
+        SQLite first and are then pushed to the server; keep that order.
+    - path: "apps/web/server/**"
+      instructions: |
+        Server code follows oRPC (contract-first, packages/api) + Drizzle
+        (packages/db) patterns: routes are thin wrappers over usecases,
+        usecases receive the db and a resolved userId, repos own the SQL.
+        Every authenticated path must resolve auth to a userId (session,
+        OAuth access token or API key via lib/bearer) and scope all queries
+        by it; flag any query on user-owned tables that is not filtered by
+        userId. Prefer Drizzle query builders over raw SQL.
+    - path: "apps/web/app/**"
+      instructions: |
+        TanStack Start + React 19. Prefer TanStack Query hooks from
+        @feedreader/query over ad-hoc fetching; avoid useEffect for data
+        loading; keep the UI mobile-first.
+
+chat:
+  auto_reply: true

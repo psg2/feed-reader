@@ -1,0 +1,38 @@
+{
+	"$schema": "https://turbo.build/schema.json",
+	"globalDependencies": ["**/.env.*local"],
+	"ui": "tui",
+	"tasks": {
+		"build": {
+			"outputs": [".output/**", ".vercel/output/**", "dist/**"],
+			"dependsOn": ["^build"],
+			"env": [
+				"NODE_ENV",
+				"VERCEL_ENV",
+				"VERCEL_GIT_COMMIT_SHA",
+				"VITE_PUBLIC_*",
+				"SENTRY_AUTH_TOKEN",
+				"SENTRY_ORG",
+				"SENTRY_PROJECT",
+				"EMAIL_FROM"
+			]
+		},
+		"dev": {
+			"cache": false,
+			"persistent": true
+		},
+		"preview": {
+			"cache": false,
+			"persistent": true
+		},
+		"test": {
+			"cache": false
+		},
+		"lint": {},
+		"type-check": {},
+		"knip": {},
+		"clean": {
+			"cache": false
+		}
+	}
+}

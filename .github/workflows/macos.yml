@@ -1,0 +1,67 @@
+name: macOS app
+
+on:
+  push:
+    branches: [main]
+    paths: ["macos/**", ".github/workflows/macos.yml"]
+  pull_request:
+    paths: ["macos/**", ".github/workflows/macos.yml"]
+
+concurrency:
+  group: macos-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: macos
+
+jobs:
+  check:
+    name: lint · build · test
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode_26.app || sudo xcode-select -s "$(ls -d /Applications/Xcode_26*.app | sort -V | tail -1)"
+          xcodebuild -version
+          swift --version
+
+      - name: Cache SwiftPM
+        uses: actions/cache@v6
+        with:
+          path: |
+            macos/.build
+            ~/Library/Caches/org.swift.swiftpm
+          key: spm-${{ runner.os }}-${{ github.repository }}-${{ hashFiles('macos/Package.resolved') }}
+          restore-keys: spm-${{ runner.os }}-${{ github.repository }}-
+
+      - name: Lint (swift-format)
+        run: make lint
+
+      - name: Build (release)
+        run: swift build -c release
+
+      - name: Test
+        shell: bash
+        run: set -o pipefail; swift test 2>&1 | tee test.log
+
+      - name: Collect failed snapshots
+        if: failure()
+        run: |
+          mkdir -p snapshot-failures
+          cp -R "$TMPDIR/SnapshotTests" snapshot-failures/ 2>/dev/null || true
+          cp test.log snapshot-failures/
+
+      - name: Upload failed snapshots
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: snapshot-failures
+          path: macos/snapshot-failures
+          if-no-files-found: ignore

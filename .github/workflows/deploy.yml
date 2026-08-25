@@ -1,0 +1,45 @@
+name: Deploy
+
+# Manual production deploy with the Vercel CLI. The Vercel GitHub integration
+# already deploys every push to main; this is the fallback when that is off
+# (or for forks that prefer Actions: switch the trigger to push on main).
+# Configure once per fork:
+#   gh variable set VERCEL_ORG_ID --body team_…
+#   gh variable set VERCEL_PROJECT_ID --body prj_…
+#   gh secret set VERCEL_TOKEN          # https://vercel.com/account/tokens
+# The job is skipped while VERCEL_TOKEN is missing. Database migrations run
+# inside the Vercel build (apps/web/vercel.json buildCommand).
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Vercel (production)
+    runs-on: ubuntu-latest
+    if: vars.VERCEL_ORG_ID != '' && vars.VERCEL_PROJECT_ID != ''
+    permissions:
+      contents: read
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
+    steps:
+      - name: Skip (no VERCEL_TOKEN secret)
+        if: env.VERCEL_TOKEN == ''
+        run: echo "::notice::VERCEL_TOKEN is not set; skipping deploy."
+      - uses: actions/checkout@v7
+        if: env.VERCEL_TOKEN != ''
+      - uses: actions/setup-node@v7
+        if: env.VERCEL_TOKEN != ''
+        with:
+          node-version: "24"
+      - name: Deploy
+        if: env.VERCEL_TOKEN != ''
+        run: |
+          npm i -g vercel@latest
+          vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+          vercel deploy --prod --yes --archive=tgz --token="$VERCEL_TOKEN"

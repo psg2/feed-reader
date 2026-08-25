@@ -1,0 +1,120 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@feedreader/tailwind-config/theme.css";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ── Feed Reader theme ───────────────────────────────────────────────────
+ * Reading-first palette layered over the shared template tokens.
+ * Warm gray ramps (hue ~80, low chroma) instead of the template blue;
+ * sky accent (the app icon color) reserved for selection, unread and
+ * primary actions. Three surface layers: sidebar (deepest) < background
+ * (list) < card (reading pane).
+ */
+
+@theme inline {
+	--font-serif: Charter, "Iowan Old Style", Georgia, "Times New Roman", serif;
+	--color-unread: var(--unread);
+	--color-star: var(--star);
+}
+
+:root {
+	--background: oklch(0.976 0.004 85);
+	--foreground: oklch(0.25 0.012 75);
+	--card: oklch(0.99 0.003 85);
+	--card-foreground: oklch(0.25 0.012 75);
+	--popover: oklch(0.99 0.003 85);
+	--popover-foreground: oklch(0.25 0.012 75);
+	--primary: oklch(0.58 0.13 235);
+	--primary-foreground: oklch(0.985 0.005 235);
+	--secondary: oklch(0.945 0.006 85);
+	--secondary-foreground: oklch(0.3 0.012 75);
+	--muted: oklch(0.945 0.006 85);
+	--muted-foreground: oklch(0.5 0.014 75);
+	--accent: oklch(0.935 0.008 85);
+	--accent-foreground: oklch(0.25 0.012 75);
+	--border: oklch(0.905 0.007 85);
+	--input: oklch(0.885 0.008 85);
+	--ring: oklch(0.58 0.13 235);
+	--sidebar: oklch(0.955 0.006 85);
+	--sidebar-foreground: oklch(0.25 0.012 75);
+	--sidebar-accent: oklch(0.92 0.008 85);
+	--sidebar-accent-foreground: oklch(0.25 0.012 75);
+	--sidebar-border: oklch(0.9 0.007 85);
+	--unread: oklch(0.58 0.13 235);
+	--star: oklch(0.75 0.14 80);
+}
+
+.dark {
+	--background: oklch(0.195 0.008 75);
+	--foreground: oklch(0.92 0.008 85);
+	--card: oklch(0.22 0.009 80);
+	--card-foreground: oklch(0.92 0.008 85);
+	--popover: oklch(0.24 0.01 80);
+	--popover-foreground: oklch(0.92 0.008 85);
+	--primary: oklch(0.72 0.12 235);
+	--primary-foreground: oklch(0.16 0.02 235);
+	--secondary: oklch(0.26 0.01 80);
+	--secondary-foreground: oklch(0.92 0.008 85);
+	--muted: oklch(0.255 0.01 80);
+	--muted-foreground: oklch(0.66 0.012 80);
+	--accent: oklch(0.26 0.011 80);
+	--accent-foreground: oklch(0.94 0.008 85);
+	--border: oklch(0.285 0.01 80);
+	--input: oklch(0.31 0.011 80);
+	--ring: oklch(0.72 0.12 235);
+	--sidebar: oklch(0.165 0.007 75);
+	--sidebar-foreground: oklch(0.88 0.008 85);
+	--sidebar-accent: oklch(0.235 0.01 80);
+	--sidebar-accent-foreground: oklch(0.94 0.008 85);
+	--sidebar-border: oklch(0.24 0.01 80);
+	--unread: oklch(0.72 0.12 235);
+	--star: oklch(0.8 0.13 85);
+}
+
+@layer base {
+	* {
+		@apply border-border outline-ring/50;
+	}
+	body {
+		@apply bg-background text-foreground;
+	}
+}
+
+/* OTP fake-caret blink (used by components/ui/input-otp). Mirrors the
+ * shadcn/tw-animate-css utility so it works even if the plugin doesn't
+ * register one for this project. */
+@keyframes caret-blink {
+	0%,
+	70%,
+	100% {
+		opacity: 1;
+	}
+	20%,
+	50% {
+		opacity: 0;
+	}
+}
+.animate-caret-blink {
+	animation: caret-blink 1.25s ease-out infinite;
+}
+
+/* Mobile nav drawer */
+@keyframes drawer-in {
+	from {
+		transform: translateX(-100%);
+	}
+	to {
+		transform: translateX(0);
+	}
+}
+@keyframes fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}

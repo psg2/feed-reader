@@ -1,0 +1,209 @@
+<!doctype html>
+<!--
+  Source HTML for apps/web/public/og-image.jpg. Rendered to a 1200×630 JPEG
+  by scripts/build-og.mjs (`pnpm og:build`). Edit this file when the brand
+  shifts; do NOT edit the generated jpg directly.
+
+  Replace APP_NAME, the tagline, and the URL below. Adjust colors via the
+  CSS custom properties in :root.
+-->
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+			rel="stylesheet"
+		/>
+		<style>
+			:root {
+				--bg-0: #0e0d14;
+				--bg-1: #15131c;
+				--fg: #f0f0f5;
+				--dim: rgba(240, 240, 245, 0.65);
+				--dimmer: rgba(240, 240, 245, 0.42);
+				--accent: #a78bfa;
+				--accent2: #60a5fa;
+				--accent3: #34d399;
+				--border-strong: rgba(255, 255, 255, 0.18);
+				--grad-spectrum: linear-gradient(
+					90deg,
+					var(--accent),
+					var(--accent2),
+					var(--accent3)
+				);
+				--grad-spectrum-v: linear-gradient(
+					180deg,
+					var(--accent),
+					var(--accent2),
+					var(--accent3)
+				);
+			}
+			* {
+				box-sizing: border-box;
+				margin: 0;
+				padding: 0;
+			}
+			html,
+			body {
+				width: 1200px;
+				height: 630px;
+				font-family: "Inter", system-ui, sans-serif;
+				font-feature-settings: "cv02", "cv03", "cv11";
+				letter-spacing: -0.005em;
+				color: var(--fg);
+				background: #08070d;
+				-webkit-font-smoothing: antialiased;
+			}
+			.mono {
+				font-family: "JetBrains Mono", ui-monospace, monospace;
+				font-feature-settings: "tnum";
+			}
+			.spectrum-text {
+				background: var(--grad-spectrum);
+				-webkit-background-clip: text;
+				background-clip: text;
+				color: transparent;
+				filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
+			}
+			.og {
+				width: 1200px;
+				height: 630px;
+				position: relative;
+				overflow: hidden;
+				background:
+					radial-gradient(
+						circle at 12% 20%,
+						rgba(76, 29, 149, 0.55) 0%,
+						transparent 42%
+					),
+					radial-gradient(
+						circle at 88% 78%,
+						rgba(30, 58, 138, 0.45) 0%,
+						transparent 45%
+					),
+					radial-gradient(
+						circle at 50% 110%,
+						rgba(20, 83, 69, 0.35) 0%,
+						transparent 50%
+					),
+					linear-gradient(180deg, var(--bg-0), var(--bg-1));
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				padding: 72px 88px;
+				gap: 28px;
+			}
+			.ribbon {
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				height: 2px;
+				background: linear-gradient(
+					90deg,
+					transparent,
+					var(--accent),
+					var(--accent2),
+					var(--accent3),
+					transparent
+				);
+			}
+			.ribbon-bottom {
+				position: absolute;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				height: 2px;
+				background: linear-gradient(
+					90deg,
+					transparent,
+					var(--accent),
+					var(--accent2),
+					var(--accent3),
+					transparent
+				);
+			}
+			.lockup {
+				display: flex;
+				align-items: center;
+				gap: 14px;
+			}
+			.logo-tile {
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				background: linear-gradient(
+					180deg,
+					rgba(255, 255, 255, 0.1),
+					rgba(255, 255, 255, 0.04)
+				);
+				border: 1px solid var(--border-strong);
+				box-shadow:
+					0 8px 32px rgba(0, 0, 0, 0.5),
+					0 0 40px rgba(167, 139, 250, 0.25);
+				width: 56px;
+				height: 56px;
+				border-radius: 13px;
+				font-size: 28px;
+				font-weight: 700;
+				background-clip: padding-box;
+			}
+			.logo-tile span {
+				background: var(--grad-spectrum-v);
+				-webkit-background-clip: text;
+				background-clip: text;
+				color: transparent;
+			}
+			.wm {
+				font-size: 26px;
+				font-weight: 600;
+				letter-spacing: 0.04em;
+			}
+			h1 {
+				font-size: 76px;
+				line-height: 1.04;
+				font-weight: 600;
+				letter-spacing: -0.03em;
+				max-width: 1000px;
+			}
+			.sub {
+				font-size: 24px;
+				color: var(--dim);
+				line-height: 1.45;
+				max-width: 900px;
+			}
+			.url {
+				font-size: 16px;
+				color: var(--dimmer);
+				letter-spacing: 0.06em;
+				margin-top: 8px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="og">
+			<div class="ribbon"></div>
+
+			<div class="lockup">
+				<span class="logo-tile" aria-hidden="true"><span>A</span></span>
+				<span class="wm spectrum-text">APP_NAME</span>
+			</div>
+
+			<h1>
+				A short, punchy headline.<br />
+				<span class="spectrum-text">With a gradient second line.</span>
+			</h1>
+
+			<p class="sub">
+				One sentence that explains what the product does and why someone should
+				care enough to click through.
+			</p>
+
+			<span class="url mono">your-app.example.com</span>
+
+			<div class="ribbon-bottom"></div>
+		</div>
+	</body>
+</html>

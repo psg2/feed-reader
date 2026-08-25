@@ -1,0 +1,23 @@
+{
+	"$schema": "https://oxc.rs/oxfmt/schema.json",
+	"useTabs": true,
+	"tabWidth": 2,
+	"singleQuote": false,
+	"semi": true,
+	"trailingComma": "all",
+	"printWidth": 80,
+	"ignorePatterns": [
+		"**/node_modules/**",
+		"**/.cache/**",
+		"**/.output/**",
+		"**/.vercel/**",
+		"**/.turbo/**",
+		"**/dist/**",
+		"**/routeTree.gen.ts",
+		"packages/db/drizzle/**",
+		".agents/**",
+		".claude/**",
+		".ralph/**",
+		"pnpm-lock.yaml"
+	]
+}

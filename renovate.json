@@ -1,0 +1,54 @@
+{
+	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
+	"extends": [
+		"config:recommended",
+		":semanticCommits",
+		":disableDependencyDashboard"
+	],
+	"timezone": "America/Sao_Paulo",
+	"schedule": ["before 6am on monday"],
+	"automerge": false,
+	"rangeStrategy": "bump",
+	"minimumReleaseAge": "3 days",
+	"labels": ["dependencies"],
+	"postUpdateOptions": ["pnpmDedupe"],
+	"lockFileMaintenance": {
+		"enabled": true,
+		"schedule": ["before 6am on monday"]
+	},
+	"packageRules": [
+		{
+			"description": "Group minor and patch npm updates into one weekly PR",
+			"matchManagers": ["npm"],
+			"matchUpdateTypes": ["minor", "patch"],
+			"groupName": "npm dependencies (non-major)",
+			"groupSlug": "npm-minor-patch"
+		},
+		{
+			"description": "Group minor and patch GitHub Actions updates into one weekly PR",
+			"matchManagers": ["github-actions"],
+			"matchUpdateTypes": ["minor", "patch"],
+			"groupName": "github-actions (non-major)",
+			"groupSlug": "github-actions-minor-patch",
+			"semanticCommitType": "ci"
+		},
+		{
+			"description": "Group minor and patch SwiftPM updates (macos/Package.swift) into one weekly PR",
+			"matchManagers": ["swift"],
+			"matchUpdateTypes": ["minor", "patch"],
+			"groupName": "swift packages (non-major)",
+			"groupSlug": "swift-minor-patch"
+		},
+		{
+			"description": "react/react-dom are pinned in pnpm overrides; keep them in one PR",
+			"matchPackageNames": ["react", "react-dom"],
+			"groupName": "react"
+		},
+		{
+			"description": "Pre-release Nitro is pinned on purpose; do not chase alphas",
+			"matchPackageNames": ["nitro"],
+			"enabled": false
+		}
+	],
+	"ignorePaths": ["**/node_modules/**", ".claude/**", ".agents/**"]
+}

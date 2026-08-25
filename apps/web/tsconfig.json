@@ -1,0 +1,12 @@
+{
+	"extends": "../../tooling/typescript/tanstack.json",
+	"compilerOptions": {
+		"paths": {
+			"@/*": ["./*"]
+		},
+		"declaration": false,
+		"declarationMap": false
+	},
+	"include": ["**/*.ts", "**/*.tsx", "**/*.mts"],
+	"exclude": ["node_modules"]
+}

@@ -1,0 +1,31 @@
+# Dependabot — security updates only.
+#
+# Version updates (npm, GitHub Actions, SwiftPM) are handled by Renovate
+# (renovate.json at the repository root), which groups them into one weekly
+# PR per ecosystem. Dependabot stays on for security alerts as a second,
+# faster path for vulnerable versions.
+#
+# open-pull-requests-limit: 0 disables version-update PRs for an ecosystem
+# while keeping it registered, so Dependabot security updates (enabled under
+# Settings → Code security) still open PRs with these labels.
+
+version: 2
+
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 0
+    labels:
+      - "dependencies"
+      - "security"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 0
+    labels:
+      - "dependencies"
+      - "security"

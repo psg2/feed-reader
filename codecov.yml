@@ -1,0 +1,27 @@
+# Codecov — informational only. No status check fails the build; coverage
+# is uploaded from the Test job in .github/workflows/ci.yml.
+codecov:
+  require_ci_to_pass: false
+
+coverage:
+  status:
+    project:
+      default:
+        informational: true
+    patch:
+      default:
+        informational: true
+
+comment:
+  layout: "condensed_header, diff, files"
+  behavior: default
+  require_changes: true
+
+ignore:
+  - "**/routeTree.gen.ts"
+  - "**/*.gen.ts"
+  - "**/*.test.ts"
+  - "**/*.test.tsx"
+  - "apps/web/tests/**"
+  - "packages/db/drizzle/**"
+  - "macos/**"

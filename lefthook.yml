@@ -1,0 +1,26 @@
+# Lefthook — Git hooks manager
+# https://lefthook.dev
+#
+# Enforces mandatory quality gates before push.
+# Prevents pushing code that would fail CI.
+#
+# Install:  brew install lefthook && lefthook install
+# Skip:     LEFTHOOK=0 git push  (emergency only)
+
+pre-push:
+  piped: true
+  jobs:
+    - name: quality gates
+      group:
+        parallel: true
+        jobs:
+          - name: lint
+            run: pnpm lint
+          - name: type-check
+            run: pnpm type-check
+          - name: test
+            run: pnpm test
+          - name: knip
+            run: pnpm knip
+          - name: scan-secrets
+            run: gitleaks detect --source . -v

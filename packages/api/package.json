@@ -1,0 +1,20 @@
+{
+	"name": "@feedreader/api",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"scripts": {
+		"type-check": "tsc --noEmit",
+		"clean": "rm -rf node_modules"
+	},
+	"dependencies": {
+		"@orpc/contract": "^1.15.0",
+		"zod": "^4.4.3"
+	},
+	"devDependencies": {
+		"typescript": "~7.0.2"
+	}
+}

@@ -1,0 +1,55 @@
+{
+	"name": "feedreader",
+	"version": "0.1.0",
+	"private": true,
+	"description": "Self-hosted feed reader: web app, native macOS client and remote MCP server on one Postgres database.",
+	"homepage": "https://github.com/psg2/feed-reader#readme",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/psg2/feed-reader.git"
+	},
+	"scripts": {
+		"dev": "turbo run dev",
+		"build": "turbo run build",
+		"test": "turbo run test",
+		"preview": "pnpm build && pnpm --filter @feedreader/web preview",
+		"test:e2e": "pnpm --filter @feedreader/web test:e2e",
+		"test:db:migrate": "pnpm --filter @feedreader/web test:db:migrate",
+		"lint": "oxlint --max-warnings=0",
+		"lint:fix": "oxlint --fix",
+		"format": "oxfmt",
+		"format:check": "oxfmt --check",
+		"type-check": "turbo run type-check",
+		"knip": "turbo run knip",
+		"clean": "turbo run clean && rm -rf node_modules",
+		"dev:tmux": "tmux kill-session -t app-web 2>/dev/null; tmux new-session -d -s app-web 'cd apps/web && pnpm dev 2>&1' && echo '✓ web started on :3000 (tmux: app-web)'",
+		"dev:attach": "tmux attach -t app-web",
+		"dev:logs": "tmux capture-pane -t app-web -p -S -100",
+		"dev:stop": "tmux kill-session -t app-web 2>/dev/null && echo '✓ web stopped'",
+		"deps:up": "docker compose up -d && bash scripts/sync-deps-env.sh",
+		"deps:down": "docker compose down && rm -f .env.docker",
+		"deps:status": "docker compose ps && echo && (cat .env.docker 2>/dev/null || echo '(no .env.docker — run pnpm deps:up)')",
+		"deps:sync": "bash scripts/sync-deps-env.sh",
+		"db:generate": "pnpm --filter @feedreader/db db:generate",
+		"db:migrate": "pnpm --filter @feedreader/db db:migrate",
+		"db:seed": "pnpm --filter @feedreader/db db:seed",
+		"db:reset": "pnpm --filter @feedreader/db db:reset",
+		"db:studio": "pnpm --filter @feedreader/db db:studio",
+		"db:prune-branches": "bash scripts/neon-prune-branches.sh",
+		"db:prune-branches:force": "bash scripts/neon-prune-branches.sh --force",
+		"og:build": "node scripts/build-og.mjs",
+		"outdated": "npx taze -r"
+	},
+	"devDependencies": {
+		"oxfmt": "^0.63.0",
+		"oxlint": "^1.78.0",
+		"playwright-core": "^1.62.1",
+		"sharp": "^0.35.3",
+		"turbo": "^2.10.9"
+	},
+	"engines": {
+		"node": ">=24"
+	},
+	"packageManager": "pnpm@10.28.0"
+}

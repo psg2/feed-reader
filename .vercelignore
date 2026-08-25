@@ -1,0 +1,6 @@
+.env*
+macos
+.github
+# Do not add *.png here: apps/web/public/ ships the PWA icons
+# (icon-192.png, apple-touch-icon.png, ...) and a blanket ignore drops them
+# from the deployment.

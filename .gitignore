@@ -1,0 +1,47 @@
+# Dependencies
+node_modules
+
+# Build
+.next
+.output
+.vinxi
+dist
+.turbo
+.cache
+
+# TanStack Router — routeTree.gen.ts is committed (CI needs it for type-check)
+
+# Environment
+.env
+.env.local
+.env.*.local
+.env.docker
+!.env.example
+.env-sync-backups/
+.env.local.bkp.*
+
+# IDE
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Sentry
+.sentryclirc
+
+# Vercel
+.vercel
+coverage/
+
+# Agent tooling (local only)
+.ralph
+.beads
+.agents
+.claude/
+.env*
+
+# Personal env-sync config (copy from env-sync.example.yaml)
+env-sync.yaml

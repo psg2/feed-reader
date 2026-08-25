@@ -1,0 +1,194 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+# Runs on GitHub-hosted runners (works for forks and public repos) —
+# no self-hosted or paid runners required.
+jobs:
+  secrets-scan:
+    name: Secrets Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Gitleaks (full history)
+        env:
+          GITLEAKS_VERSION: 8.30.1
+          # sha256 of gitleaks_8.30.1_linux_x64.tar.gz from the release's checksums.txt;
+          # bump both when changing GITLEAKS_VERSION.
+          GITLEAKS_SHA256: 551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb
+        run: |
+          curl -sSfL -o gitleaks.tar.gz "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          echo "${GITLEAKS_SHA256}  gitleaks.tar.gz" | sha256sum -c -
+          tar -xzf gitleaks.tar.gz gitleaks
+          ./gitleaks git --redact -v .
+
+  static-checks:
+    name: Static Checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Restore Turbo cache
+        uses: actions/cache@v6
+        with:
+          path: .turbo
+          key: turbo-static-${{ github.sha }}
+          restore-keys: |
+            turbo-static-
+      - run: pnpm lint
+      - run: pnpm format:check
+      - run: pnpm exec turbo run type-check --cache-dir=.turbo
+      - run: pnpm exec turbo run knip --cache-dir=.turbo
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: dev
+          POSTGRES_PASSWORD: dev
+          POSTGRES_DB: app
+        ports:
+          - 5435:5432
+        options: >-
+          --health-cmd "pg_isready -U dev -d app"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      POSTGRES_URL: postgres://dev:dev@localhost:5435/app
+      TEST_DATABASE_URL: postgres://dev:dev@localhost:5435/app_test
+      SKIP_ENV_VALIDATION: true
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Create test database and extensions
+        run: |
+          PGPASSWORD=dev psql -h localhost -p 5435 -U dev -d app -c "CREATE DATABASE app_test OWNER dev;"
+          PGPASSWORD=dev psql -h localhost -p 5435 -U dev -d app -c "CREATE EXTENSION IF NOT EXISTS unaccent;"
+          PGPASSWORD=dev psql -h localhost -p 5435 -U dev -d app_test -c "CREATE EXTENSION IF NOT EXISTS unaccent;"
+      - name: Migrate test database
+        run: cd packages/db && POSTGRES_URL=postgres://dev:dev@localhost:5435/app_test pnpm exec drizzle-kit migrate
+      # Same suites as `pnpm test`, with coverage on the unit run so the
+      # suite executes once.
+      - name: Unit tests (with coverage)
+        run: pnpm --filter @feedreader/web test:coverage
+      - name: Frontend tests
+        run: pnpm --filter @feedreader/web test:frontend
+      # Coverage is informational: the upload step never fails CI, so the
+      # workflow stays green before CODECOV_TOKEN exists (forks included).
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: apps/web/coverage/lcov.info
+          flags: web
+          fail_ci_if_error: false
+
+  e2e:
+    name: E2E (web)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: dev
+          POSTGRES_PASSWORD: dev
+          POSTGRES_DB: app
+        ports:
+          - 5435:5432
+        options: >-
+          --health-cmd "pg_isready -U dev -d app"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      CI: true
+      POSTGRES_URL: postgres://dev:dev@localhost:5435/app
+      # The production server refuses the dev default; any 32+ char string works here.
+      BETTER_AUTH_SECRET: e2e-only-secret-not-for-production-0123456789
+      BETTER_AUTH_URL: http://localhost:3123
+      # The suite signs up one account per worker (e2e/global-setup.ts);
+      # the invite-only default would block all but the first.
+      ALLOW_SIGNUP: "true"
+      E2E_PORT: "3123"
+      # Serve the production build (playwright.config.ts starts it on E2E_PORT).
+      E2E_APP_COMMAND: pnpm start
+      NITRO_PRESET: node-server
+      NODE_OPTIONS: "--max-old-space-size=8192"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Create extensions
+        run: PGPASSWORD=dev psql -h localhost -p 5435 -U dev -d app -c "CREATE EXTENSION IF NOT EXISTS unaccent;"
+      - name: Migrate
+        run: cd packages/db && pnpm exec drizzle-kit migrate
+      - name: Build (node-server preset)
+        run: SKIP_ENV_VALIDATION=true pnpm --filter @feedreader/web build
+      - name: Install Chromium
+        run: pnpm --filter @feedreader/web exec playwright install --with-deps chromium
+      - name: Run Playwright
+        run: pnpm --filter @feedreader/web test:e2e
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report
+          path: apps/web/playwright-report
+          retention-days: 7
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    env:
+      SKIP_ENV_VALIDATION: true
+      NODE_OPTIONS: "--max-old-space-size=8192"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Restore Turbo cache
+        uses: actions/cache@v6
+        with:
+          path: .turbo
+          key: turbo-build-${{ github.sha }}
+          restore-keys: |
+            turbo-build-
+      - run: pnpm exec turbo run build --cache-dir=.turbo

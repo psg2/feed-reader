@@ -1,0 +1,885 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Irrational Exuberance</title><link>https://lethain.com/</link><description>Recent content on Irrational Exuberance</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Will Larson</copyright><lastBuildDate>Tue, 11 Aug 2026 07:00:00 -0700</lastBuildDate><atom:link href="https://lethain.com/feeds.xml" rel="self" type="application/rss+xml"/><item><title>Roadmap decisions rather than dates.</title><link>https://lethain.com/decisions-not-dates/</link><pubDate>Tue, 11 Aug 2026 07:00:00 -0700</pubDate><guid>https://lethain.com/decisions-not-dates/</guid><description>&lt;p&gt;One thing that bothered me about Imprint&amp;rsquo;s product after joining was our lack of passkey support.
+Passkey support is a rare opportunity to increase resiliency to phishing attacks
+while simultaneously reducing login friction. If it&amp;rsquo;s good for our members, our partners, and our product,
+it felt like something we should have already shipped.
+Nonetheless, it was hard to get it onto the roadmap alongside everything else we were working on.&lt;/p&gt;
+&lt;p&gt;To dig into passkeys, I started sketching out the implementation as a side quest.
+Some iterations later, I had something implemented behind a disabled feature flag for team review.
+At that point, most problems had a concrete solution implemented, and the remaining issues
+were messy intersections between passkey implementation and user experience.
+Issues remained, but the tangible implementation made tradeoffs explicit, and we were able to work through them.
+Soon thereafter, we launched passkeys to a small group in our web experience,
+iterated on feedback, finalized the details, and brought those details forward to our native
+mobile experiences as well.
+It never got onto the roadmap, but it did ship.&lt;/p&gt;
+&lt;p&gt;Our passkey release planted a seed for me, but it required another experience to fully germinate.
+We had a discussion about hitting a date for a product extension we&amp;rsquo;re developing.
+Our conversation kept anchoring on the idea that pulling in a date was dependent on pushing out dates for other
+projects. Presenting two conflicting projects as requiring timeline tradeoffs wouldn&amp;rsquo;t have caused me
+to blink an eye five years ago, but in this conversation it inspired a sort of instinctual revolt:
+with modern development techniques, I believe very few projects are essentially constrained by execution bandwidth.
+Some are constrained by approvals, others are constrained by cross-team and cross-functional handoffs,
+and many are constrained by missing decisions, but almost none should be constrained purely on &lt;em&gt;time&lt;/em&gt;.
+Shifting blocks of time across projects to speed up delivery felt wholly divorced from the reality
+I work in.&lt;/p&gt;
+&lt;p&gt;Grappling with my frustration for some time didn&amp;rsquo;t lead to a profound awakening, but
+it did help me bring together my thoughts about how effective modern organizations operate.
+The modern organization operates most effectively by orienting itself around highly empowered teams who broaden their capabilities to
+absorb cross-team and cross-functional handoffs,
+can rely on automated harnesses to address most remaining cross-functional approvals,
+and accelerate high-quality decision making through rapid prototyping.
+The premise here is an old one, but AI-tooling has shifted what&amp;rsquo;s possible in remarkable ways.&lt;/p&gt;
+&lt;h2 id="reducing-handoffs-with-team-and-individual-accountability"&gt;Reducing handoffs with team and individual accountability&lt;/h2&gt;
+&lt;p&gt;In 1975, Fred Brooks&amp;rsquo;s &lt;a href="https://www.amazon.com/Mythical-Man-Month-Anniversary-Engineering-Documents-ebook/dp/B0CLKZK6XD/"&gt;The Mythical Man-Month&lt;/a&gt;
+warned us that adding individuals to a late project makes that project even later rather than speeding it up.
+However well-understood this is, it remains extremely common for leaders to repeat this mistake, even today.
+My personal theory is that most leaders performing the &amp;ldquo;ask for more staffing&amp;rdquo; gambit intuitively know they are optimizing to
+&amp;ldquo;get stuck&amp;rdquo; in a way that shifts responsibility off them because they didn&amp;rsquo;t get the requested funding,
+rather than that there is no way to accomplish the task at hand.&lt;/p&gt;
+&lt;p&gt;Even if teams avoid the simplest versions of the mythical man-month&amp;rsquo;s trap, organizations that operate through
+strict ownership of defined boundaries introduce the same problem.
+Well, of course your team can&amp;rsquo;t launch that without approval from the architecture team and the security team and performing
+a user research study. That&amp;rsquo;s not really your team&amp;rsquo;s ownership area, you&amp;rsquo;ll need approval from the membership accounts team, at a minimum!
+Agile, with the idea of collective code ownership, rejected this idea in principle, although certainly it remains messy in practice.&lt;/p&gt;
+&lt;p&gt;Even with strong AI-enhanced workflows, I still find human review of load-bearing technical decisions (e.g. a decision that will
+meaningfully impact subsequent decisions) to be extremely valuable. This is why the highly-empowered team model is an effective
+compromise: there needs to be an experienced engineer whose perspective is infused into the architecture, who shares the team&amp;rsquo;s
+context, and who is aligned with the team&amp;rsquo;s priorities. This creates space for earlier career folks to be highly effective,
+while also allowing teams to largely operate independently across complex, intersecting goals.&lt;/p&gt;
+&lt;p&gt;The final piece of driving accountability is rejecting the argument that a problem is too confusing or too hard for someone to know the consequences of their work.
+There are a lot of hard problems, and that&amp;rsquo;s what makes creating software such an interesting job.
+However, in a world with infinite feedback readily available, even if that feedback is of inconsistent quality,
+getting surprised or being unable to unpack a problem is an algorithmic gap in how work is being approached.
+Learning how to manage that gap is a core part of being an engineer, and something we are accountable for learning.&lt;/p&gt;
+&lt;p&gt;To be explicit, the argument isn&amp;rsquo;t that folks should be flawless: mistakes are fine, even laudable in some cases.
+Laudable mistakes are almost always couched in a web of derisking, often feature flags, to make them inexpensive.
+If someone isn&amp;rsquo;t increasingly effective at derisking their decisions throughout their career, then they&amp;rsquo;re not
+being accountable for their impact as an engineer.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;The above section has been fairly standard advice for decades, but I believe AI-tooling has substantially changed three dimensions of this approach:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Maintained context in e.g. &lt;code&gt;AGENTS.md&lt;/code&gt; files can improve the overall approach of the company working
+on a given area. It&amp;rsquo;s very hard to train an entire company, but today you can get many of the outcomes
+of training by manipulating centralized context. This makes it far easier to operate decentralized teams
+than in prior eras.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Inconsistent patterns in a codebase will &amp;ldquo;poison&amp;rdquo; an LLM&amp;rsquo;s context window with bad patterns,
+but it&amp;rsquo;s never been easier to simply remove those bad patterns from the codebase.
+Bad patterns within your codebase are largely a problem you can choose not to have at this point.
+This further simplifies operating decentralized teams, especially if you love introducing tighter typing and linting.
+Which I do.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;One high context engineer can scale themselves across a team&amp;rsquo;s scope much more easily than before
+by using LLM-tooling to investigate, debug, monitor and influence agent development.&lt;/p&gt;
+&lt;p&gt;The broader this engineer&amp;rsquo;s judgment extends, the more effective they&amp;rsquo;ll become.
+I don&amp;rsquo;t think that any of design or product or engineering are going away,
+but individuals whose judgment spans across multiple of these fields
+are increasingly impactful on their teams because they can breeze through
+the easy cross-domain problems rather than get hung up on them.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;In aggregate, I believe that these changes in degree become a change in kind for running an empowered team.&lt;/p&gt;
+&lt;h2 id="minimize-cross-functional-dependencies-with-relationships-or-escalations"&gt;Minimize cross-functional dependencies with relationships or escalations&lt;/h2&gt;
+&lt;p&gt;Even if code ownership is shared, it can become impossible to move forward if there&amp;rsquo;s enough cross-functional
+permission required to make changes. To a small extent this is due to inherent misalignment in incentives across
+functions, but it&amp;rsquo;s much more driven by incompatible priorities.
+Where possible, it&amp;rsquo;s ideal to embed functions into a common pod to align priorities, but in an era of lean teams,
+that&amp;rsquo;s not a particularly accessible solution.&lt;/p&gt;
+&lt;p&gt;Instead your two most likely solutions are the same ones that have always been there.
+First, building relationships across functions to help get your project unblocked by
+a helping hand from within that function. Second, an effective executive team is able
+to make collective tradeoffs&amp;ndash;and share some of their treasury of cross-functional relationship merit&amp;ndash;to
+unblock a given project.&lt;/p&gt;
+&lt;p&gt;Now, however, I think we finally have a playbook for speeding up cross-functional approval
+in a meaningful way, which is providing function-specific harnesses that can perform elements
+of their function&amp;rsquo;s work, especially of the approval variety.
+I don&amp;rsquo;t see substantial adoption of this technique &lt;em&gt;yet&lt;/em&gt;, but I see it coming, and Imprint has spun
+up an internal AI team to iterate our way through deploying this approach. Hopefully we&amp;rsquo;ll be writing
+about our learning there in a month or two.&lt;/p&gt;
+&lt;p&gt;Our goal is that every function has a centrally managed harness that can perform an increasingly large portion
+of their team&amp;rsquo;s work, prioritizing the sorts of things that require cross-team approvals.
+They would have a collection of general tools&amp;ndash;e.g. search indexes of their work corpus&amp;ndash;and also very
+function specific tools&amp;ndash;e.g. access to a tool like Zip for financial approvals on the Finance team&amp;ndash;along
+with the ability to provide skills and direction to the harness.
+Assuming this idea works, this harness will become a shim on top of functions to further allow teams to
+focus on the highest value work rather than getting caught up in the least interesting approvals.&lt;/p&gt;
+&lt;h2 id="eliminate-decisions-through-the-iterative-application-of-judgment"&gt;Eliminate decisions through the iterative application of judgment&lt;/h2&gt;
+&lt;p&gt;With less accidental complexity slowing down our organizations from cross-team
+and cross-functional dependencies, we still have one very large remaining:
+deciding what software to write.
+Software is not, as some argue today, free, but it&amp;rsquo;s no longer constrained on
+implementation weeks but instead on correct decisions.&lt;/p&gt;
+&lt;p&gt;Grounding this in an example, for an upcoming release we found ourselves grappling with
+implications of changing how applicants applied for a new credit card.
+There were concerns that we didn&amp;rsquo;t have enough weeks to implement the change.
+However, the actual work to be done was roughly two weeks, and we were talking about
+the initiative taking two months. The gap between the two weeks and the two months
+was a dozen ambiguous decisions. Those proposing the longer timeline assumed we&amp;rsquo;d
+continue making decisions at the current decision-making pace, resulting in the longer schedule.&lt;/p&gt;
+&lt;p&gt;There was some discussion around how we might find that number of months to complete the project.
+Treating decision-making speed as a fixed constant
+oriented the discussion around a complex, low-value workstream of deciding the relative
+priority of other tasks we were currently working on and then reranking them to free up more calendar time.
+But we were never constrained on calendar time, what mattered was accelerating the pace of high-quality decision-making.&lt;/p&gt;
+&lt;p&gt;In my experience, calendar discussions are another way that folks deliberately get stuck, because no company ever has a central
+list of the true priority of every task. Asking for that non-existent list shifts accountability for forward progress
+off the asker, but it&amp;rsquo;s a fundamentally unreasonable thing to ask for. Thinking about things from
+a CPU scheduling perspective: any scheduler that tried to centrally orchestrate priority within every thread
+would be extraordinarily slow and stuck all the time; it&amp;rsquo;s only by locally determining priority&amp;ndash;often
+through extremely crude methods&amp;ndash;that things move quickly overall.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;Decision-making at a fixed degree of complexity hasn&amp;rsquo;t gotten easier with AI-tooling
+but AI-tooling has dramatically reduced the complexity of most decisions I see in practice.
+Going back to the passkey problem, trying to make those decisions from a blank slate was very
+difficult. I was simply too ignorant of the handshake&amp;rsquo;s constraints to correctly decide the UX details.
+However, I was able to iterate through the open decisions as a side project, until the answers became obvious.
+The answers became obvious not because I got smarter&amp;ndash;I didn&amp;rsquo;t get smarter&amp;ndash;but because iterative
+exploration discarded many of the initial options until the inherent constraints of passkeys and
+our user experience simplified the problem.&lt;/p&gt;
+&lt;p&gt;Prototyping&amp;ndash;e.g. the iterative application of judgment&amp;ndash;can turn most complex problems into a series of simple problems,
+and the rate of prototyping today makes it a substantially more accessible strategy than in the past.
+Yes, prototyping has always been a well-received solution to validate ideas, but it used to be expensive
+enough that many teams didn&amp;rsquo;t take advantage of it, but these days I think it is the most accessible way
+to find high-quality decisions within an ambiguous problem space.&lt;/p&gt;
+&lt;h2 id="a-roadmap-of-decisions-not-on-dates"&gt;A roadmap of decisions, not on dates&lt;/h2&gt;
+&lt;p&gt;Combining all of these ideas, the world we live in is increasingly constrained by
+access to high-quality decisions. Rather than talk about scheduling software around software,
+we should be fixated on the idea of accelerating making high-quality decisions.
+Every hour we spend deciding priorities or timelines is a distraction from making the next decision.&lt;/p&gt;
+&lt;p&gt;As an ending caveat, this isn&amp;rsquo;t an argument that we shouldn&amp;rsquo;t have dates on projects.
+Dates are the external interface for coordinating across companies, so you still need dates.
+However, I think teams are better picking a plausible, slightly conservative external date
+and then entirely ignoring that date internally. Instead, they should
+focus on the list of decisions to be made, and work through
+them directly. Dates, global priorities, stack ranked items&amp;hellip; An engineer who doesn&amp;rsquo;t know the release date
+can still ship.&lt;/p&gt;</description></item><item><title>Middle management roles are also a trap.</title><link>https://lethain.com/middle-management-roles-were-also-a-trap/</link><pubDate>Sat, 08 Aug 2026 07:00:00 -0700</pubDate><guid>https://lethain.com/middle-management-roles-were-also-a-trap/</guid><description>&lt;p&gt;Six years ago, I wrote &lt;a href="https://lethain.com/tech-lead-managers/"&gt;Tech Lead Management roles are a trap&lt;/a&gt;.
+My argument then was that TLM roles present themselves as &lt;em&gt;easier&lt;/em&gt; than moving into
+a full management role, but the tension between doing the software engineering and engineering management
+aspects of the role made being a TLM a much harder first management role than a pure engineering management role.
+I still agree with that post, and I have some additional bad news to share:
+middle management roles are mostly a trap as well, if you goal is to become an executive.&lt;/p&gt;
+&lt;p&gt;The core aspects of middle management roles are:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Balancing between top-down executive, lateral stakeholder, and bottom-up team pressure,
+e.g. keeping morale up as an organization deprioritizes last year&amp;rsquo;s big initiative&lt;/li&gt;
+&lt;li&gt;Defining and operating an organization&amp;rsquo;s process,
+e.g. creating career ladders and interview loops&lt;/li&gt;
+&lt;li&gt;Competing for a share of fixed organizational resources (e.g. budget) and allocating acquired resources&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;These are all extremely important skills to be an effective executive,
+and they make up &lt;a href="https://lethain.com/eng-execs-primer/"&gt;the bulk of &lt;em&gt;The Engineering Executive&amp;rsquo;s Primer&lt;/em&gt;&lt;/a&gt;,
+but they are insufficient to make you a great executive.
+If you don&amp;rsquo;t have them, you will be a deeply flawed executive, but even if you&amp;rsquo;re an expert at them,
+you can still be a terrible executive.&lt;/p&gt;
+&lt;p&gt;That&amp;rsquo;s because the most important skills of an effective executive are
+the same exact skills that make an excellent line manager:
+developing domain expertise, driving execution (including setting pace),
+and translating both of those into an organizational culture
+that extends beyond you (in any of innumerable different ways).
+All of them are more easily practiced and mastered as a line manager
+than as a middle manager. Most middle management roles make practicing those skills difficult,
+and sometimes negatively select against developing them.&lt;/p&gt;
+&lt;p&gt;As a middle manager, if you drive execution too closely, you might get told off
+as a micromanager. As a middle manager, if you go too deep on domain expertise, you
+might get told that you&amp;rsquo;re not focusing enough on your internal stakeholders.
+That&amp;rsquo;s undoubtedly valid feedback in many middle management roles, but it&amp;rsquo;s
+the perfectly wrong feedback to someone who is trying to become an effective
+executive.
+As a result, I&amp;rsquo;ve come to believe that the filters for good middle managers inadvertently
+negatively select out the &amp;ldquo;challenging&amp;rdquo; line managers who actually have the best chance to be
+excellent executives. That&amp;rsquo;s not even necessarily irrational: most companies are developing
+middle managers to take on more complex middle management roles; very rarely do they
+worry about growing future executives from within.&lt;/p&gt;
+&lt;p&gt;If you&amp;rsquo;re willing to embrace this fact that a little bit of time in middle management roles
+is important preparation to become an executive, but spending a great deal of time in middle management
+only prepares you for further middle management roles&amp;ndash;and makes you less effective as a potential
+executive&amp;ndash;then the AI-driven shift in &lt;a href="https://lethain.com/good-eng-mgmt-is-a-fad/"&gt;managerial fads&lt;/a&gt; might be a threat to
+your current role, but it&amp;rsquo;s likely to improve your chances to succeed as an executive.&lt;/p&gt;</description></item><item><title>Generated and suppressed demand.</title><link>https://lethain.com/generated-demand/</link><pubDate>Sat, 11 Jul 2026 14:00:00 -0700</pubDate><guid>https://lethain.com/generated-demand/</guid><description>&lt;p&gt;&lt;img src="https://lethain.com/static/blog/2026/stages-2026.png" alt="Stages of a performing team, revised for 2026"&gt;&lt;/p&gt;
+&lt;p&gt;Eight years ago, I wrote about &lt;a href="https://lethain.com/durably-excellent-teams/"&gt;my theory of restoring struggling teams&lt;/a&gt;,
+which came down to four steps:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;A team is &lt;strong&gt;falling behind&lt;/strong&gt; if each week their backlog is longer than the week before.
+Solve by hiring more.&lt;/li&gt;
+&lt;li&gt;A team is &lt;strong&gt;treading water&lt;/strong&gt; if they’re able to get their critical work done, but are not able to start paying down technical debt or start major new projects.
+Solve by reducing work-in-progress.&lt;/li&gt;
+&lt;li&gt;A team is &lt;strong&gt;repaying debt&lt;/strong&gt; when they’re able to start paying down technical debt, but progress still feels slow.
+Solve by staying the course: it&amp;rsquo;s actually working, you just have to keep the faith until you finish digging out.&lt;/li&gt;
+&lt;li&gt;A team is &lt;strong&gt;innovating&lt;/strong&gt; when their technical debt is sustainably low, morale is high, and the majority of work is satisfying new user needs.
+There&amp;rsquo;s nothing left to solve, at this point.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Even now, I find this mental model extremely valuable, but I do think it is missing one interesting
+nuance that I&amp;rsquo;ve seen many teams run into in high-growth environments: suppressed and generated demand.
+Suppressed demand is the idea of incoming work that isn&amp;rsquo;t incoming, because teams stop asking you for help.
+Generated demand is when an increasingly effective team&amp;rsquo;s progress is noticed, and the previously
+suppressed demand is converted into actual demand.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://lethain.com/static/blog/2026/return-to-falling-2026.png" alt="Generated demand"&gt;&lt;/p&gt;
+&lt;p&gt;The consequence of generated demand is that a team that was struggling can successfully recover,
+work through much of its backlog, and then shortly thereafter be just as far underwater as they were at their worst.
+This is a very disorienting experience, and even a demoralizing one. The team has done everything right,
+shipped a bunch of genuinely valuable work, and are nonetheless just as far underwater as they were before.&lt;/p&gt;
+&lt;p&gt;To give a concrete example, our Customer Operations Engineering team didn&amp;rsquo;t exist a year ago,
+and instead we invested in customer operations engineering tasks by prioritizing them into
+a larger team&amp;rsquo;s tasks. This often meant we had very valuable projects that didn&amp;rsquo;t get staffed.
+We then split it out into its own team, launching a number of projects like reworking our internal
+customer operations tooling and integrating Sierra for our IVR, both of which worked out quite well.
+As a result of working out well, there are far more requests for work. Despite accomplishing so much,
+the team is even further behind on the incoming requests than they were a year ago, when they had
+shipped relatively little and had relatively little capacity to ship more.&lt;/p&gt;
+&lt;p&gt;Unfortunately, the solution here is not particularly novel: you have to run through the cycle again.
+And potentially a third time. And potentially a fourth time. You just have to keep running through
+it until you&amp;rsquo;ve surfaced the entire backlog of suppressed demand.
+This is very similar to the problem of &lt;a href="https://lethain.com/modeling-reliability/"&gt;latent incidents&lt;/a&gt; which cause
+effective reliability programs to look like they&amp;rsquo;re failing as they drain the stock of previously
+created latent incidents. Sometimes you&amp;rsquo;re doing the right thing, and it just takes a while
+to work. Your challenge in that moment is building conviction that you are indeed doing the
+right thing, and convincing your team and leadership of that as well.&lt;/p&gt;
+&lt;p&gt;Finally, it&amp;rsquo;s interesting to attempt to predict which teams are, and which aren&amp;rsquo;t, sitting
+on top of a backlog of suppressed demand. Some teams run through the recovery cycle, and
+find that there simply isn&amp;rsquo;t much else to do. These tend to be teams with very narrow interfaces,
+for example a team whose job is providing internal queues probably won&amp;rsquo;t have much generated
+demand after clearing the initial backlog. Teams with broad interfaces, like customer operations
+or developer experience, are generally sitting on an incredibly large, albeit currently invisible,
+backlog of suppressed work.&lt;/p&gt;</description></item><item><title>Make no assumptions.</title><link>https://lethain.com/make-no-assumptions/</link><pubDate>Sat, 11 Jul 2026 06:00:00 -0700</pubDate><guid>https://lethain.com/make-no-assumptions/</guid><description>&lt;p&gt;I&amp;rsquo;ve recently been thinking a lot about the concept of &amp;ldquo;soil horizons&amp;rdquo;,
+which is the idea that there are many distinct layers of soil, from topsoil all the way down
+to bedrock, which all combine into a soil horizon.
+Translating this idea into software, the ideal codebase would have a single uniform
+&amp;ldquo;code layer&amp;rdquo;, but a surprisingly large percentage of production software has numerous, distinct
+code layers as the leading architect shifted over time.
+I&amp;rsquo;ve found this particularly true for software in problem-spaces with &lt;a href="https://lethain.com/quality/"&gt;high essential complexity and low scale complexity&lt;/a&gt;,
+where the purifying challenges of scaling never create enough pressure
+to compact disjoint layers into a unified layer.&lt;/p&gt;
+&lt;p&gt;Codebases with the most code layers tend to be created by small teams working on complex domains
+over a long period of time. In many companies this might be an identity, permissions or payments team:
+stuff that&amp;rsquo;s permanently valuable, but usually not the central concern at any given time.
+On such teams, there is often only one architect who understands the nuances of the domain well enough
+to make tradeoffs. When that architect leaves, they are replaced by someone who aspires to operate
+in the same code layer, but simply cannot because they lack enough context to do so.
+As a result, that new replacement creates a new code layer, despite not intending to.
+If the team runs through a handful of folks as the new team leads struggle, it&amp;rsquo;s easy to
+end up with a complex code horizon very quickly.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://lethain.com/static/blog/2026/code_horizons.png" alt="Software history framed as soil horizons."&gt;&lt;/p&gt;
+&lt;p&gt;The problem of messy code horizons is not a new one, and the general approach
+to addressing them is the same one I wrote about seven years ago in
+&lt;a href="https://lethain.com/reclaim-unreasonable-software/"&gt;Reclaim unreasonable software&lt;/a&gt;,
+but with the proliferation of coding and non-coding harnesses,
+lately I&amp;rsquo;m running into the problem of messy code horizons more frequently.
+Even more concerning, I&amp;rsquo;m seeing this problem expand from impacting code horizons into
+impacting how organizations make decisions outside of software, e.g. the company&amp;rsquo;s general reasoning horizons.
+When individuals or teams rely on LLMs to reason to conclusions, rather than using LLMs to explore or draft options,
+it&amp;rsquo;s possible for even the most important decisions to be built on top of flawed reasoning layers underneath.&lt;/p&gt;
+&lt;p&gt;In the next section, I&amp;rsquo;ll develop the problem statement a bit about what I&amp;rsquo;m running into,
+and then in the final section I&amp;rsquo;ll lay out the approaches that I am finding (moderately) effective to navigate that problem.&lt;/p&gt;
+&lt;h2 id="messy-reasoning-horizons"&gt;Messy reasoning horizons&lt;/h2&gt;
+&lt;p&gt;If you give three enthusiastic engineers a problem, a new codebase, a coding harness, and self-approval rights,
+it&amp;rsquo;s very easy to end up with three new soil horizons as their harnesses gleefully commit code.
+However, in engineering we have a number of techniques to derisk this problem.
+First, we have manual and automated code review, and second we increasingly have the
+ability for the harnesses to operate off sufficiently clear instructions that they write new code
+consistently with the existing code, even if the operator is unaware of what good looks like.
+This is also true for code review, where coding harnesses
+can drive consistency across pull requests even if the person (or harness) creating the pull requests
+is not operating off the same shared context as the wider team.&lt;/p&gt;
+&lt;p&gt;Many codebases are not well-configured for this new reality, and those codebases are getting
+worse at an accelerating rate as more harness and agent contributions get added.
+Legacy codebases that reach a certain size before introducing these better practices are
+&lt;a href="https://lethain.com/revised-rules-of-engineering-leadership/"&gt;easier to fix than before&lt;/a&gt;, but still require a lot
+of work to fix.&lt;/p&gt;
+&lt;p&gt;That said, I&amp;rsquo;m confident that coding harnesses are going to substantially
+improve the quality of code horizons over the next year or two as the way we configure harnesses improves.
+That&amp;rsquo;s not the problem I&amp;rsquo;m worried about.
+What I&amp;rsquo;m worried about is the application of harnesses to problems outside of writing software,
+where there&amp;rsquo;s no static typing, linting, or unit tests to validate the output.&lt;/p&gt;
+&lt;p&gt;Let me provide a very recent example from my own work that highlights this problem:
+I wanted to understand how our incidents were trending over time.
+So I pulled data via an MCP, and the analysis was unintuitive to me, in particular
+I thought we were having more Data related incidents than the results reflected.
+I had to look at the incidents in Slack, then the results in our incident tool,
+and understand why the two conflicted. After a bit, I recognized the results in our incident tool
+were only showing incidents that properly tagged a team when the alert was triggered, so it was omitting about half the relevant incidents.
+After having the agent manually tag the incidents without team assignments, the data
+made a lot more sense. After recognizing the issue, it was trivial to fix.
+However, if I had simply accepted the initial analysis, I would have made
+the perfectly wrong conclusion about what was happening. On top of that wrong conclusion,
+I could have easily pushed the team to take on a project to solve an illusionary problem.&lt;/p&gt;
+&lt;p&gt;What&amp;rsquo;s so pernicious about messy reasoning horizons, is once any reasoning layer is poisoned,
+it&amp;rsquo;s impossible to reason effectively on top of it. If you take the incident analysis example,
+it&amp;rsquo;s easy to imagine prioritizing the perfectly wrong set of remediations, which have the artifacts
+of solid strategic reasoning, but are nonetheless just wrong.
+It&amp;rsquo;s easy to imagine a team wasting a quarter of time building a solution to this sort of problem
+that never existed.&lt;/p&gt;
+&lt;p&gt;It&amp;rsquo;s true that poor reasoning has always existed, long before harnesses, but my experience is that
+poor reasoning wearing well-formatted clothing is proliferating more widely than I&amp;rsquo;ve previously seen, and it is increasingly difficult to combat
+because certain social norms are &amp;ndash; at least temporarily &amp;ndash; collapsing around folks actually thinking.
+That collapse is largely driven by unprincipled adoption of AI techniques without paying attention to whether
+they work. Widespread adoption is, in my opinion, the fundamental risk for most companies at the moment,
+and something companies need to be doing, but many approaches inadvertently mix play (experimenting with something new in ways that are likely to fail!)
+with production (creating load-bearing work product!) in ways that erode social norms for quality.&lt;/p&gt;
+&lt;p&gt;The norms are not uniformly collapsing by any means, they are &lt;em&gt;generally&lt;/em&gt; intact, but even a small increase
+in the proliferation of low quality reasoning layers has a devastating effect on your ability to reason
+successfully. Especially true the further up the poor reasoning occurs (sloppy reasoning from senior leaders)
+or when senior leaders rely on layers of reasoning without inspection (leaders who aren&amp;rsquo;t sufficiently &amp;ldquo;in the details&amp;rdquo;
+to spot likely reasoning errors in reasoning layers).&lt;/p&gt;
+&lt;p&gt;As a result, we now live in a world where accepting any part of the reasoning context before &lt;a href="https://lethain.com/inspection/"&gt;inspecting&lt;/a&gt;
+it might lead to making a catastrophic mistake.
+This is an exhausting way to live.&lt;/p&gt;
+&lt;h2 id="make-no-assumptions"&gt;Make no assumptions&lt;/h2&gt;
+&lt;p&gt;Accepting that this is the world we live in, I wanted to lay out
+the techniques that I am finding useful to deal with it.
+Some of these are novel, but many of them are the same techniques I was
+using before the LLM-advent:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Make no assumptions&lt;/strong&gt;. When new hires join my team or my company,
+the first thing I tell them is that it&amp;rsquo;s essential that they &amp;ldquo;make no assumptions.&amp;rdquo;
+This is difficult to do, and it goes against every instinct because it forces you to
+inspect each aspect of how the company works and thinks, but I do think it&amp;rsquo;s the necessary approach.
+It&amp;rsquo;s a bit like learning &amp;ldquo;internet-skepticism&amp;rdquo; at some point in your life, where you realize
+that everything on the internet is self-motivated in some way, and you have to maintain a strict
+filter on what ideas you accept.&lt;/p&gt;
+&lt;p&gt;This is a hard change to make, but I genuinely believe this is the correct mindset for accepting
+new information in the current era. The combination of fewer management layers and more flawed
+reasoning layers means that the core job of leadership is inspecting the details.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;The author must be the first human in the loop for their output.&lt;/strong&gt; The biggest cultural failure with harnesses is when you can tell
+that you&amp;ndash;the recipient of a piece of work&amp;ndash;are the first human in the loop reviewing it.
+You must set a cultural norm that the creator of a piece of content is always the first human in the
+loop before asking another human to review it.
+If you fail to set that cultural expectation, then you will quickly crush the remaining team with a high
+standard for quality reasoning, which will lead to a full destruction of your reasoning horizon.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Prioritize reasonable software.&lt;/strong&gt; Run the &lt;a href="https://lethain.com/reclaim-unreasonable-software/"&gt;Reclaim unreasonable software&lt;/a&gt; playbook,
+recognizing that &lt;a href="https://lethain.com/revised-rules-of-engineering-leadership/"&gt;migrations are cheap in 2026&lt;/a&gt;,
+so it&amp;rsquo;s much faster to remediate gaps. The core idea here is that relying on convention doesn&amp;rsquo;t work,
+and instead you have to rely on deterministic decisioning for each approach.
+For humans this can feel overly prescriptive, but harnesses don&amp;rsquo;t care.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Learn faster by separating play and production.&lt;/strong&gt; Many folks trying to learn how to use harnesses and LLMs
+leap directly into using them in their most critical work. This is a slow way to learn, and can lead to
+substantial errors in your most critical work. It&amp;rsquo;s much faster to work by buffering small pockets of time
+to learn.&lt;/p&gt;
+&lt;p&gt;For example, our head of data has spent time building an iOS app fully &amp;ldquo;hands off the keyboard&amp;rdquo;
+to get a better feel for the tools. This sort of experiment goes much faster and gives you more
+repetitions in less time. The very practical version of this is setting aside a day or two periodically
+for folks to experiment.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Structure how you think with LLMs.&lt;/strong&gt; In &lt;em&gt;&lt;a href="https://craftingengstrategy.com/"&gt;Crafting Engineering Strategy&lt;/a&gt;&lt;/em&gt;,
+I lay out a structured approach to reasoning through creating a strategy document, which aims to prevent the
+reasoning errors that folks make in their thinking.
+This applies equally in how we use LLMs, and I think you can substantially reduce the chance of introducing
+flawed reasoning layers by focusing LLM work on
+&lt;a href="https://craftingengstrategy.com/strategy-steps/"&gt;exploration&lt;/a&gt; (gathering information on internet and via various MCPs),
+&lt;a href="https://craftingengstrategy.com/refinement-intro/"&gt;refinement&lt;/a&gt; (presenting gathered information effectively),
+and a final formatting pass.
+That takes much of the work out of strategy creation while constraining the areas you have to avoid
+making any assumptions about its output.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;I&amp;rsquo;m certain there are more things! What are you trying?&lt;/p&gt;</description></item><item><title>Revised rules of engineering leadership.</title><link>https://lethain.com/revised-rules-of-engineering-leadership/</link><pubDate>Mon, 15 Jun 2026 06:00:00 -0700</pubDate><guid>https://lethain.com/revised-rules-of-engineering-leadership/</guid><description>&lt;p&gt;From early 2014 through late 2020, I was working in &lt;a href="https://lethain.com/productivity-in-the-age-of-hypergrowth/"&gt;hypergrowth&lt;/a&gt; environments,
+which are challenging, but also educational. The most valuable feature of hypergrowth is that
+your mistakes reveal themselves next month rather than next year, because things go wrong very loudly when you&amp;rsquo;re moving fast.
+I&amp;rsquo;ve been thinking a lot about hypergrowth recently, because Imprint&amp;rsquo;s business is growing quickly and we did a large batch
+of hiring last year, but also because the AI-tooling shift has changed the pace at which it&amp;rsquo;s possible to work.&lt;/p&gt;
+&lt;p&gt;This post documents the new rules I&amp;rsquo;ve revised my approach to engineering leadership around,
+and then talks through the specific projects I&amp;rsquo;ve worked on over the past year that caused
+me to believe in these rules.&lt;/p&gt;
+&lt;h2 id="revised-rules"&gt;Revised rules&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;&lt;a href="https://lethain.com/migrations/"&gt;Migrations&lt;/a&gt; can be done by an individual rather than a team.&lt;/strong&gt;
+Even complex, large changes can be 95% owned by the driving individual or team, and done in 10% of the time.
+As the initial cost of migrations goes down, the reward/penalty of each migration&amp;rsquo;s quality goes up:
+even small sharp edges will break your colleagues&amp;rsquo; mental models about the software you co-maintain.
+The impact of individual judgment on your company has never been higher.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;While 1st-pass code is nearly free, the cost of working code depends on your development harness, and is not free.&lt;/strong&gt;
+We&amp;rsquo;re in an era when many companies say that &lt;em&gt;everyone&lt;/em&gt; should be writing code, however our experience
+is that writing code that works well, while avoiding messy edgecases, remains difficult.
+Just how difficult remains a factor of your development harness, e.g. your tests, CI/CD,
+validation environments, preview-ability of changes, and so on.
+While I personally don&amp;rsquo;t imagine it&amp;rsquo;s valuable for most folks at a company to be contributing code,
+I suspect that most disagreement about that topic is actually a miscommunication:
+even at a company where &amp;ldquo;everyone codes&amp;rdquo;, the marketing team isn&amp;rsquo;t reducing allocations in your servers,
+instead it&amp;rsquo;s about whether there is a safe boundary where they &lt;em&gt;can&lt;/em&gt; participate.
+(Much like a SaaS product that allows customization by writing software.)&lt;/p&gt;
+&lt;p&gt;The good news is that this means the things that were most valuable to speed up engineering two years ago
+are still the things that are most valuable to speed them up today.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Optimize the base-case of process for agents.&lt;/strong&gt;
+Most steps of most processes can be fully automated in most cases.
+With the right harnesses, the right controls, domain context, and good judgment in their designers,
+you can fully automate the base-case of most processes
+in modern technology companies. For example, the base case of code review from a human
+is slower and less effective than a good harness&amp;rsquo; code review.
+Of course, the harness will miss things, but so will human reviewers, and most areas
+are relatively safe to make changes. Of course, there are some higher risk areas, where
+this doesn&amp;rsquo;t hold true.
+By effectively capturing these distinctions properly, we can go much faster without
+introducing risk. By failing to capture these distinctions, we&amp;rsquo;ll create innumerable problems
+for ourselves.&lt;/p&gt;
+&lt;p&gt;As a corollary, I think most planning processes like weekly or bi-weekly sprints are operating at
+too low an altitude. Humans planning together still matters, but should be operating at a higher level.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Durable, high-ownership teams with domain-context are even more important.&lt;/strong&gt;
+One of my biggest lessons at Uber was that &lt;a href="https://lethain.com/durably-excellent-teams/"&gt;persistent, durable teams work magic&lt;/a&gt;
+by accumulating domain-context, building a sense of camaraderie, and feeling an increasingly strong sense
+of ownership over an area as they continue to work in it.
+Even in an era where specifically doing something is much cheaper, you still have to do &lt;a href="https://lethain.com/judgment-is-all-you-need/"&gt;the right thing&lt;/a&gt;,
+which has gotten a bit easier but not much easier, and structural improvements help address this.
+(As a recent example of that, we had an issue in production where the necessary data to optimize it simply wasn&amp;rsquo;t being
+captured at all, so the harness&amp;rsquo; ideas to solve it were reasonable but wrong, since the only real path forward was
+instrumenting the missing information.)&lt;/p&gt;
+&lt;p&gt;As a specific disagreement, there&amp;rsquo;s a prevailing idea that AI-first companies will be run by a small number of
+genius engineers who create perfect versions of things one by one, doing such a good job that there&amp;rsquo;s nothing
+to maintain. This is a very compelling vision, but I don&amp;rsquo;t see it happening. High judgment individuals &lt;em&gt;can&lt;/em&gt;
+wander across a company doing remarkable things, but at some point they do get hemmed in by lack of domain context,
+which is why durable teams are the fundamental building block, even in this era.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Quick, good, and durable decision-making is a prerequisite to meaningfully benefit from AI.&lt;/strong&gt;
+Being able to replace a legal review with automation only works if Legal can commit to that change,
+which depends on designing the automation thoughtfully, and also the teams&amp;rsquo; willingness to collaborate.
+Implementing a new feature is only valuable if you can decide to launch that feature.&lt;/p&gt;
+&lt;p&gt;Your team and company can only benefit from this increased pace of execution if you can make durable decisions
+quickly, and those decisions are good. This is the primary reason, in my opinion, why the average CTO role has
+necessarily become substantially more technical and less bureaucratic than a year ago.
+In many cases, I am the only person who can make binding decisions when teams disagree on the path forward,
+and that means I am making decisions constantly in this new world in order to maintain the pace.
+(That&amp;rsquo;s not an argument that executives are better decision makers, just that binding executive decisions
+are uniquely powerful to the extent that the executives themselves are aligned enough to honor those decisions.)&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="what-have-we-done-in-practice"&gt;What have we done in practice&lt;/h2&gt;
+&lt;p&gt;So, I genuinely believe the above rules based on my experiences over the past year, and let me try to
+connect them to specific projects we&amp;rsquo;ve worked on that have convinced me of them:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Migrations&lt;/strong&gt;
+&lt;ol&gt;
+&lt;li&gt;A year ago, we deployed manually, and deployed ~6 times a week, and now we deploy 200-400 times a week.
+Our engineering headcount has doubled, but even if we double the prior deploys, we&amp;rsquo;re still up 20-30x year-over-year.
+This is due to a complete overhaul of how we deploy and run migrations, and this migration was done over two months and done 90% by
+two folks on our infrastructure team.&lt;/li&gt;
+&lt;li&gt;The first day of January, about 25% of folks on our team used Claude Code or Cursor every day. By the end of February, 100% did.
+We did this without any top-down mandate, just by making the tooling good and chatting with non-adopters to remove sources of friction.
+Pretty much every PR is written by harnesses now, at least in the first pass.&lt;/li&gt;
+&lt;li&gt;We migrated from a large number of varied configuration mechanisms to two configuration mechanisms (one for client or server constants that rarely change,
+a second for product-specific or frequently changing values). This was a large series of changes, which were largely done
+as a series of isolated projects by individual engineers. First, one engineer cleaned up the architecture to support this approach.
+Then another engineer did a reference architecture on the new approach. Then several more engineers followed the reference architecture
+in other areas of our codebase. This might have been a years long project of many people in the prior world, but took less than a quarter
+to complete, including a new internal tool for managing these values across engineering and non-engineer teams.&lt;/li&gt;
+&lt;li&gt;We unified a multi-repo frontend application architecture into a mono-repo frontend architecture over about a month.
+This was 95% driven by one frontend engineer. We now have a shared frontend development harness, can maintain libraries cheaply,
+and entirely moved off using &lt;code&gt;npm&lt;/code&gt; for package hosting, which was a source of ongoing friction.&lt;/li&gt;
+&lt;li&gt;We fully statically typed our frontend code, going from a place where the majority of our frontend code was not typed.
+This was done by one engineer, and a lot of tokens, over the course of a few weeks.&lt;/li&gt;
+&lt;li&gt;We migrated from &lt;code&gt;npm&lt;/code&gt; to &lt;code&gt;pnpm&lt;/code&gt; for better security defaults and faster deploys.
+This took one engineer a few hours a day for a few days.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Cost of working code depends on your development harness.&lt;/strong&gt;
+&lt;ol&gt;
+&lt;li&gt;Where we&amp;rsquo;ve tried to throw design documents and PRs &amp;ldquo;over the wall&amp;rdquo; to engineers on other teams, they&amp;rsquo;ve never gone anywhere.
+Slop pull requests and design documents are cheap, but are actively harmful. They not only have to be cleaned up and repaired,
+their context poisons the LLM, leading to worse outcomes than starting over.&lt;/li&gt;
+&lt;li&gt;We&amp;rsquo;ve seen tremendous success in managers contributing software, as long as those managers are validating the work directly,
+looking at dashboards after their changes go out, and resolving any issues their changes cause.
+We&amp;rsquo;ve found no positive impact from folks attempting to make changes where they don&amp;rsquo;t do those things.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Optimize the base-case of process for agents.&lt;/strong&gt;
+&lt;ol&gt;
+&lt;li&gt;We triage all incoming issues from our customer operations team using a harness which knows our team, our open tickets,
+and has limited access to our data warehouse to size the impact of issues.
+This is complex, high-skill but not particularly interesting labor that we&amp;rsquo;re now doing better and faster with agents.
+Yes, there is still a human triage for the edgecases.
+Importantly, we&amp;rsquo;re also doing this without changing human workflows, it&amp;rsquo;s the same workflow, just with some steps
+automated.&lt;/li&gt;
+&lt;li&gt;The first pass of code review is done by the same harness that implements the changes, cleared of the context used
+to write the change, allowing humans to focus on higher value feedback.&lt;/li&gt;
+&lt;li&gt;We rolled out Claude Code and Cowork to all folks in the company last quarter, and have seen them also automate
+an increasingly large swath of their work as well.
+Our fraud team has been particularly ambitious in replacing manual workflows with a first-pass of automation&amp;ndash;with attribution to the data itself&amp;ndash;to
+do the initial investigation on potential attacks automatically.&lt;/li&gt;
+&lt;li&gt;We&amp;rsquo;ve migrated to Linear, and off Jira, to better support this workflow with a more capable MCP and better Slack integration,
+making it possible for everyone internally to have better infrastructure for building these agent-first workflows.
+More on this later, but we&amp;rsquo;re almost done alpha-testing our internal harness pulling issues off Linear, and working to resolve them,
+automatically which is our biggest next step in this direction.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Durable, high ownership teams with domain-context are even more important.&lt;/strong&gt;
+&lt;ol&gt;
+&lt;li&gt;When I joined, we had a number of areas supported by very talented folks who rotated through them quickly on
+a per-project basis. This worked, but it meant we were very reactive to issues.
+Now, we&amp;rsquo;ve been able to dedicate at least a small team to every important area of the company,
+where they are able to persistently invest.
+These teams are now wielding all the new techniques afforded by AI themselves.
+Without them, no one would be capturing these opportunities, because there is simply too much
+happening.&lt;/li&gt;
+&lt;li&gt;We launched SierraAI, which is quite good, but since then the team has iterated on it relentlessly,
+getting it truly excellent. This is something we wouldn&amp;rsquo;t have been able to do without a dedicated,
+focused team.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Quick, good and durable decision making is a prerequisite to benefit from AI.&lt;/strong&gt;
+&lt;ol&gt;
+&lt;li&gt;Changing how we do configuration was a controversial decision, and I&amp;rsquo;ve had to make repeated clarifications on the approach.
+This would have been very difficult to do bottom-up, because it impacts every team differently, and the benefit is only experienced
+at the ecosystem-level (allowing one person to configure all configuration across teams).&lt;/li&gt;
+&lt;li&gt;Reworking our CI/CD pipeline was controversial, as it changed many folks&amp;rsquo; mental models of how we deploy and release
+(e.g., it forced us to explicitly decouple deploy and release via feature flagging). This was a contentious decision,
+and would have been slow and difficult to make bottom-up.&lt;/li&gt;
+&lt;li&gt;Unifying into a web mono-repo was also a controversial decision with varied opinions. It benefitted greatly from having
+a unified decision.&lt;/li&gt;
+&lt;li&gt;Moving to SierraAI was a difficult discussion versus both various competitors, and also not doing it.
+It needed the executive stamp to finalize the cross-functional debate.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;These are just representative examples, we&amp;rsquo;ve done a lot more than these. The aperture of what&amp;rsquo;s possible has continued
+to expand every month this year, but the things holding us back haven&amp;rsquo;t changed all that much: organizational misalignment,
+lack of clarity, and poor technical architecture.
+It&amp;rsquo;s a wild time to be working in technology.&lt;/p&gt;</description></item><item><title>Early and late-stage hypergrowth.</title><link>https://lethain.com/early-late-stage-hypergrowth/</link><pubDate>Mon, 27 Apr 2026 06:00:00 -0700</pubDate><guid>https://lethain.com/early-late-stage-hypergrowth/</guid><description>&lt;p&gt;Last week, a colleague asked why I&amp;rsquo;d hired an additional new leader onto
+an important area rather than expanding an existing leader&amp;rsquo;s scope to
+incorporate that area as well. The existing leader was a known quantity
+and doing well, so why not keep expanding them?
+It&amp;rsquo;s a good question, and depending on the circumstances I might have done
+either, but explaining why I specifically brought in a new leader this time
+depends a bit on a distinction I think of as early versus late-stage hypergrowth.&lt;/p&gt;
+&lt;p&gt;In &lt;a href="https://www.amazon.com/Crossing-Chasm-3rd-Disruptive-Mainstream/dp/0062292986"&gt;Cross the Chasm&lt;/a&gt;&amp;rsquo;s
+world, early-stage is when you&amp;rsquo;ve proven product market fit, have won the early adopters,
+and are just starting to win the early majority. In this phase, there are specific problems,
+and the most important problem is to solve those specific problems.
+For example, you might be having scalability issues, and solving that is the company&amp;rsquo;s almost sole focus
+for a few weeks. After scalability is fixed, next you&amp;rsquo;ll need to work on onboarding flows to convert for
+less technical users, and so on. Not only the executives, but much of the company, serially hunts down solutions
+to their biggest problem.&lt;/p&gt;
+&lt;p&gt;When you reach late-stage hypergrowth, you are starting to encounter the late majority and laggards
+cohorts. This reorients the company and executive teams away from only creating an exceptional product,
+to also having to solve the numerous concerns and checkboxes that a skeptical audience introduces.
+Sure, your product might save hours a day for our team, but how does your compliance paperwork look?
+How stable are you? What contractual commitment will you make regarding customer support resolution?
+At this point, you&amp;rsquo;ll &lt;em&gt;still&lt;/em&gt; be in an extremely competitive environment to retain the innovators
+and early majority, while also having to solve the long list of skeptic-driven requirements.
+Instead of hunting down solutions, the company&amp;ndash;and the executive team&amp;ndash;now has to solve
+everything, everywhere, all at once.&lt;/p&gt;
+&lt;p&gt;Going back to my colleague&amp;rsquo;s question, in early-stage hypergrowth, it would have absolutely
+been preferable to expand the existing leader&amp;rsquo;s scope. In late-stage hypergrowth,
+expanding their scope would have moved the problem, while reintroducing a previous problem,
+and that&amp;rsquo;s a losing strategy in that stage.&lt;/p&gt;
+&lt;p&gt;It&amp;rsquo;s been a while since the industry has talked a lot about
+&lt;a href="https://lethain.com/productivity-in-the-age-of-hypergrowth/"&gt;hypergrowth&lt;/a&gt;, but
+a lot of the lessons of hypergrowth are relevant again as we see the productive chaos
+of the current AI-era, and this is absolutely one of them.
+In particular, it&amp;rsquo;s extremely clear that you can speedrun the early hypergrowth phase
+with a small, AI-empowered team, but it&amp;rsquo;s far from clear you can speedrun the late hypergrowth
+phase with the same approach. Personally, I suspect we will figure that out as an industry,
+but many of the challenges popping up recently in e.g. Anthropic&amp;rsquo;s messaging to Claude Code
+power users, feel to me like they&amp;rsquo;re rooted in the challenges of making this transition.&lt;/p&gt;
+&lt;p&gt;Even in the unlikely case that we never solve late-stage hypergrowth using the same AI-staffed
+mechanisms that support the early-stage case, it&amp;rsquo;s still an economic miracle, since it&amp;rsquo;ll allow
+a smaller amount of capital to culminate into relatively large and derisked companies, which
+should underpin substantial productivity for the economy.&lt;/p&gt;</description></item><item><title>Agents as scaffolding for recurring tasks.</title><link>https://lethain.com/agents-as-scaffolding/</link><pubDate>Sun, 12 Apr 2026 10:00:00 -0700</pubDate><guid>https://lethain.com/agents-as-scaffolding/</guid><description>&lt;p&gt;One of my gifts/curses is an endless fixation with how processes can be optimized.
+For a brief moment early in my career, that was focused on improving how humans collaborate,
+but that quickly switched to figuring out how we can minimize human involvement, and eliminate
+human-to-human handoffs as much as possible.
+Lately, every time I perform a recurring task&amp;ndash;or see someone else perform one&amp;ndash;I think about
+how we might eliminate the human&amp;rsquo;s involvement entirely by introducing agents.
+This both has worked well, but also worked poorly, and I wanted to highlight the pattern
+I&amp;rsquo;ve found useful.&lt;/p&gt;
+&lt;p&gt;For a concrete example, a problem that all software companies have is patching security vulnerabilities.
+We have that problem too, and I check our security dashboards periodically to ensure nothing has gone awry.
+Sometimes when I check that dashboard, I&amp;rsquo;ll notice a finding that&amp;rsquo;s precariously close to our resolution SLAs,
+and either fix it myself or track down the appropriate team to fix it.
+However, this feels like a process that shouldn&amp;rsquo;t require me checking on it.&lt;/p&gt;
+&lt;p&gt;Five to six months ago, I added Github Dependabot webhooks as an input into our internal agent framework.
+Then I set up an agent to handle those webhooks, including filtering incoming messages down to the highest priority issues.
+About a month ago, when I upgraded from GPT 4.1 to GPT 5.4 with high reasoning, I noticed that it got
+quite good at using the Github MCP to determine the appropriate owners for a given issue, using the same variety
+of techniques that a human would use: looking at Codeowners files where available, looking at recent commits on
+the repository, and so on. The alerts and owners were already getting piped into a Slack channel.&lt;/p&gt;
+&lt;p&gt;So, this worked! However, it didn&amp;rsquo;t actually work that well, because despite repeated iteration on the prompt,
+including numerous &lt;code&gt;CRITICAL: you must...&lt;/code&gt; statements, it simply could not reliably restrict itself to &lt;code&gt;critical&lt;/code&gt;
+severity alerts. It would also include some &lt;code&gt;high&lt;/code&gt; severity alerts, and even the occasional &lt;code&gt;medium&lt;/code&gt; severity alert.
+This is a recurring issue with using agents as drop-in software replacement: they simply are not perfect, and interrupting
+your colleagues requires a level of near-perfection.&lt;/p&gt;
+&lt;p&gt;If I&amp;rsquo;d hired someone on our Security team to notify teams about critical alerts, and they occasionally flagged non-critical alerts,
+eventually someone would pop into my DMs to ask me what was going wrong. That didn&amp;rsquo;t happen here, because the knowledge that those DMs
+would show up prevented me from rolling the notifications out more aggressively.
+Coding agents address this sort of issue by running tests, typechecking, or linting, but less structured tasks
+are either harder or more expensive to verify. For example, I could have added an eval verifying messages didn&amp;rsquo;t mention medium or high
+severity tasks before allowing it to send to Slack, but I found that somewhat unsatisfying despite knowing that it would work.&lt;/p&gt;
+&lt;p&gt;Instead, after some procrastination on other tasks, I finally prompted Claude to update this agent to rely on
+a &lt;a href="https://lethain.com/agents-coordinators/"&gt;code-driven workflow&lt;/a&gt; where flow-control is managed by software by default, and only
+cedes control to an agent where ideal.
+That workflow looks like:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;A webhook comes in from Dependabot&lt;/li&gt;
+&lt;li&gt;Script extracts the severity and action (e.g. is it a new issue versus a resolved issue),
+and filters out low priority or non-actionable webhooks&lt;/li&gt;
+&lt;li&gt;The code packages the metadata into a list of issues and repositories&lt;/li&gt;
+&lt;li&gt;The code passes each repository-scoped bundle to an agent with our internal ownership skill and
+the Github MCP to determine appropriate folks to notify for each issue&lt;/li&gt;
+&lt;li&gt;The issues and ownership data are passed to a second agent that formats them
+as a Slack message&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;This works 100% of the time, while still allowing us to rely on our internal ownership skill to
+determine the most likely teams or individuals to notify for a given problem.
+It&amp;rsquo;s now something I can rollout more aggressively.&lt;/p&gt;
+&lt;p&gt;The immediate fast follow was a weekly follow-up ping for open critical issues,
+relying on the same split of deterministic and agentic behaviors.
+The next improvement will be automating the generation of the vulnerability fixes,
+such that the human involvement is just reviewing the change before it automatically
+deploys.
+(We &lt;a href="https://lethain.com/dependabot-auto-merge/"&gt;already do this for Dependabot generated PRs&lt;/a&gt;,
+but in my experience Dependabot can solve a reasonable subset of identified issues,
+but far from all of them.)&lt;/p&gt;
+&lt;p&gt;That is the pattern that I&amp;rsquo;ve found effective:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Prototype with agent-driven workflow until I get a feel for the workflow and what&amp;rsquo;s difficult about it&lt;/li&gt;
+&lt;li&gt;Refactor agent-driven control away, increasingly relying on code-driven workflow for more and more of the solution&lt;/li&gt;
+&lt;li&gt;End with a version that narrowly relies on agents for their strengths (navigating ambiguous problems like identifying code owners)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;This has worked well for pretty much every problem I&amp;rsquo;ve encountered. The end-result is faster, cheaper, and more maintainable.
+It&amp;rsquo;s also a cheap transition, generally I can take logs of some recent runs, the agent&amp;rsquo;s prompt, and some brief instructions,
+throw them into Codex/Claude, and get a working replacement in a few minutes.&lt;/p&gt;</description></item><item><title>The agentic passive voice.</title><link>https://lethain.com/agentic-passive-voice/</link><pubDate>Sun, 29 Mar 2026 07:30:00 -0700</pubDate><guid>https://lethain.com/agentic-passive-voice/</guid><description>&lt;p&gt;At some point, you will have learned about the passive voice,
+where the actor in a sentence is unclear.
+For example, my software didn&amp;rsquo;t compile. That&amp;rsquo;s a good example
+of the passive voice.
+However, you might not know the full set of rules,
+because here are some sentences in the passive voice
+that you might not recognize:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Claude made an error in my writeup.&lt;/li&gt;
+&lt;li&gt;ChatGPT messed up the commitment.&lt;/li&gt;
+&lt;li&gt;Gemini didn&amp;rsquo;t write tests.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You might think those are active sentences, but those
+are in fact examples of the &lt;em&gt;agentic passive voice&lt;/em&gt;.
+The rule here is: whenever the actor in a sentence is a model,
+then it&amp;rsquo;s a passive sentence.
+I&amp;rsquo;m sorry if your grammar instructor never taught you this rule,
+but this is just the way it works now.&lt;/p&gt;
+&lt;p&gt;This is an important grammatical distinction to make, because
+I&amp;rsquo;m increasingly seeing folks say that Claude made a mistake,
+without recognizing that they&amp;rsquo;re writing unclear, nearly ungrammatical
+sentences that their grade-school teacher would reject.
+So please, aspire higher. Write in the active voice, avoiding all passive variants.&lt;/p&gt;</description></item><item><title>Judgment and creativity are all you need.</title><link>https://lethain.com/judgment-is-all-you-need/</link><pubDate>Wed, 11 Mar 2026 07:30:00 -0700</pubDate><guid>https://lethain.com/judgment-is-all-you-need/</guid><description>&lt;p&gt;When I joined Imprint a little less than a year ago, our deploys were manual, requiring close human attention to complete.
+Our database migrations were run manually, too.
+Developing good software is very possible in those circumstances, but it takes a remarkable attention to detail to do it.
+It was also possible to develop good software using Subversion and developing by ssh&amp;rsquo;ing into a remote server to edit PHP files,
+but the goal is making things &lt;em&gt;easy&lt;/em&gt; rather than &lt;em&gt;possible&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Ten months later, the vast majority of our changes, including database migrations, continuously deploy to production without human involvement
+after the initial pull request is reviewed and merged. Reading aloud the relevant pages from the mandated gospel of continuous deployment,
+deploying changes this way doesn&amp;rsquo;t make them less reliable, but more so. Each step of validation a human &lt;em&gt;might&lt;/em&gt; do, is now consistently
+done on every deploy, including many steps that are just onerous enough to drop off the standard operating steps like meticulously checking the
+post-launch health on a production canary every minute for half an hour after each deploy.&lt;/p&gt;
+&lt;p&gt;This migration has reminded me a lot of the Uber service migration, which prompted me to write
+&lt;a href="https://lethain.com/migrations/"&gt;Migrations: the only scalable solution for technical debt&lt;/a&gt; back in 2018, and in particular
+how &lt;em&gt;different&lt;/em&gt; this sort of migration feels in the age of coding agents.
+The more I&amp;rsquo;ve thought about how these two migrations compared, the more it&amp;rsquo;s
+solidified my thinking a bit about how this technology is going to impact software development over the next few years.&lt;/p&gt;
+&lt;h2 id="migrations-as-metaphor"&gt;Migrations as metaphor&lt;/h2&gt;
+&lt;p&gt;Although I really want to talk about how coding agents are changing software development,
+I want to start by expanding a bit on this recent migration at Imprint and how it compared with the migration at Uber.&lt;/p&gt;
+&lt;p&gt;The Uber migration was:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Spinning up a new self-service service provisioning platform, along the lines of a very minimal Heroku,
+including the actual scheduling algorithm across clusters, etc.
+A lot of the edges were rough, including for example I do not remember how we performed service database migrations,
+but I suspect we simply left that as an exercise for the user. Part of the challenge was that this was a heterogenous
+environment with Python, NodeJS, Go, and a long-tail of random things (R, Elixir, etc).
+(For historical context, Kubernetes was sufficiently early that it effectively didn&amp;rsquo;t exist in 2014 when we did this work.)&lt;/li&gt;
+&lt;li&gt;Migrated services iteratively, driven almost entirely by the platform team, without much product engineering support.
+(Everyone was too busy to help, and our timeline was driven by an upcoming datacenter migration.)
+A team of ~3 engineers focused on this migrated hundreds of services, although it included Xiaojian Huang
+who remains a likely contender for the most productive engineer I have worked with in my career,
+so maybe it&amp;rsquo;s unfair to call it a ~3 engineer team.&lt;/li&gt;
+&lt;li&gt;Shedding a quiet tear for our colleagues on the core product engineering team responsible for deprecating the Python monolith,
+and migrating it over as a single, heavy service.&lt;/li&gt;
+&lt;li&gt;This took us less than six months start to finish, but
+I don&amp;rsquo;t think I stopped working at any point in those six months.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The Imprint migration felt fairly differently:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;We were building on substantially more powerful infrastructure, with Kubernetes, ArgoCD, etc.
+Our problem statement was composing our software and workflows with these platforms, rather than
+building the platforms from scratch.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;We migrated all our services and databases to a continuous deployment setup, with the majority of the work
+occurring over 3 months. Once again, the significant majority of it was done by a team of ~3 engineers.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;In 2014, we spent the vast majority of our time &lt;em&gt;implementing decisions&lt;/em&gt;: how the scheduler worked, how the UX for provisioning services worked, etc.
+In 2026, we spent almost our entire time designing our approach, reviewing coding agent pull requests,
+and revising our approach when designs and reality didn&amp;rsquo;t come together as cleanly as we hoped.&lt;/p&gt;
+&lt;p&gt;The frenzied sprint was replaced by substantially more time on designing our approach.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;All the fundamental challenges of migrations remained true,
+but in 2026 we got to solely work on solving those challenges, rather
+than on the essential but mundane minutiae of implementing those decisions.
+(Ok, I&amp;rsquo;ll be honest, we also had to keep iterating on our approach to using
+coding agents to get longer working cycles out of them without human involvement,
+but we&amp;rsquo;re telling a story here, let&amp;rsquo;s not get distracted.)&lt;/p&gt;
+&lt;h2 id="productivity-today-is-is-most-constrained-on-judgment"&gt;Productivity today is is most constrained on judgment&lt;/h2&gt;
+&lt;p&gt;What this migration highlighted for me, is that coding agents have already
+generally solved the problem of &lt;strong&gt;time&lt;/strong&gt; for our team. We have, effectively,
+an unlimited amount of time, at a very affordable price, to complete our work.&lt;/p&gt;
+&lt;p&gt;They have also made substantial progress on the problem of &lt;strong&gt;attention&lt;/strong&gt;.
+After I go beyond five or so concurrent projects, I tend to lose track of
+the necessary work to shepherd those projects to completion, but increasingly
+I believe that this, as the LLM community would charmingly frame it, is a skill
+issue in how I am composing the tools. I&amp;rsquo;m fairly confident that I will evolve
+my approach to these problems such that the bottleneck on my attention is less
+important. I don&amp;rsquo;t think this will go to zero, a reality of working on teams
+is that the work has to be coordinated, but it will go down.&lt;/p&gt;
+&lt;p&gt;The next constraint, which I think is the biggest issue today when it comes to building
+genuinely important software, is &lt;strong&gt;judgment&lt;/strong&gt;.
+With unlimited time, and with attention increasingly constrained on my personal
+workflow rather than an inherent limit, I &lt;em&gt;can&lt;/em&gt; do anything. But how do I do it in a way
+that is maintainable, secure, and reliable? How do I do it in a way where it keeps running
+after a key engineer leaves the company?&lt;/p&gt;
+&lt;p&gt;I developed the idea of datapacks in &lt;a href="https://lethain.com/competitive-advantage-author-llms/"&gt;What is the competitive advantage of authors in the age of LLMs?&lt;/a&gt;,
+and this still rings true to me as the core mechanism for scaling judgment in how we approach software:
+we can supplement judgment by introducing expert context for the task at hand.
+Today this is defacto happening within the coding agent development layer, in the wider community
+developing shared agent skills, and internally within companies developing their own skills.
+My guess is that the industry will develop an ecosystem for high-quality skills, e.g. detailed
+and maintained skills for security engineering, product engineering, and so on.
+You can easily imagine O&amp;rsquo;Reilly, or another technology publisher, developing a package manager for
+blessed skills, which is the first stop for injecting judgment into tasks.
+(This is the idea I experimented with in creating &lt;a href="https://www.amazon.com/Companion-Crafting-Engineering-Strategy-Thoughtful-ebook/dp/B0FXN2J4PJ"&gt;LLM-optimized edition of my latest book&lt;/a&gt;,
+but it&amp;rsquo;s really the distribution platform that&amp;rsquo;s going to be most valuable here.)&lt;/p&gt;
+&lt;p&gt;Once we solve judgment, and I do imagine that we will using a variety of open-source and commercially managed
+skill package managers that are tightly integrated with coding agents, then the last constraint ahead of us is
+&lt;strong&gt;creativity&lt;/strong&gt;. This is a problem far enough ahead that I&amp;rsquo;m not too worried about it, but I feel like it&amp;rsquo;s
+a classic entrepreneurship problem that will be amenable to the same solutions as it is today.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;I&amp;rsquo;ll admit I&amp;rsquo;m ignoring financial constraints here, but relative to how much companies are spending
+on software engineering budgets today, this isn&amp;rsquo;t a particularly interesting constraint today.
+Maybe the financial constraints will get more interesting over time as engineering &lt;em&gt;conceivably&lt;/em&gt;
+gets cheaper, but as we think about injecting judgment, things will get more expensive as well,
+so the outcomes remain to be seen.&lt;/p&gt;</description></item><item><title>Refactoring internal documentation in Notion</title><link>https://lethain.com/refactoring-internal-docs-notion/</link><pubDate>Thu, 05 Feb 2026 07:00:00 -0700</pubDate><guid>https://lethain.com/refactoring-internal-docs-notion/</guid><description>&lt;p&gt;In our latest developer productivity survey, our documentation
+was the area with the second most comments.
+This is a writeup of the concrete steps I took to see how much
+progress one person could make on improving the organization&amp;rsquo;s
+documentation while holding myself to a high standard for making
+changes that actually worked instead of optically sounding impressive.&lt;/p&gt;
+&lt;h2 id="diagnosis"&gt;Diagnosis&lt;/h2&gt;
+&lt;p&gt;There were a handful of issues we were running into:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;We migrated from Confluence to Notion in January, 2025,
+which had left around a bunch of old pages that were
+&amp;ldquo;obviously wrong.&amp;rdquo;&lt;/p&gt;
+&lt;p&gt;These files created a bad smell around our other docs, as folks
+felt like things weren&amp;rsquo;t well maintained.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;We had inconsistent approach to what we documented in Git-managed files
+versus managing in Notion. This led to duplication.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Duplication meant that it felt safer to create an &lt;code&gt;N+1&lt;/code&gt;th version,
+rather than debugging why &lt;code&gt;N&lt;/code&gt; versions already existed.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;We&amp;rsquo;ve had a bunch of new folks join over the past year,
+who weren&amp;rsquo;t sure if &lt;em&gt;they&lt;/em&gt; were empowered to update documentation
+or if someone else was managing any given file&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;We started using Notion AI as the primary mechanism for exposing content,
+which meant that hierarchical organization was less important,
+and that having inaccurate snippets was harmful even if they were
+tucked away into a quiet corner&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This was combined with a handful of interesting limitations in Notion itself:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;You cannot tell if a non-wiki page is verified or not via API.
+You &lt;em&gt;can&lt;/em&gt; tell if a wiki page is verified via API, but no one uses wiki pages&lt;/li&gt;
+&lt;li&gt;You cannot retrieve all pages in a Notion Teamspace via API,
+you instead have to manually take list of the top-level pages in that Teamspace,
+and find the children from those pages&lt;/li&gt;
+&lt;li&gt;There is no &amp;ldquo;archive&amp;rdquo; functionality in Notion that allows you to exclude a document
+from search results&lt;/li&gt;
+&lt;li&gt;There is no programmatic visibility into views or usage of a page via API &lt;em&gt;except&lt;/em&gt;
+for how recently it was edited&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="policy"&gt;Policy&lt;/h2&gt;
+&lt;p&gt;The policy we adopted for addressing the above diagnosis was:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Optimize for NotionAI results, not manual discovery&lt;/strong&gt;: a significant majority of our Notion use
+is now via either direct links to a specific page, or via Notion AI, not via manual discovery.
+That means that things like “FAQ” pages that duplicate content and go stale are actively harmful,
+whereas previously they were very valuable.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Duplication and stale content is worse than nothing&lt;/strong&gt;: do not write your own guide to a process.
+Link to it instead, or update the source document&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Prefer natural documentation in version control&lt;/strong&gt;: we’d rather link to a README in Github than
+duplicate those instructions in Notion, because the README is more likely to be kept current&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Everyone tidies our documentation&lt;/strong&gt;: we’d rather be people who try to clean up a document,
+even if we make a small mistake, rather than someone who leaves documentation in a poor state&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Automatic beats manual every time&lt;/strong&gt;: we&amp;rsquo;re a busy team doing a lot of things,
+it&amp;rsquo;s always going to be difficult to consistently find time to manually curate content deeply,
+focused curation is great, but global is unreasonable&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="implementation"&gt;Implementation&lt;/h2&gt;
+&lt;p&gt;Then the specifics of implementing that policy were:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Create &lt;code&gt;Scheduled to Archive&lt;/code&gt; and &lt;code&gt;Archive&lt;/code&gt; teamspaces.&lt;/strong&gt;
+The &lt;code&gt;Archive&lt;/code&gt; teamspace is a private teamspace, such that documents added there don&amp;rsquo;t pollute the search index.
+Conversely, &lt;code&gt;Scheduled to Archive&lt;/code&gt; is public, where anyone can add documents to its root document.&lt;/p&gt;
+&lt;p&gt;We have a weekly script that migrates everything from &lt;code&gt;Scheduled to Archive&lt;/code&gt; to &lt;code&gt;Archive&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;This was the most effective mechanism we could find to implement archiving within Notion&amp;rsquo;s constraints.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Prune expired pages.&lt;/strong&gt; Created a script which recursively builds hierarchy from a root page,
+enriches each page with the &lt;code&gt;last_edited_date&lt;/code&gt; for each child, and then prunes all pages
+where it &lt;em&gt;and all children&lt;/em&gt; were last edited more than &lt;code&gt;N&lt;/code&gt; days ago.&lt;/p&gt;
+&lt;p&gt;Using this script on 3-4 most relevant top-level pages, we archived about 1,500 pages of expired documentation.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Compact stale hierarchies.&lt;/strong&gt; Created a second script which identifies current pages deep in stale hierarchies,
+e.g. the one updated page among 15 inaccurate docs. After finding a &amp;ldquo;buried current page&amp;rdquo;, promotes it to the grandparent page,
+and move the parent page (and its stale children) to &lt;code&gt;Scheduled to Archive&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;This ended up as a script that found all the candidates, and then I worked through approving/rejecting
+each suggestion. The biggest issue being the lack of &amp;ldquo;verification&amp;rdquo; status within the API, such that there&amp;rsquo;s
+no way to bless given pages and their descendants.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Stale link finder.&lt;/strong&gt; Created a third script which recursively works through a hierarchy and finds 404s.
+It&amp;rsquo;s essential that this script &lt;em&gt;does not&lt;/em&gt; have access to the &lt;code&gt;Archive&lt;/code&gt; so those scripts show up as 404s,
+otherwise you would have to scan through &lt;code&gt;Archived&lt;/code&gt; to find things there. Both approaches would work,
+just a bit of a matter of preference.&lt;/p&gt;
+&lt;p&gt;Ran this after the mass migrations to ensure we didn&amp;rsquo;t leave a &amp;ldquo;haunted forest&amp;rdquo; of links into
+archived documents that folks can&amp;rsquo;t see, which would make the documentation still feel bad even though
+much of the bad content was removed.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Manual review of key pages.&lt;/strong&gt; After running all of the above steps, I then worked through all
+new-hire documentation to ensure it was linked to top-level onboarding guide, stated clear prerequisites,
+indicated the Slack channel to get help if folks ran into trouble,
+and ensured that instructions did not duplicate our Git-managed READMEs, instead linking to them where
+appropriate.&lt;/p&gt;
+&lt;p&gt;I did a lighter pass of this approach for our top-level engineering and technology pages,
+although those were generally in a good place.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Altogether, I think this was about eight hours of my time, but required zero hours of anyone
+else&amp;rsquo;s, and will have hopefully significantly improved the quality of our documentation.
+There&amp;rsquo;s still a lot more to be done in specific areas, but I&amp;rsquo;m optimistic that having far fewer duplicates,
+and more evidence that we&amp;rsquo;re actively maintaining the documentation, will make that easier as well.&lt;/p&gt;</description></item></channel></rss>

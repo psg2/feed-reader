@@ -1,0 +1,52 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"plugins": ["import", "typescript", "unicorn", "react"],
+	"jsPlugins": ["./tooling/oxlint-plugin-no-use-effect/index.js"],
+	"categories": {
+		"correctness": "error",
+		"suspicious": "warn",
+		"perf": "warn",
+		"style": "off",
+		"pedantic": "off",
+		"restriction": "off",
+		"nursery": "off"
+	},
+	"rules": {
+		"no-console": "off",
+		"no-unused-vars": "warn",
+		"no-await-in-loop": "off",
+		"no-underscore-dangle": "off",
+		"no-shadow": "off",
+		"react/jsx-key": "error",
+		"react/react-in-jsx-scope": "off",
+		"unicorn/no-array-sort": "off",
+		"unicorn/no-empty-file": "off",
+		"unicorn/no-new-array": "off",
+		"import/no-named-as-default": "off",
+		"import/no-unassigned-import": ["warn", { "allow": ["**/jest-dom/**"] }],
+		"typescript/no-explicit-any": "warn",
+		"no-use-effect/no-use-effect": "error"
+	},
+	"overrides": [
+		{
+			"files": ["**/*.test.ts", "**/*.test.tsx", "**/tests/**"],
+			"rules": {
+				"no-unused-vars": "off",
+				"typescript/no-non-null-assertion": "off"
+			}
+		}
+	],
+	"ignorePatterns": [
+		"**/node_modules/**",
+		"**/.cache/**",
+		"**/.output/**",
+		"**/.vercel/**",
+		"**/.turbo/**",
+		"**/dist/**",
+		"**/routeTree.gen.ts",
+		"packages/db/drizzle/**",
+		".claude/**",
+		".agents/**",
+		".ralph/**"
+	]
+}

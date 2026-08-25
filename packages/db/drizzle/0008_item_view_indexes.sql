@@ -1,0 +1,3 @@
+CREATE INDEX "items_feed_published_idx" ON "items" USING btree ("feed_id","published_at" DESC NULLS LAST);--> statement-breakpoint
+CREATE INDEX "items_unread_feed_published_idx" ON "items" USING btree ("feed_id","published_at" DESC NULLS LAST) WHERE "items"."read_at" IS NULL;--> statement-breakpoint
+CREATE INDEX "items_starred_feed_published_idx" ON "items" USING btree ("feed_id","published_at" DESC NULLS LAST) WHERE "items"."starred";
