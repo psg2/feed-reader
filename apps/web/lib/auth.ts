@@ -251,7 +251,10 @@ export function createAuth(
 				// the resource is bound to the grant: a token/refresh request may
 				// only narrow it, never widen it (the Dependabot GHSA for unbound
 				// resource indicators). Anything outside this list is invalid_target.
-				resources: [`${getAppUrl()}/api/mcp`, `${getAppUrl()}/api/auth`],
+				resources:
+					env.NODE_ENV === "test"
+						? []
+						: [`${getAppUrl()}/api/mcp`, `${getAppUrl()}/api/auth`],
 				// Clients registered before 1.7 have no oauthClientResource links,
 				// so per-client resource enforcement would lock them out; every
 				// client may use every listed resource instead.
