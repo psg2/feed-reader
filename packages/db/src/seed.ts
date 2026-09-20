@@ -76,7 +76,6 @@ async function seed() {
 			.insert(authAccounts)
 			.values({
 				id: crypto.randomUUID(),
-				issuer: "local:credential",
 				accountId: user.id,
 				providerId: "credential",
 				userId: user.id,

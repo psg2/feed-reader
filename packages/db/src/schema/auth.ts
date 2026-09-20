@@ -48,9 +48,6 @@ export const authAccounts = pgTable(
 	"auth_accounts",
 	{
 		id: text().primaryKey(),
-		// BetterAuth 1.7 identifies an external account by (issuer, accountId):
-		// `local:credential` for passwords, the OIDC issuer for Google.
-		issuer: text().notNull(),
 		accountId: text().notNull(),
 		providerId: text().notNull(),
 		userId: uuid()
@@ -69,10 +66,7 @@ export const authAccounts = pgTable(
 			.$onUpdate(() => new Date())
 			.notNull(),
 	},
-	(t) => [
-		index("account_user_id_idx").on(t.userId),
-		uniqueIndex("account_issuer_account_id_uidx").on(t.issuer, t.accountId),
-	],
+	(t) => [index("account_user_id_idx").on(t.userId)],
 );
 
 export const verifications = pgTable(
