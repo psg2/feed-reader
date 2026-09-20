@@ -20,7 +20,7 @@
 		"clean": "rm -rf node_modules .cache"
 	},
 	"dependencies": {
-		"better-auth": "1.7.4",
+		"better-auth": "1.7.5",
 		"drizzle-orm": "^0.45.2",
 		"postgres": "^3.4.9"
 	},
