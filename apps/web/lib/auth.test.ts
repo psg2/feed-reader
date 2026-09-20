@@ -4,25 +4,18 @@
  * `auth.api.signUpEmail` against the test database instead of calling the
  * policy directly.
  */
-import { beforeAll, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { createTestUser } from "@/tests/factories";
 import { getTestDb } from "@/tests/setup";
 import * as inviteRepo from "@/server/repos/invites";
 import * as userRepo from "@/server/repos/users";
 import * as admin from "@/server/usecases/admin";
 import { INVITE_COOKIE } from "@/server/usecases/signup";
-import { auth as appAuth, createAuth } from "./auth";
+import { createAuth } from "./auth";
 
 // Verification e-mails go to the console without RESEND_API_KEY; keep the
 // test output clean.
 vi.spyOn(console, "log").mockImplementation(() => {});
-
-// The OAuth provider seeds configured resources during auth initialization.
-// Finish the singleton app instance first so test instances observe those rows
-// instead of racing it and attempting the same unique inserts concurrently.
-beforeAll(async () => {
-	await appAuth.$context;
-});
 
 function signUp(
 	auth: ReturnType<typeof createAuth>,

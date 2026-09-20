@@ -7,7 +7,7 @@ Feed Reader is a **small-instance** application: each account owns its own feeds
 ## 1. Prerequisites
 
 - **Node 24** (`.github/workflows/ci.yml` and the Vercel build use 24).
-- **pnpm 10** — the exact version is pinned in `package.json` (`packageManager`); `corepack enable` picks it up.
+- **pnpm 12** — the exact version is pinned in `package.json` (`packageManager`); `corepack enable` picks it up.
 - **Docker** (Desktop or compatible) for the local Postgres.
 - **Git + GitHub account** to fork the repository and connect it to Vercel.
 - **Vercel account** (Hobby is enough) and, through the Vercel Marketplace, a **Neon** database.

@@ -45,7 +45,7 @@ The browser opens once to approve the client. Tools: `list_items`, `get_item`, `
 
 ## Development
 
-Requirements: Node 24, pnpm 10 (`corepack enable`), Docker.
+Requirements: Node 24, pnpm 12 (`corepack enable`), Docker.
 
 ```bash
 pnpm install
