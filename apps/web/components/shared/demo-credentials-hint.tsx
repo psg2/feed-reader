@@ -1,5 +1,5 @@
 import { Sparkles } from "lucide-react";
-import { type RefObject, useRef, useState } from "react";
+import { type RefObject, useEffectEvent, useRef, useState } from "react";
 import { useMountEffect } from "@/hooks/use-mount-effect";
 
 /**
@@ -132,8 +132,7 @@ function DismissOnOutsideInteraction({
 	containerRef: RefObject<HTMLDivElement | null>;
 	onDismiss: () => void;
 }): null {
-	const onDismissRef = useRef(onDismiss);
-	onDismissRef.current = onDismiss;
+	const dismiss = useEffectEvent(onDismiss);
 
 	useMountEffect(() => {
 		function handleClickOutside(e: MouseEvent) {
@@ -141,11 +140,11 @@ function DismissOnOutsideInteraction({
 				containerRef.current &&
 				!containerRef.current.contains(e.target as Node)
 			) {
-				onDismissRef.current();
+				dismiss();
 			}
 		}
 		function handleEscape(e: KeyboardEvent) {
-			if (e.key === "Escape") onDismissRef.current();
+			if (e.key === "Escape") dismiss();
 		}
 		document.addEventListener("mousedown", handleClickOutside);
 		document.addEventListener("keydown", handleEscape);

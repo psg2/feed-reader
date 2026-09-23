@@ -61,7 +61,6 @@ function PaneHandle({
 				aria-valuenow={value}
 				tabIndex={0}
 				className="absolute inset-y-0 -left-[3px] w-1.5 cursor-col-resize touch-none outline-none before:absolute before:inset-y-0 before:left-[2px] before:w-px before:bg-primary/0 hover:before:bg-primary/40 focus-visible:before:bg-primary data-[dragging]:before:bg-primary motion-safe:before:transition-colors motion-safe:before:delay-75"
-				data-dragging={drag.current ? "" : undefined}
 				onPointerDown={(e) => {
 					if (e.button !== 0) return;
 					e.preventDefault();
