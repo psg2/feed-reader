@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffectEvent } from "react";
 import { useMountEffect } from "@/hooks/use-mount-effect";
 
 type Handlers = {
@@ -32,70 +32,69 @@ function isEditable(target: EventTarget | null): boolean {
 }
 
 /** Global reader shortcuts, mirroring the macOS app (see docs/shortcuts.md).
- * Mounted once; reads the latest handlers through a ref so the listener
+ * Mounted once; the Effect Event reads the latest handlers so the listener
  * never re-subscribes. */
 export function useReaderShortcuts(handlers: Handlers) {
-	const ref = useRef(handlers);
-	ref.current = handlers;
+	const onKeyDown = useEffectEvent((e: KeyboardEvent) => {
+		const h = handlers;
+		const mod = e.metaKey || e.ctrlKey;
+		const key = e.key.toLowerCase();
 
-	useMountEffect(() => {
-		const onKeyDown = (e: KeyboardEvent) => {
-			const h = ref.current;
-			const mod = e.metaKey || e.ctrlKey;
-			const key = e.key.toLowerCase();
-
-			if (mod && !e.altKey) {
-				const cmd: Record<string, (() => void) | undefined> = {
-					k: e.shiftKey ? h.markAll : h.palette,
-					"1": () => h.view("unread"),
-					"2": () => h.view("all"),
-					"3": () => h.view("starred"),
-					",": h.settings,
-					"\\": h.sidebar,
-				};
-				const fn = cmd[key];
-				if (fn) {
-					e.preventDefault();
-					fn();
-				}
-				return;
-			}
-			if (e.key === "Escape") {
-				if (h.overlayOpen) {
-					h.closeOverlays();
-					return;
-				}
-				if (isEditable(e.target)) {
-					(e.target as HTMLElement).blur();
-					return;
-				}
-				h.back();
-				return;
-			}
-			if (e.altKey || isEditable(e.target) || h.overlayOpen) return;
-
-			const act: Record<string, () => void> = {
-				j: h.next,
-				k: h.prev,
-				e: h.readAndNext,
-				u: h.toggleRead,
-				s: h.toggleStar,
-				o: h.open,
-				n: h.focusNotes,
-				"/": h.focusSearch,
-				"?": h.help,
-				a: h.addFeed,
-				r: h.refresh,
-				z: h.undo,
+		if (mod && !e.altKey) {
+			const cmd: Record<string, (() => void) | undefined> = {
+				k: e.shiftKey ? h.markAll : h.palette,
+				"1": () => h.view("unread"),
+				"2": () => h.view("all"),
+				"3": () => h.view("starred"),
+				",": h.settings,
+				"\\": h.sidebar,
 			};
-			const fn = act[e.key];
+			const fn = cmd[key];
 			if (fn) {
 				e.preventDefault();
 				fn();
 			}
+			return;
+		}
+		if (e.key === "Escape") {
+			if (h.overlayOpen) {
+				h.closeOverlays();
+				return;
+			}
+			if (isEditable(e.target)) {
+				(e.target as HTMLElement).blur();
+				return;
+			}
+			h.back();
+			return;
+		}
+		if (e.altKey || isEditable(e.target) || h.overlayOpen) return;
+
+		const act: Record<string, () => void> = {
+			j: h.next,
+			k: h.prev,
+			e: h.readAndNext,
+			u: h.toggleRead,
+			s: h.toggleStar,
+			o: h.open,
+			n: h.focusNotes,
+			"/": h.focusSearch,
+			"?": h.help,
+			a: h.addFeed,
+			r: h.refresh,
+			z: h.undo,
 		};
-		window.addEventListener("keydown", onKeyDown);
-		return () => window.removeEventListener("keydown", onKeyDown);
+		const fn = act[e.key];
+		if (fn) {
+			e.preventDefault();
+			fn();
+		}
+	});
+
+	useMountEffect(() => {
+		const listener = (e: KeyboardEvent) => onKeyDown(e);
+		window.addEventListener("keydown", listener);
+		return () => window.removeEventListener("keydown", listener);
 	});
 }
 
