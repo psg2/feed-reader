@@ -1,31 +1,155 @@
-# Dependabot — security updates only.
+# Dependabot configuration: version updates for npm (pnpm workspace) and
+# GitHub Actions. Security updates follow the repository setting under
+# Settings → Code security.
+# Docs: https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference
 #
-# Version updates (npm, GitHub Actions, SwiftPM) are handled by Renovate
-# (renovate.json at the repository root), which groups them into one weekly
-# PR per ecosystem. Dependabot stays on for security alerts as a second,
-# faster path for vulnerable versions.
+# Cooldown: delay pulling new versions to give the community time to flag
+# malicious publishes before they land in our lockfile. Security updates
+# bypass the cooldown automatically.
+# See: https://nesbitt.io/2026/03/04/package-managers-need-to-cool-down.html
 #
-# open-pull-requests-limit: 0 disables version-update PRs for an ecosystem
-# while keeping it registered, so Dependabot security updates (enabled under
-# Settings → Code security) still open PRs with these labels.
+# renovate.json is also configured. Keep only one bot opening version
+# updates, or both will open PRs for the same packages.
 
 version: 2
 
 updates:
-  - package-ecosystem: "npm"
-    directory: "/"
-    schedule:
-      interval: "monthly"
-    open-pull-requests-limit: 0
-    labels:
-      - "dependencies"
-      - "security"
-
+  # ── GitHub Actions ────────────────────────────────────────────────
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "monthly"
-    open-pull-requests-limit: 0
+      interval: "weekly"
+      day: "monday"
+    cooldown:
+      default-days: 7
     labels:
       - "dependencies"
-      - "security"
+      - "github-actions"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # ── npm (pnpm workspaces) ──────────────────────────────────────────
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    cooldown:
+      default-days: 7
+      semver-major-days: 14
+      semver-minor-days: 7
+      semver-patch-days: 7
+    open-pull-requests-limit: 15
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    ignore:
+      # Nitro is pinned to a pre-release on purpose; do not chase new betas.
+      - dependency-name: "nitro"
+    groups:
+      tanstack:
+        patterns:
+          - "@tanstack/*"
+        update-types:
+          - "minor"
+          - "patch"
+      orpc:
+        patterns:
+          - "@orpc/*"
+        update-types:
+          - "minor"
+          - "patch"
+      drizzle:
+        patterns:
+          - "drizzle-*"
+        update-types:
+          - "minor"
+          - "patch"
+      auth:
+        patterns:
+          - "better-auth"
+          - "@better-auth/*"
+        update-types:
+          - "minor"
+          - "patch"
+      # react and react-dom are pinned in pnpm-workspace.yaml overrides;
+      # keep them and their types in one PR.
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"
+      ui:
+        patterns:
+          - "radix-ui"
+          - "shadcn"
+          - "lucide-react"
+          - "tailwind*"
+          - "@tailwindcss/*"
+          - "tw-animate-css"
+          - "class-variance-authority"
+          - "clsx"
+        update-types:
+          - "minor"
+          - "patch"
+      observability:
+        patterns:
+          - "@sentry/*"
+          - "@axiomhq/*"
+          - "posthog-js"
+        update-types:
+          - "minor"
+          - "patch"
+      testing:
+        patterns:
+          - "vitest"
+          - "@vitest/*"
+          - "@playwright/*"
+          - "playwright*"
+          - "@testing-library/*"
+          - "happy-dom"
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
+      lint-and-format:
+        patterns:
+          - "oxlint"
+          - "oxfmt"
+          - "knip"
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
+      build-tooling:
+        patterns:
+          - "vite"
+          - "@vitejs/*"
+          - "turbo"
+          - "typescript"
+          - "tsx"
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
+      types:
+        patterns:
+          - "@types/*"
+        exclude-patterns:
+          - "@types/react"
+          - "@types/react-dom"
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
