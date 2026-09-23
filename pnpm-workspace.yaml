@@ -11,6 +11,14 @@ overrides:
   "esbuild": ">=0.25.0"
   "srvx": ">=0.11.13"
 
+# @axiomhq/logging 0.4.1 still declares peer @axiomhq/js ^1. Its
+# AxiomJSTransport only calls ingest() and flush(), which v2 kept; v2 broke
+# only the default APL query format, which we do not use. Drop this rule
+# once a logging release accepts v2.
+peerDependencyRules:
+  allowedVersions:
+    "@axiomhq/logging>@axiomhq/js": "2"
+
 allowBuilds:
   "@sentry/cli": true
   "core-js": true
