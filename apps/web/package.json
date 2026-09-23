@@ -23,7 +23,7 @@
 		"clean": "rm -rf .output node_modules .cache coverage"
 	},
 	"dependencies": {
-		"@axiomhq/js": "^1.8.0",
+		"@axiomhq/js": "^2.0.0",
 		"@axiomhq/logging": "^0.4.1",
 		"@better-auth/api-key": "1.7.5",
 		"@better-auth/core": "1.7.5",
