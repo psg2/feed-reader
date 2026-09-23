@@ -111,7 +111,7 @@ jobs:
       # Coverage is informational: the upload step never fails CI, so the
       # workflow stays green before CODECOV_TOKEN exists (forks included).
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: apps/web/coverage/lcov.info
