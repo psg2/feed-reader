@@ -42,8 +42,8 @@
 		"outdated": "npx taze -r"
 	},
 	"devDependencies": {
-		"oxfmt": "^0.63.0",
-		"oxlint": "^1.78.0",
+		"oxfmt": "^0.68.0",
+		"oxlint": "^1.83.0",
 		"playwright-core": "^1.62.1",
 		"sharp": "^0.35.3",
 		"turbo": "^2.10.9"
