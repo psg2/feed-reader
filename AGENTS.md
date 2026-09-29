@@ -61,7 +61,7 @@ Adding a domain: schema in `packages/db/src/schema/<domain>.ts` → `pnpm db:gen
 - Server instance: `auth` in `lib/auth.ts`; helpers `getAuthUserId()` / `getServerUser()` in `server/auth.ts`, exposed to the UI via `app/server-fns/auth.ts`.
 - Client: `useSessionContext()` (one `useSession` subscription), `signIn` / `signUp` / `signOut` from `lib/auth-client.ts`.
 - oRPC `authed` middleware accepts a session cookie or a Bearer token (OAuth access token or API key, `lib/bearer.ts`) and resolves both to `userId`; downstream code does not care which.
-- Sign-up policy (`server/usecases/signup.ts`, enforced by the `user.create.before` hook in `lib/auth.ts`): open while the instance has no users, with `ALLOW_SIGNUP=true`, or with a valid invite (cookie `fr_invite` set by `/sign-up?invite=`). Admins (`ADMIN_EMAILS`, else the first account; `server/usecases/admin.ts`) manage users and invites from Settings › Admin through the `admin.*` oRPC routes (`admin` middleware in `server/routes/base.ts`). `GOOGLE_CLIENT_ID` toggles the Google button.
+- Sign-up policy (`server/usecases/signup.ts`, enforced by the `user.create.before` hook in `lib/auth.ts`): open while the instance has no users, with `ALLOW_SIGNUP=true`, or with a valid invite (cookie `fr_invite` set by `/sign-up?invite=`). Admins (`ADMIN_EMAILS`, else the first account; `server/usecases/admin.ts`) manage users and invites from Settings › Admin through the `admin.*` oRPC routes (`admin` middleware in `server/routes/base.ts`). Which sign-in methods exist comes from env (`lib/auth-methods.ts`): Google needs both `GOOGLE_CLIENT_*` values; e-mail sign-up, password reset and e-mail codes need Resend in production. The server registers and the pages render only those methods.
 
 ## Testing
 

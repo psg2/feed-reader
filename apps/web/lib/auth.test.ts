@@ -4,7 +4,7 @@
  * `auth.api.signUpEmail` against the test database instead of calling the
  * policy directly.
  */
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { createTestUser } from "@/tests/factories";
 import { getTestDb } from "@/tests/setup";
 import * as inviteRepo from "@/server/repos/invites";
@@ -157,5 +157,26 @@ describe("OAuth dynamic client registration", () => {
 			redirect_uris: ["http://localhost:6274/callback"],
 		});
 		expect(res.status).toBe(400);
+	});
+});
+
+describe("Google sign-in", () => {
+	afterEach(() => {
+		vi.unstubAllEnvs();
+		vi.resetModules();
+	});
+
+	it("answers 404 instead of failing when Google isn't configured", async () => {
+		vi.stubEnv("GOOGLE_CLIENT_ID", "id.apps.googleusercontent.com");
+		vi.stubEnv("GOOGLE_CLIENT_SECRET", "");
+		vi.resetModules();
+		const { createAuth: createUnconfigured } = await import("./auth");
+		const auth = createUnconfigured(getTestDb(), { allowSignup: "true" });
+
+		await expect(
+			auth.api.signInSocial({
+				body: { provider: "google", callbackURL: "/" },
+			}),
+		).rejects.toMatchObject({ statusCode: 404 });
 	});
 });

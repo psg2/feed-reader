@@ -15,7 +15,7 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
-	const { allowSignup } = Route.useLoaderData();
+	const { allowSignup, passwordSignUp, google } = Route.useLoaderData();
 	return (
 		<div className="flex min-h-dvh flex-col items-center justify-center gap-8 bg-background p-8">
 			<div className="flex flex-col items-center gap-4">
@@ -47,7 +47,7 @@ function HomePage() {
 				>
 					{"Sign In"}
 				</Link>
-				{allowSignup && (
+				{allowSignup && (passwordSignUp || google) && (
 					<Link
 						to="/sign-up"
 						className="rounded-md px-4 py-2 text-sm text-muted-foreground hover:text-foreground"

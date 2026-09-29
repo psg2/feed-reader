@@ -35,7 +35,7 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function SignUpPage() {
 	const { redirect } = Route.useSearch();
-	const { allowSignup, googleEnabled, invite } = Route.useLoaderData();
+	const { allowSignup, passwordSignUp, google, invite } = Route.useLoaderData();
 	const invited = invite.status === "valid";
 	const dest = safePath(redirect);
 	const { session } = useSessionContext();
@@ -114,6 +114,31 @@ function SignUpPage() {
 							the self-hosting guide
 						</a>
 						.
+					</p>
+					<p className="text-sm text-muted-foreground">
+						Already have an account?{" "}
+						<Link
+							to="/sign-in"
+							search={{ redirect }}
+							className="text-primary hover:underline"
+						>
+							Sign in
+						</Link>
+					</p>
+				</div>
+			</div>
+		);
+	}
+
+	if (!passwordSignUp && !google) {
+		return (
+			<div className="flex min-h-screen items-center justify-center p-4">
+				<div className="w-full max-w-sm space-y-4 text-center">
+					<h1 className="text-2xl font-bold">Sign-up is unavailable</h1>
+					<p className="text-sm text-muted-foreground">
+						{
+							"This instance can't send e-mail yet, so a new account couldn't verify its address. Ask its admin to set up e-mail or Google sign-in."
+						}
 					</p>
 					<p className="text-sm text-muted-foreground">
 						Already have an account?{" "}
@@ -245,127 +270,131 @@ function SignUpPage() {
 
 				{step === "form" ? (
 					<>
-						{googleEnabled && (
-							<>
-								<button
-									type="button"
-									onClick={handleGoogleSignIn}
-									disabled={isGoogleLoading}
-									className="flex w-full items-center justify-center gap-2 rounded-md border border-input bg-background px-4 py-2.5 text-sm font-medium hover:bg-accent disabled:opacity-50"
-								>
-									{isGoogleLoading ? (
-										<Loader2 className="h-4 w-4 animate-spin" />
-									) : (
-										<GoogleIcon />
-									)}
-									Continue with Google
-								</button>
-
-								<div className="relative">
-									<div className="absolute inset-0 flex items-center">
-										<span className="w-full border-t" />
-									</div>
-									<div className="relative flex justify-center text-xs uppercase">
-										<span className="bg-background px-2 text-muted-foreground">
-											Or continue with email
-										</span>
-									</div>
-								</div>
-							</>
+						{google && (
+							<button
+								type="button"
+								onClick={handleGoogleSignIn}
+								disabled={isGoogleLoading}
+								className="flex w-full items-center justify-center gap-2 rounded-md border border-input bg-background px-4 py-2.5 text-sm font-medium hover:bg-accent disabled:opacity-50"
+							>
+								{isGoogleLoading ? (
+									<Loader2 className="h-4 w-4 animate-spin" />
+								) : (
+									<GoogleIcon />
+								)}
+								Continue with Google
+							</button>
 						)}
 
-						<form
-							onSubmit={handleSignUp}
-							className="space-y-4"
-							data-hydrated={hydrated || undefined}
-						>
-							<div className="space-y-2">
-								<label htmlFor="name" className="text-sm font-medium">
-									Name
-								</label>
-								<input
-									id="name"
-									type="text"
-									value={name}
-									onChange={(e) => {
-										setName(e.target.value);
-										setErrors((p) => {
-											const { name: _, ...rest } = p;
-											return rest;
-										});
-									}}
-									className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-									placeholder="Your name"
-									autoComplete="name"
-								/>
-								{errors.name && (
-									<p className="text-xs text-destructive">{errors.name}</p>
-								)}
+						{google && passwordSignUp && (
+							<div className="relative">
+								<div className="absolute inset-0 flex items-center">
+									<span className="w-full border-t" />
+								</div>
+								<div className="relative flex justify-center text-xs uppercase">
+									<span className="bg-background px-2 text-muted-foreground">
+										Or continue with email
+									</span>
+								</div>
 							</div>
-							<div className="space-y-2">
-								<label htmlFor="email" className="text-sm font-medium">
-									Email
-								</label>
-								<input
-									id="email"
-									type="email"
-									value={email}
-									readOnly={invited}
-									onChange={(e) => {
-										setEmail(e.target.value);
-										setErrors((p) => {
-											const { email: _, ...rest } = p;
-											return rest;
-										});
-									}}
-									className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm read-only:text-muted-foreground"
-									placeholder="you@example.com"
-									autoComplete="email"
-								/>
-								{invited && (
-									<p className="text-xs text-muted-foreground">
-										{"The invitation is for this address."}
-									</p>
-								)}
-								{errors.email && (
-									<p className="text-xs text-destructive">{errors.email}</p>
-								)}
-							</div>
-							<div className="space-y-2">
-								<label htmlFor="password" className="text-sm font-medium">
-									Password
-								</label>
-								<input
-									id="password"
-									type="password"
-									value={password}
-									onChange={(e) => {
-										setPassword(e.target.value);
-										setErrors((p) => {
-											const { password: _, ...rest } = p;
-											return rest;
-										});
-									}}
-									className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-									placeholder="At least 8 characters"
-									autoComplete="new-password"
-								/>
-								{errors.password && (
-									<p className="text-xs text-destructive">{errors.password}</p>
-								)}
-							</div>
-							<button
-								type="submit"
-								disabled={isLoading}
-								className="w-full rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+						)}
+
+						{passwordSignUp && (
+							<form
+								onSubmit={handleSignUp}
+								className="space-y-4"
+								data-hydrated={hydrated || undefined}
 							>
-								{isLoading ? (
-									<Loader2 className="mx-auto h-4 w-4 animate-spin" />
-								) : (
-									"Create Account"
-								)}
-							</button>
-						</form>
+								<div className="space-y-2">
+									<label htmlFor="name" className="text-sm font-medium">
+										Name
+									</label>
+									<input
+										id="name"
+										type="text"
+										value={name}
+										onChange={(e) => {
+											setName(e.target.value);
+											setErrors((p) => {
+												const { name: _, ...rest } = p;
+												return rest;
+											});
+										}}
+										className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+										placeholder="Your name"
+										autoComplete="name"
+									/>
+									{errors.name && (
+										<p className="text-xs text-destructive">{errors.name}</p>
+									)}
+								</div>
+								<div className="space-y-2">
+									<label htmlFor="email" className="text-sm font-medium">
+										Email
+									</label>
+									<input
+										id="email"
+										type="email"
+										value={email}
+										readOnly={invited}
+										onChange={(e) => {
+											setEmail(e.target.value);
+											setErrors((p) => {
+												const { email: _, ...rest } = p;
+												return rest;
+											});
+										}}
+										className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm read-only:text-muted-foreground"
+										placeholder="you@example.com"
+										autoComplete="email"
+									/>
+									{invited && (
+										<p className="text-xs text-muted-foreground">
+											{"The invitation is for this address."}
+										</p>
+									)}
+									{errors.email && (
+										<p className="text-xs text-destructive">{errors.email}</p>
+									)}
+								</div>
+								<div className="space-y-2">
+									<label htmlFor="password" className="text-sm font-medium">
+										Password
+									</label>
+									<input
+										id="password"
+										type="password"
+										value={password}
+										onChange={(e) => {
+											setPassword(e.target.value);
+											setErrors((p) => {
+												const { password: _, ...rest } = p;
+												return rest;
+											});
+										}}
+										className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+										placeholder="At least 8 characters"
+										autoComplete="new-password"
+									/>
+									{errors.password && (
+										<p className="text-xs text-destructive">
+											{errors.password}
+										</p>
+									)}
+								</div>
+								<button
+									type="submit"
+									disabled={isLoading}
+									className="w-full rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+								>
+									{isLoading ? (
+										<Loader2 className="mx-auto h-4 w-4 animate-spin" />
+									) : (
+										"Create Account"
+									)}
+								</button>
+							</form>
+						)}
 					</>
 				) : (
 					<form onSubmit={handleVerifyOtp} className="space-y-5">

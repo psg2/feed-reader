@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { canDeliverEmail, isEmailProviderConfigured } from "./auth-methods";
 import { env } from "./env";
 
 /** Sender for transactional mail; the domain must be verified in Resend. */
@@ -8,7 +9,14 @@ let resend: Resend | null = null;
 
 function getResend(): Resend | null {
 	if (resend) return resend;
-	const apiKey = env.RESEND_API_KEY;
+	// The dev fallback prints codes to stdout; in production that would put
+	// live sign-in codes in the logs while the user never receives them.
+	if (!canDeliverEmail(env)) {
+		throw new Error(
+			"Email delivery is not configured (RESEND_API_KEY, EMAIL_FROM)",
+		);
+	}
+	const apiKey = env.RESEND_API_KEY?.trim();
 	if (!apiKey) return null;
 	resend = new Resend(apiKey);
 	return resend;
@@ -21,8 +29,8 @@ interface SendEmailParams {
 }
 
 /**
- * Send an email via Resend. Falls back to console.log in development
- * when RESEND_API_KEY is not set.
+ * Send an email via Resend. Outside production, falls back to console.log
+ * when RESEND_API_KEY is not set; in production it throws instead.
  */
 export async function sendEmail({
 	to,
@@ -96,7 +104,7 @@ export async function sendOtpEmail({
 
 /** True when mail can actually be delivered (Resend key + verified From address). */
 export function isEmailConfigured(): boolean {
-	return !!env.RESEND_API_KEY && !!env.EMAIL_FROM;
+	return isEmailProviderConfigured(env);
 }
 
 interface SendInviteEmailParams {

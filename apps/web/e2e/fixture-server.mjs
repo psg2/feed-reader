@@ -1,6 +1,9 @@
 // Serves tests/fixtures/*.xml over http so the app server can "fetch" feeds
 // without touching the internet. Any directory prefix is ignored, so
 // /copy/lethain.xml is the same file at a different URL (a distinct feed).
+// It also stands in for the Resend API (POST /emails): CI runs the production
+// build, which refuses to sign anyone up without a working mail provider.
+import crypto from "node:crypto";
 import fs from "node:fs";
 import http from "node:http";
 import path from "node:path";
@@ -14,6 +17,14 @@ const dir = path.resolve(
 
 http
 	.createServer((req, res) => {
+		if (req.method === "POST" && req.url === "/emails") {
+			req.resume();
+			req.on("end", () => {
+				res.writeHead(200, { "content-type": "application/json" });
+				res.end(JSON.stringify({ id: crypto.randomUUID() }));
+			});
+			return;
+		}
 		const name = path.basename(new URL(req.url ?? "/", "http://x").pathname);
 		const file = path.join(dir, name);
 		if (!name || !fs.existsSync(file)) {

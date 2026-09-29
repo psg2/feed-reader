@@ -27,6 +27,7 @@ import {
 	INVITE_COOKIE,
 	readInviteCookie,
 } from "@/server/usecases/signup";
+import { googleCredentials, resolveAuthMethods } from "./auth-methods";
 import { sendOtpEmail } from "./email";
 import { env, getAppUrl } from "./env";
 
@@ -55,7 +56,7 @@ function isLoopbackHttpRedirect(value: unknown): boolean {
  * Configured with:
  * - Drizzle adapter pointing to our PostgreSQL database
  * - Email + password auth with email verification
- * - Google OAuth social provider
+ * - Google OAuth social provider (only when both credentials are set)
  * - Admin plugin for user management
  * - API key plugin for automation
  * - Two-factor authentication (TOTP + email OTP + backup codes)
@@ -70,6 +71,9 @@ export function createAuth(
 	database: Database,
 	options: AuthOptions = { allowSignup: env.ALLOW_SIGNUP },
 ) {
+	const authMethods = resolveAuthMethods(env);
+	const google = googleCredentials(env);
+
 	return betterAuth({
 		baseURL: env.BETTER_AUTH_URL,
 		secret: env.BETTER_AUTH_SECRET,
@@ -174,7 +178,8 @@ export function createAuth(
 		},
 
 		emailAndPassword: {
-			enabled: true,
+			enabled: authMethods.passwordSignIn,
+			disableSignUp: !authMethods.passwordSignUp,
 			requireEmailVerification: true,
 		},
 
@@ -212,17 +217,20 @@ export function createAuth(
 			},
 		},
 
-		socialProviders: {
-			google: {
-				clientId: env.GOOGLE_CLIENT_ID ?? "",
-				clientSecret: env.GOOGLE_CLIENT_SECRET ?? "",
-				...(env.OAUTH_PROXY_URL
-					? {
-							redirectURI: `${env.OAUTH_PROXY_URL}/api/auth/callback/google`,
-						}
-					: {}),
-			},
-		},
+		// Registering Google with blank credentials makes /sign-in/social 500;
+		// leaving it out makes BetterAuth answer 404 "provider not found".
+		socialProviders: google
+			? {
+					google: {
+						...google,
+						...(env.OAUTH_PROXY_URL
+							? {
+									redirectURI: `${env.OAUTH_PROXY_URL}/api/auth/callback/google`,
+								}
+							: {}),
+					},
+				}
+			: {},
 
 		user: {
 			fields: {
