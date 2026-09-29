@@ -13,7 +13,7 @@ test("refuses to send a code in production without Resend instead of logging it"
 	vi.stubEnv("BETTER_AUTH_URL", "https://reader.example");
 	vi.stubEnv("RESEND_API_KEY", "");
 	vi.resetModules();
-	vi.spyOn(console, "error").mockImplementation(() => {});
+	const error = vi.spyOn(console, "error").mockImplementation(() => {});
 	const log = vi.spyOn(console, "log").mockImplementation(() => {});
 	const { sendOtpEmail } = await import("./email");
 
@@ -25,5 +25,6 @@ test("refuses to send a code in production without Resend instead of logging it"
 			expiresIn: "10 minutes",
 		}),
 	).rejects.toThrow(/not configured/);
-	expect(log.mock.calls.flat().join(" ")).not.toContain("123456");
+	const output = [...log.mock.calls, ...error.mock.calls].flat().join(" ");
+	expect(output).not.toContain("123456");
 });

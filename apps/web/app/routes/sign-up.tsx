@@ -60,6 +60,31 @@ function SignUpPage() {
 		return null;
 	}
 
+	if (!passwordSignUp && !google) {
+		return (
+			<div className="flex min-h-screen items-center justify-center p-4">
+				<div className="w-full max-w-sm space-y-4 text-center">
+					<h1 className="text-2xl font-bold">Sign-up is unavailable</h1>
+					<p className="text-sm text-muted-foreground">
+						{
+							"This instance can't send e-mail yet, so a new account couldn't verify its address. Ask its admin to set up e-mail or Google sign-in."
+						}
+					</p>
+					<p className="text-sm text-muted-foreground">
+						Already have an account?{" "}
+						<Link
+							to="/sign-in"
+							search={{ redirect }}
+							className="text-primary hover:underline"
+						>
+							Sign in
+						</Link>
+					</p>
+				</div>
+			</div>
+		);
+	}
+
 	if (invite.status === "invalid") {
 		return (
 			<div className="flex min-h-screen items-center justify-center p-4">
@@ -114,31 +139,6 @@ function SignUpPage() {
 							the self-hosting guide
 						</a>
 						.
-					</p>
-					<p className="text-sm text-muted-foreground">
-						Already have an account?{" "}
-						<Link
-							to="/sign-in"
-							search={{ redirect }}
-							className="text-primary hover:underline"
-						>
-							Sign in
-						</Link>
-					</p>
-				</div>
-			</div>
-		);
-	}
-
-	if (!passwordSignUp && !google) {
-		return (
-			<div className="flex min-h-screen items-center justify-center p-4">
-				<div className="w-full max-w-sm space-y-4 text-center">
-					<h1 className="text-2xl font-bold">Sign-up is unavailable</h1>
-					<p className="text-sm text-muted-foreground">
-						{
-							"This instance can't send e-mail yet, so a new account couldn't verify its address. Ask its admin to set up e-mail or Google sign-in."
-						}
 					</p>
 					<p className="text-sm text-muted-foreground">
 						Already have an account?{" "}
