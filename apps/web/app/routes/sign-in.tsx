@@ -34,7 +34,7 @@ export const Route = createFileRoute("/sign-in")({
 
 /**
  * Three modes:
- *  - `password`     — default; email + password + Google
+ *  - `password`     — default; email + password (+ Google when configured)
  *  - `passwordless` — email-only, sends the code on submit
  *  - `otp`          — six-slot code input + resend-with-cooldown
  */
@@ -44,7 +44,7 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function SignInPage() {
 	const { error: authError, redirect } = Route.useSearch();
-	const { allowSignup, googleEnabled } = Route.useLoaderData();
+	const authConfig = Route.useLoaderData();
 	// Mid-OAuth login (MCP clients): resume the authorize flow after sign-in.
 	const resume =
 		typeof window === "undefined"
@@ -206,7 +206,7 @@ function SignInPage() {
 
 				{mode === "password" && (
 					<>
-						{googleEnabled && (
+						{authConfig.google && (
 							<>
 								<button
 									type="button"
@@ -243,12 +243,14 @@ function SignInPage() {
 									<label htmlFor="password" className="text-sm font-medium">
 										Password
 									</label>
-									<Link
-										to="/forgot-password"
-										className="text-xs text-muted-foreground hover:underline"
-									>
-										Forgot password?
-									</Link>
+									{authConfig.passwordReset && (
+										<Link
+											to="/forgot-password"
+											className="text-xs text-muted-foreground hover:underline"
+										>
+											Forgot password?
+										</Link>
+									)}
 								</div>
 								<input
 									id="password"
@@ -282,17 +284,19 @@ function SignInPage() {
 							</button>
 						</form>
 
-						<button
-							type="button"
-							onClick={() => {
-								setMode("passwordless");
-								setPassword("");
-							}}
-							className="flex w-full items-center justify-center gap-2 rounded-md border border-input bg-background px-4 py-2.5 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground"
-						>
-							<Mail className="h-4 w-4" />
-							Sign in with an email code
-						</button>
+						{authConfig.emailOtp && (
+							<button
+								type="button"
+								onClick={() => {
+									setMode("passwordless");
+									setPassword("");
+								}}
+								className="flex w-full items-center justify-center gap-2 rounded-md border border-input bg-background px-4 py-2.5 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground"
+							>
+								<Mail className="h-4 w-4" />
+								Sign in with an email code
+							</button>
+						)}
 					</>
 				)}
 
@@ -394,18 +398,19 @@ function SignInPage() {
 					</form>
 				)}
 
-				{allowSignup && (
-					<p className="text-center text-sm text-muted-foreground">
-						Don't have an account?{" "}
-						<Link
-							to="/sign-up"
-							search={{ redirect }}
-							className="text-primary hover:underline"
-						>
-							Sign up
-						</Link>
-					</p>
-				)}
+				{authConfig.allowSignup &&
+					(authConfig.passwordSignUp || authConfig.google) && (
+						<p className="text-center text-sm text-muted-foreground">
+							Don't have an account?{" "}
+							<Link
+								to="/sign-up"
+								search={{ redirect }}
+								className="text-primary hover:underline"
+							>
+								Sign up
+							</Link>
+						</p>
+					)}
 			</div>
 		</div>
 	);

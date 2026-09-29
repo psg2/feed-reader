@@ -1,5 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
-import { BASE_URL, FEEDS, FIXTURE_PORT, PORT } from "./e2e/env";
+import { BASE_URL, FEEDS, FIXTURE_BASE, FIXTURE_PORT, PORT } from "./e2e/env";
 
 /**
  * E2E configuration.
@@ -53,6 +53,10 @@ export default defineConfig({
 				ALLOW_SIGNUP: "true",
 				// The fixture feed server listens on 127.0.0.1.
 				ALLOW_PRIVATE_FEED_HOSTS: "true",
+				// Mail goes to the fixture server's fake Resend API, never out.
+				RESEND_API_KEY: "re_e2e",
+				EMAIL_FROM: "Feed Reader <e2e@example.com>",
+				RESEND_BASE_URL: FIXTURE_BASE,
 			},
 			reuseExistingServer: !isCI || !!process.env.E2E_REUSE,
 			timeout: 180_000,

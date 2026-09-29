@@ -3,6 +3,7 @@ import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { getAuthMethodsFn } from "@/app/server-fns/auth";
 import {
 	InputOTP,
 	InputOTPGroup,
@@ -14,11 +15,41 @@ import { authClient } from "@/lib/auth-client";
 
 export const Route = createFileRoute("/forgot-password")({
 	component: ForgotPasswordPage,
+	loader: () => getAuthMethodsFn(),
 });
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function ForgotPasswordPage() {
+	const { passwordReset } = Route.useLoaderData();
+	if (!passwordReset) return <PasswordResetUnavailable />;
+	return <ForgotPasswordForm />;
+}
+
+function PasswordResetUnavailable() {
+	return (
+		<div className="flex min-h-screen items-center justify-center p-4">
+			<div className="w-full max-w-sm space-y-6 text-center">
+				<div className="space-y-2">
+					<h1 className="text-2xl font-bold">Password reset unavailable</h1>
+					<p className="text-sm text-muted-foreground">
+						{
+							"This instance can't send e-mail yet, so it can't send you a reset code. Ask its admin to help you regain access."
+						}
+					</p>
+				</div>
+				<Link
+					to="/sign-in"
+					className="text-sm text-muted-foreground hover:underline"
+				>
+					Back to sign in
+				</Link>
+			</div>
+		</div>
+	);
+}
+
+function ForgotPasswordForm() {
 	const [email, setEmail] = useState("");
 	const [otp, setOtp] = useState("");
 	const [newPassword, setNewPassword] = useState("");

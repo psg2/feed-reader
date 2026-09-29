@@ -2,6 +2,7 @@ import { db } from "@feedreader/db/client";
 import { createServerFn } from "@tanstack/react-start";
 import { deleteCookie, setCookie } from "@tanstack/react-start/server";
 import { z } from "zod";
+import { type AuthMethods, resolveAuthMethods } from "@/lib/auth-methods";
 import { env } from "@/lib/env";
 import { getAuthUserId, getServerUser } from "@/server/auth";
 import * as userRepo from "@/server/repos/users";
@@ -31,18 +32,24 @@ export const getServerUserFn = createServerFn({ method: "GET" }).handler(
 	},
 );
 
-export interface AuthConfig {
+/**
+ * Enabled sign-in methods, for the auth pages' loaders so SSR renders only
+ * the options the server can serve.
+ */
+export const getAuthMethodsFn = createServerFn({ method: "GET" }).handler(
+	(): AuthMethods => resolveAuthMethods(env),
+);
+
+export interface AuthConfig extends AuthMethods {
 	/** Anyone may register: ALLOW_SIGNUP=true, or no account exists yet. */
 	allowSignup: boolean;
-	/** Google sign-in is only wired when GOOGLE_CLIENT_ID is set. */
-	googleEnabled: boolean;
 }
 
 async function authConfig(): Promise<AuthConfig> {
 	return {
+		...resolveAuthMethods(env),
 		allowSignup:
 			env.ALLOW_SIGNUP === "true" || (await userRepo.countUsers(db)) === 0,
-		googleEnabled: !!env.GOOGLE_CLIENT_ID,
 	};
 }
 

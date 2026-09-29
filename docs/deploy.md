@@ -85,13 +85,13 @@ Invitations are links (`https://<host>/sign-up?invite=…`) valid for 7 days and
 1. [Google Cloud Console → APIs & Services → Credentials](https://console.cloud.google.com/apis/credentials) → **Create credentials → OAuth client ID → Web application**.
 2. Authorized JavaScript origin: `https://<host>`.
 3. Authorized redirect URI: `https://<host>/api/auth/callback/google` (BetterAuth is mounted at `/api/auth` by `apps/web/app/routes/api/auth.$.tsx`; `callback/<provider>` is its standard path).
-4. Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`. The sign-in page always shows the Google button; without these two variables it errors, so tell your users to use e-mail or configure it before sharing the link.
+4. Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`. The sign-in and sign-up pages show "Continue with Google" only when both are set.
 
 `OAUTH_PROXY_URL` is only for routing preview-deployment callbacks through a [better-auth oauth-proxy](https://github.com/better-auth/oauth-proxy); leave it unset.
 
 ### Optional: transactional e-mail (Resend)
 
-Sign-up verification, passwordless sign-in and 2FA codes are sent through [Resend](https://resend.com). Without `RESEND_API_KEY` production logs a warning at startup and codes are only printed to the function logs, which is workable for the very first sign-up but not for daily use.
+Sign-up verification, password reset, passwordless sign-in and 2FA codes are sent through [Resend](https://resend.com). Production needs both `RESEND_API_KEY` and `EMAIL_FROM`; without them the auth pages hide e-mail sign-up, "Forgot password?" and "Sign in with an email code", and codes are never written to the logs. Password sign-in keeps working for existing accounts, so configure Resend (or Google) before creating the first account.
 
 1. Add and verify your domain in Resend (DNS records for DKIM/SPF).
 2. Create an API key with **Sending access** → `RESEND_API_KEY`.
@@ -192,7 +192,7 @@ make install     # release build → ~/Applications/FeedReader.app (ad-hoc signe
 
 ## 11. First run
 
-1. Open `https://<host>/sign-up`, create your account and enter the verification code (from your inbox, or from the Vercel function logs if e-mail is not configured yet). The first account is created regardless of `ALLOW_SIGNUP`.
+1. Open `https://<host>/sign-up`, create your account and enter the verification code from your inbox (or use "Continue with Google"). Sign-up needs Resend or Google configured. The first account is created regardless of `ALLOW_SIGNUP`.
 2. Registration is now closed to strangers. To add someone, open **Settings › Admin** and invite their e-mail: they receive a link (or you copy it) that is valid for 7 days. Set `ALLOW_SIGNUP=true` instead if you want open registration.
 3. Add feeds: paste site or feed URLs (one per line) in the web UI or with ⌘N in the macOS app; the server resolves site URLs to their feed. Categories and tags are created inline. To bring an existing subscription list, import an OPML file from **Settings** in the web UI (`POST /api/opml`) or **File → Import OPML…** in the macOS app.
 4. Run a refresh (⌘R, the UI button, or the cron `curl` above) to fetch the first items.
