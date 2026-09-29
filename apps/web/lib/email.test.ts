@@ -28,3 +28,21 @@ test("refuses to send a code in production without Resend instead of logging it"
 	const output = [...log.mock.calls, ...error.mock.calls].flat().join(" ");
 	expect(output).not.toContain("123456");
 });
+
+// Resend rejects the default sender, so a key alone must not route mail to it.
+test("outside production, prints the code when EMAIL_FROM is missing", async () => {
+	vi.stubEnv("NODE_ENV", "development");
+	vi.stubEnv("RESEND_API_KEY", "re_123");
+	vi.stubEnv("EMAIL_FROM", "");
+	vi.resetModules();
+	const log = vi.spyOn(console, "log").mockImplementation(() => {});
+	const { sendOtpEmail } = await import("./email");
+
+	await sendOtpEmail({
+		to: "user@example.com",
+		subject: "Your sign-in code",
+		otp: "654321",
+		expiresIn: "10 minutes",
+	});
+	expect(log.mock.calls.flat().join(" ")).toContain("654321");
+});
