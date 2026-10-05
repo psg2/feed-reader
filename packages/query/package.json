@@ -13,9 +13,9 @@
 	},
 	"dependencies": {
 		"@feedreader/api": "workspace:*",
-		"@orpc/contract": "^1.15.1",
-		"@orpc/tanstack-query": "^1.15.1",
-		"@tanstack/react-query": "^5.103.2"
+		"@orpc/contract": "^1.15.4",
+		"@orpc/tanstack-query": "^1.15.4",
+		"@tanstack/react-query": "^5.104.0"
 	},
 	"devDependencies": {
 		"@feedreader/tsconfig": "workspace:*",
