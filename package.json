@@ -46,7 +46,7 @@
 		"oxlint": "^1.83.0",
 		"playwright-core": "^1.63.0",
 		"sharp": "^0.35.5",
-		"turbo": "^2.10.13"
+		"turbo": "^2.11.5"
 	},
 	"engines": {
 		"node": ">=24"
