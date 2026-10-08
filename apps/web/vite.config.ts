@@ -85,4 +85,14 @@ export default defineConfig({
 		// Force all packages to use the same React instance.
 		dedupe: ["react", "react-dom"],
 	},
+	ssr: {
+		// TanStack Start inlines `better-auth` into the SSR bundle. Left external,
+		// the `@better-auth/*` plugins get bundled by Nitro with their own copy of
+		// `better-auth/api`, whose per-request state the inlined copy can't see:
+		// the OAuth provider's context then never reaches the Google sign-in
+		// state, and an MCP connect via Google lands on the dashboard.
+		// `infra` stays external: it only uses the core's global async context and
+		// declares optional React Native peers the SSR bundle shouldn't resolve.
+		noExternal: [/^@better-auth\/(?!infra$)/],
+	},
 });
