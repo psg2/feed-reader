@@ -163,7 +163,7 @@ The job skips itself while `VERCEL_TOKEN` is missing. It runs `vercel pull` + `v
 
 ## 9. MCP clients
 
-The server is a remote MCP endpoint with OAuth 2.1 (dynamic client registration is allowed, so any OAuth-capable MCP client can register itself without an API key). For Claude Code:
+The server is a remote MCP endpoint with OAuth 2.1. Clients identify themselves with a Client ID Metadata Document (an HTTPS URL as `client_id`, fetched on the first authorize), so any CIMD-capable MCP client connects without registering or an API key; dynamic client registration is off. For Claude Code:
 
 ```bash
 claude mcp add --transport http --scope user feedreader https://<host>/api/mcp

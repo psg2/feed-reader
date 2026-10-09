@@ -12,6 +12,8 @@ import * as userRepo from "@/server/repos/users";
 import * as admin from "@/server/usecases/admin";
 import { INVITE_COOKIE } from "@/server/usecases/signup";
 import { createAuth } from "./auth";
+import { TEST_MCP_CLIENT_ID } from "./cimd";
+import { getAppUrl } from "./env";
 
 // Verification e-mails go to the console without RESEND_API_KEY; keep the
 // test output clean.
@@ -108,55 +110,55 @@ describe("BetterAuth sign-up policy", () => {
 	});
 });
 
-function register(
+function authRequest(
 	auth: ReturnType<typeof createAuth>,
-	body: Record<string, unknown>,
+	path: string,
+	init?: RequestInit,
 ) {
-	return auth.handler(
-		new Request("https://feedreader.localhost/api/auth/oauth2/register", {
+	return auth.handler(new Request(`${getAppUrl()}/api/auth${path}`, init));
+}
+
+describe("OAuth client discovery (CIMD)", () => {
+	it("advertises metadata documents instead of a registration endpoint", async () => {
+		const auth = createAuth(getTestDb(), { allowSignup: "true" });
+		const res = await authRequest(
+			auth,
+			"/.well-known/oauth-authorization-server",
+		);
+		const metadata = (await res.json()) as Record<string, unknown>;
+		expect(metadata.client_id_metadata_document_supported).toBe(true);
+		expect(metadata).not.toHaveProperty("registration_endpoint");
+	});
+
+	it("refuses dynamic client registration", async () => {
+		const auth = createAuth(getTestDb(), { allowSignup: "true" });
+		const res = await authRequest(auth, "/oauth2/register", {
 			method: "POST",
 			headers: { "content-type": "application/json" },
 			body: JSON.stringify({
 				client_name: "test",
 				token_endpoint_auth_method: "none",
-				grant_types: ["authorization_code", "refresh_token"],
-				response_types: ["code"],
-				...body,
+				redirect_uris: ["http://localhost:6274/callback"],
 			}),
-		}),
-	);
-}
-
-describe("OAuth dynamic client registration", () => {
-	it("treats a loopback-only registration as a native client", async () => {
-		const auth = createAuth(getTestDb(), { allowSignup: "true" });
-		const res = await register(auth, {
-			redirect_uris: [
-				"http://localhost:6274/callback",
-				"http://127.0.0.1:6274/callback",
-			],
 		});
-		expect(res.status).toBe(201);
-		const client = (await res.json()) as { application_type?: string };
-		expect(client.application_type).toBe("native");
+		expect(res.ok).toBe(false);
 	});
 
-	it("keeps rejecting plain http on non-loopback hosts", async () => {
+	it("resolves a metadata-document client_id at authorize", async () => {
 		const auth = createAuth(getTestDb(), { allowSignup: "true" });
-		const res = await register(auth, {
-			redirect_uris: ["http://example.com/callback"],
+		const query = new URLSearchParams({
+			response_type: "code",
+			client_id: TEST_MCP_CLIENT_ID,
+			redirect_uri: `${getAppUrl()}/oauth/callback`,
+			scope: "openid offline_access",
+			state: "state",
+			code_challenge: "E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM",
+			code_challenge_method: "S256",
 		});
-		expect(res.status).toBe(400);
-		expect(await res.json()).toMatchObject({ error: "invalid_redirect_uri" });
-	});
-
-	it("leaves an explicit application_type alone", async () => {
-		const auth = createAuth(getTestDb(), { allowSignup: "true" });
-		const res = await register(auth, {
-			application_type: "web",
-			redirect_uris: ["http://localhost:6274/callback"],
-		});
-		expect(res.status).toBe(400);
+		const res = await authRequest(auth, `/oauth2/authorize?${query}`);
+		const location = res.headers.get("location") ?? "";
+		expect(location).toContain("/sign-in?");
+		expect(location).not.toContain("invalid_client");
 	});
 });
 
