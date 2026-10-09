@@ -86,6 +86,9 @@ importers:
       '@orpc/zod':
         specifier: ^1.15.4
         version: 1.15.4(@opentelemetry/api@1.9.1)(@orpc/contract@1.15.4(@opentelemetry/api@1.9.1))(@orpc/server@1.15.4(@opentelemetry/api@1.9.1)(crossws@0.4.10(srvx@0.12.7))(ws@8.21.3))(crossws@0.4.10(srvx@0.12.7))(ws@8.21.3)(zod@4.6.5)
+      '@posthog/mcp':
+        specifier: 0.21.3
+        version: 0.21.3(@modelcontextprotocol/sdk@1.30.1(supports-color@7.2.0)(zod@4.6.5))(posthog-node@5.55.0)
       '@sentry/tanstackstart-react':
         specifier: ^10.75.3
         version: 10.75.3(@opentelemetry/core@2.10.0(@opentelemetry/api@1.9.1))(@opentelemetry/exporter-trace-otlp-http@0.221.0(@opentelemetry/api@1.9.1))(react@19.3.0)(supports-color@7.2.0)
@@ -104,6 +107,9 @@ importers:
       '@tanstack/react-start':
         specifier: ^1.168.60
         version: 1.168.60(crossws@0.4.10(srvx@0.12.7))(esbuild@0.28.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(rolldown@1.2.3)(supports-color@7.2.0)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.0))
+      '@vercel/functions':
+        specifier: ^3.9.11
+        version: 3.9.11(ws@8.21.3)
       better-auth:
         specifier: 1.7.7
         version: 1.7.7(@opentelemetry/api@1.9.1)(@tanstack/react-start@1.168.60(crossws@0.4.10(srvx@0.12.7))(esbuild@0.28.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(rolldown@1.2.3)(supports-color@7.2.0)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.0)))(drizzle-kit@0.31.10)(drizzle-orm@0.45.3(@opentelemetry/api@1.9.1)(@types/pg@8.15.6)(kysely@0.29.5)(postgres@3.4.9))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(solid-js@1.9.15)(vitest@5.0.2)
@@ -133,10 +139,13 @@ importers:
         version: 0.4.6(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       nitro:
         specifier: 3.0.260610-beta
-        version: 3.0.260610-beta(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.3(@opentelemetry/api@1.9.1)(@types/pg@8.15.6)(kysely@0.29.5)(postgres@3.4.9))(jiti@2.7.0)(lru-cache@11.5.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.0))
+        version: 3.0.260610-beta(@vercel/functions@3.9.11(ws@8.21.3))(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.3(@opentelemetry/api@1.9.1)(@types/pg@8.15.6)(kysely@0.29.5)(postgres@3.4.9))(jiti@2.7.0)(lru-cache@11.5.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.0))
       posthog-js:
         specifier: ^1.434.17
         version: 1.434.17(@types/react@19.3.0)(react@19.3.0)
+      posthog-node:
+        specifier: 5.55.0
+        version: 5.55.0
       radix-ui:
         specifier: ^1.6.7
         version: 1.6.7(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -1856,8 +1865,27 @@ packages:
   '@posthog/core@1.55.2':
     resolution: {integrity: sha512-2mYxGbDmTLUs096VbcZqSWo0lrI48/BrX65r54NynxxFq409BOx9w73HxOAtOKZ1vblkdV6/GxQTe7KDcIQidg==}
 
+  '@posthog/core@1.55.3':
+    resolution: {integrity: sha512-XnmG9jo7WlxTeN4oCNWH4ESLQHR6ZPZ+mcq+8JxU62k5i1BAe3BSrybnmXHjqKp7e3rUvLK2bOzGZGSlfHvlNA==}
+
+  '@posthog/mcp@0.21.3':
+    resolution: {integrity: sha512-mgUs/PDex4x8nSF8gI5eWxQMuls5cMTSZ/327xadyAdbENyY0miMVXQKwjHzBVvIPLFVHlpc7edLImGFNWjORg==}
+    engines: {node: ^20.20.0 || >=22.22.0}
+    peerDependencies:
+      '@modelcontextprotocol/sdk': '>=1.26.0'
+      '@modelcontextprotocol/server': '>=2.0.0'
+      posthog-node: ^5.0.0
+    peerDependenciesMeta:
+      '@modelcontextprotocol/sdk':
+        optional: true
+      '@modelcontextprotocol/server':
+        optional: true
+
   '@posthog/types@1.412.4':
     resolution: {integrity: sha512-Q7lV9O9TbLngjOYw1ucm3bS3tn48xb1B4ZQdDy8gv7yfKe99hCTeWYG4xZ36nJM80VxpTF9TriiJt5hngDOkBg==}
+
+  '@posthog/types@1.413.0':
+    resolution: {integrity: sha512-tYAVzNojWckuG/wxBB0fwE70sFruQQq4xbhkci7eH2ARU3mMfUTkvpN1HwBMpm0AtbxidLiH0IFvagmdJ8opPw==}
 
   '@radix-ui/number@1.1.3':
     resolution: {integrity: sha512-Road2bidD0uu/1BGDOWNdPI06g0lIRy6IF9GZcIrDK2KGItfor8IQwQa+yM2ERgHM1MmHxaxpTzk0/Jp42lNfA==}
@@ -3575,6 +3603,29 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@vercel/cli-config@0.3.1':
+    resolution: {integrity: sha512-sISbygqlFXYb8qfPu/+2Cf/A8IjrlAuZePdag3EDQr2PRA455s7UZtl9Ro674CWsB/saBRmz3jEkw0YsQs8OoQ==}
+
+  '@vercel/cli-exec@1.0.1':
+    resolution: {integrity: sha512-g9XerViJ/paZujufXYcu5XYI2vU2rtB4sgdpjUHde5RnOkdmpu0ngH46LCFGHoPXO/C+qDPSczIHIRN+8Q2YKQ==}
+    engines: {node: '>= 18'}
+
+  '@vercel/functions@3.9.11':
+    resolution: {integrity: sha512-DbqKqcbUHGBTYgHZieSNDuF1/L2iSPZV0OGm0Xkm/t+s61lFk4VX8yGQ22Og3WYGxypW1l4Elx1NP8BL928u8Q==}
+    engines: {node: '>= 20'}
+    peerDependencies:
+      '@aws-sdk/credential-provider-web-identity': '*'
+      ws: '>=8'
+    peerDependenciesMeta:
+      '@aws-sdk/credential-provider-web-identity':
+        optional: true
+      ws:
+        optional: true
+
+  '@vercel/oidc@4.0.0':
+    resolution: {integrity: sha512-ko6ATeRUlHZMB5hLFdC7+/Q1dI2f3NX3gZHxtpALdkxurwjD5HFHGWYF+4o+4SF0E47jg6KzcHknmRpHcKgJ5A==}
+    engines: {node: '>= 20'}
+
   '@vitejs/plugin-react@6.1.1':
     resolution: {integrity: sha512-yxLaQV9gkhS8ezJqCM6+ndU7mDY6gqAg75NQ+0IjwEI8IYOmQCgkRwHKVSfWXW076DsqMo0Dk+0FK1U+M5RgFw==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -4742,6 +4793,9 @@ packages:
     resolution: {integrity: sha512-AC/7JofJvZGrrneWNaEnJeOLUx+JlGt7tNa0wZiRPT4MY1wmfKjt2+6O2p2uz2+skll8OZZmJMNqeke7kKbNgQ==}
     hasBin: true
 
+  jose@5.10.0:
+    resolution: {integrity: sha512-s+3Al/p9g32Iq+oqXxkW//7jk2Vig6FF1CFqzVXoTUXt2qz89YWbL+OwS17NFYEvxC35n0FKeGO2LGYSxeM2Gg==}
+
   jose@6.2.10:
     resolution: {integrity: sha512-iiW7J9qRFlGxvCOIBDBDxFePQSn7ZMAnrYGhrrOo6siO/MIqwfyilLR27pkfDgUk+raLuzADS8A3S/KLBisc0g==}
 
@@ -5198,6 +5252,10 @@ packages:
     resolution: {integrity: sha512-weP+BZ8MVNnlCm8c0Qdc1WSWq4Qn7I+9CJGm7Qali6g44e/PUzbjNqJX5NJ9ljlNMosfJvg1fKEGILklK9cwnw==}
     engines: {node: '>=18'}
 
+  os-paths@4.4.0:
+    resolution: {integrity: sha512-wrAwOeXp1RRMFfQY8Sy7VaGVmPocaLwSFOYCGKSyo8qmJ+/yaafCl5BCA1IQZWqFSRBrKDYFeR9d/VyQzfH/jg==}
+    engines: {node: '>= 6.0'}
+
   outvariant@1.4.3:
     resolution: {integrity: sha512-+Sl2UErvtsoajRDKCE5/dBz4DIvHXQQnAxtQTF04OJxY0+DyZXSo5P5Bb7XYWOh81syohlYL24hbDwxedPUJCA==}
 
@@ -5405,6 +5463,15 @@ packages:
       '@types/react':
         optional: true
       react:
+        optional: true
+
+  posthog-node@5.55.0:
+    resolution: {integrity: sha512-8dFtlDTqs0CKGZ8t4mUnk4NdShAgzru3B9D0MfM/NTBzlRyAjctivzWINLtMLRQxYjvgBohxy7RTwiQf4mPycQ==}
+    engines: {node: ^20.20.0 || >=22.22.0}
+    peerDependencies:
+      rxjs: ^7.0.0
+    peerDependenciesMeta:
+      rxjs:
         optional: true
 
   powershell-utils@0.1.0:
@@ -6344,6 +6411,14 @@ packages:
     resolution: {integrity: sha512-Hl0ZOAs672vg+06kfujwRhoS6/jehvULrlFkuF2dRu6pHgA8U06h3xqNIqNNU1LTXPcedxByAR4GS6pwQK0mgA==}
     engines: {node: '>=20'}
 
+  xdg-app-paths@5.5.1:
+    resolution: {integrity: sha512-hI3flOB4PLZIy5prbtTpirobtPE2ZtZ52szO+2mM9Efp6ErM398La+C1lIpNWDfNoQk+6Lsi6nMcCwVB7pxeMQ==}
+    engines: {node: '>= 6.0'}
+
+  xdg-portable@7.3.0:
+    resolution: {integrity: sha512-sqMMuL1rc0FmMBOzCpd0yuy9trqF2yTTVe+E9ogwCSWQCdDEtQUwrZPT6AxqtsFGRNxycgncbP/xmOOSPw5ZUw==}
+    engines: {node: '>= 6.0'}
+
   xml2js@0.5.0:
     resolution: {integrity: sha512-drPFnkQJik/O+uPKpqSgr22mpuFHqKdbS835iAQrUC73L2F5WkboIRd63ai/2Yg6I1jzifPFKH2NTK+cfglkIA==}
     engines: {node: '>=4.0.0'}
@@ -6404,6 +6479,9 @@ packages:
 
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
+
+  zod@4.1.11:
+    resolution: {integrity: sha512-WPsqwxITS2tzx1bzhIKsEs19ABD5vmCVa4xBo2tq/SrV4RNZtfws1EnCWQXM6yh8bD08a1idvkB5MZSBiZsjwg==}
 
   zod@4.6.5:
     resolution: {integrity: sha512-v5l/aFXZQeai4awLbOpSoHecE9UiMrnfx75tEXLjNonXVARxQ5mOeipTjROUchszUNCqnE+hqAMujRsRHsut2Q==}
@@ -7717,7 +7795,20 @@ snapshots:
     dependencies:
       '@posthog/types': 1.412.4
 
+  '@posthog/core@1.55.3':
+    dependencies:
+      '@posthog/types': 1.413.0
+
+  '@posthog/mcp@0.21.3(@modelcontextprotocol/sdk@1.30.1(supports-color@7.2.0)(zod@4.6.5))(posthog-node@5.55.0)':
+    dependencies:
+      '@posthog/core': 1.55.3
+      posthog-node: 5.55.0
+    optionalDependencies:
+      '@modelcontextprotocol/sdk': 1.30.1(supports-color@7.2.0)(zod@4.6.5)
+
   '@posthog/types@1.412.4': {}
+
+  '@posthog/types@1.413.0': {}
 
   '@radix-ui/number@1.1.3': {}
 
@@ -9453,6 +9544,27 @@ snapshots:
   '@typescript/typescript-win32-x64@7.0.2':
     optional: true
 
+  '@vercel/cli-config@0.3.1':
+    dependencies:
+      xdg-app-paths: 5.5.1
+      zod: 4.1.11
+
+  '@vercel/cli-exec@1.0.1':
+    dependencies:
+      execa: 5.1.1
+
+  '@vercel/functions@3.9.11(ws@8.21.3)':
+    dependencies:
+      '@vercel/oidc': 4.0.0
+    optionalDependencies:
+      ws: 8.21.3
+
+  '@vercel/oidc@4.0.0':
+    dependencies:
+      '@vercel/cli-config': 0.3.1
+      '@vercel/cli-exec': 1.0.1
+      jose: 5.10.0
+
   '@vitejs/plugin-react@6.1.1(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.0))':
     dependencies:
       '@rolldown/pluginutils': 1.0.1
@@ -10469,6 +10581,8 @@ snapshots:
 
   jiti@2.7.0: {}
 
+  jose@5.10.0: {}
+
   jose@6.2.10: {}
 
   js-tokens@10.0.0: {}
@@ -10750,7 +10864,7 @@ snapshots:
 
   nf3@0.3.23: {}
 
-  nitro@3.0.260610-beta(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.3(@opentelemetry/api@1.9.1)(@types/pg@8.15.6)(kysely@0.29.5)(postgres@3.4.9))(jiti@2.7.0)(lru-cache@11.5.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.0)):
+  nitro@3.0.260610-beta(@vercel/functions@3.9.11(ws@8.21.3))(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.3(@opentelemetry/api@1.9.1)(@types/pg@8.15.6)(kysely@0.29.5)(postgres@3.4.9))(jiti@2.7.0)(lru-cache@11.5.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.0)):
     dependencies:
       consola: 3.4.2
       crossws: 0.4.10(srvx@0.12.7)
@@ -10765,7 +10879,7 @@ snapshots:
       rolldown: 1.2.9
       srvx: 0.12.7
       unenv: 2.0.0-rc.24
-      unstorage: 2.0.0-alpha.7(chokidar@5.0.0)(db0@0.3.4(drizzle-orm@0.45.3(@opentelemetry/api@1.9.1)(@types/pg@8.15.6)(kysely@0.29.5)(postgres@3.4.9)))(lru-cache@11.5.2)(ofetch@2.0.0-alpha.3)
+      unstorage: 2.0.0-alpha.7(@vercel/functions@3.9.11(ws@8.21.3))(chokidar@5.0.0)(db0@0.3.4(drizzle-orm@0.45.3(@opentelemetry/api@1.9.1)(@types/pg@8.15.6)(kysely@0.29.5)(postgres@3.4.9)))(lru-cache@11.5.2)(ofetch@2.0.0-alpha.3)
     optionalDependencies:
       dotenv: 17.4.2
       jiti: 2.7.0
@@ -10877,6 +10991,8 @@ snapshots:
       stdin-discarder: 0.2.2
       string-width: 7.2.0
       strip-ansi: 7.2.0
+
+  os-paths@4.4.0: {}
 
   outvariant@1.4.3:
     optional: true
@@ -11153,6 +11269,10 @@ snapshots:
       react: 19.3.0
     transitivePeerDependencies:
       - preact-render-to-string
+
+  posthog-node@5.55.0:
+    dependencies:
+      '@posthog/core': 1.55.2
 
   powershell-utils@0.1.0: {}
 
@@ -11862,8 +11982,9 @@ snapshots:
       rolldown: 1.2.3
       vite: 8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.0)
 
-  unstorage@2.0.0-alpha.7(chokidar@5.0.0)(db0@0.3.4(drizzle-orm@0.45.3(@opentelemetry/api@1.9.1)(@types/pg@8.15.6)(kysely@0.29.5)(postgres@3.4.9)))(lru-cache@11.5.2)(ofetch@2.0.0-alpha.3):
+  unstorage@2.0.0-alpha.7(@vercel/functions@3.9.11(ws@8.21.3))(chokidar@5.0.0)(db0@0.3.4(drizzle-orm@0.45.3(@opentelemetry/api@1.9.1)(@types/pg@8.15.6)(kysely@0.29.5)(postgres@3.4.9)))(lru-cache@11.5.2)(ofetch@2.0.0-alpha.3):
     optionalDependencies:
+      '@vercel/functions': 3.9.11(ws@8.21.3)
       chokidar: 5.0.0
       db0: 0.3.4(drizzle-orm@0.45.3(@opentelemetry/api@1.9.1)(@types/pg@8.15.6)(kysely@0.29.5)(postgres@3.4.9))
       lru-cache: 11.5.2
@@ -12022,6 +12143,15 @@ snapshots:
       is-wsl: 3.1.1
       powershell-utils: 0.1.0
 
+  xdg-app-paths@5.5.1:
+    dependencies:
+      os-paths: 4.4.0
+      xdg-portable: 7.3.0
+
+  xdg-portable@7.3.0:
+    dependencies:
+      os-paths: 4.4.0
+
   xml2js@0.5.0:
     dependencies:
       sax: 1.6.1
@@ -12080,5 +12210,7 @@ snapshots:
       zod: 4.6.5
 
   zod@3.25.76: {}
+
+  zod@4.1.11: {}
 
   zod@4.6.5: {}

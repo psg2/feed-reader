@@ -10,7 +10,7 @@ Single-user feed reader: TanStack Start web app on Vercel + Neon Postgres, a Swi
 
 ## Stack
 
-TanStack Start (Vite + Nitro, SSR) · TanStack Router (file-based) · TanStack Query + oRPC (contract-first) · BetterAuth (email/password, OTP, optional Google, API keys, OAuth 2.1 provider for the macOS app and MCP clients) · Postgres 17 + Drizzle · Tailwind v4 + shadcn/ui + Radix · Turborepo + pnpm · oxlint + oxfmt · Vercel. Sentry, PostHog and Axiom are wired but disabled without keys.
+TanStack Start (Vite + Nitro, SSR) · TanStack Router (file-based) · TanStack Query + oRPC (contract-first) · BetterAuth (email/password, OTP, optional Google, API keys, OAuth 2.1 provider for the macOS app and MCP clients) · Postgres 17 + Drizzle · Tailwind v4 + shadcn/ui + Radix · Turborepo + pnpm · oxlint + oxfmt · Vercel. Sentry, PostHog and Axiom are wired but disabled without keys. `VITE_PUBLIC_POSTHOG_KEY` also turns on [MCP Analytics](https://posthog.com/docs/mcp-analytics) for `/api/mcp` (`server/mcp/analytics.ts`): tool calls, agent intent, latency, errors and `get_more_tools` requests, attributed to the user id, with tool arguments and results stripped before sending.
 
 ## Commands
 
