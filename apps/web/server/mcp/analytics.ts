@@ -27,11 +27,14 @@ export function instrumentMcpServer(server: unknown, userId: string): void {
 		// reply arrives; the user id already ties a client's calls together.
 		enableConversationId: false,
 		serverBuild: process.env.VERCEL_GIT_COMMIT_SHA,
-		// Tool arguments and results are the user's own records; keep the shape
-		// of the call (tool, intent, latency, error) and leave the data out.
+		// Tool arguments, results and error messages (a failed query quotes its
+		// SQL params) are the user's own records; keep the shape of the call
+		// (tool, intent, latency, error type) and leave the data out.
+		enableExceptionAutocapture: false,
 		beforeSend: (event) => {
 			delete event.properties.$mcp_parameters;
 			delete event.properties.$mcp_response;
+			delete event.properties.$mcp_error_message;
 			return event;
 		},
 	});
