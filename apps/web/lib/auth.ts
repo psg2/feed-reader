@@ -16,9 +16,10 @@ import {
 	verifications,
 } from "@feedreader/db/schema";
 import { apiKey } from "@better-auth/api-key";
+import { cimd } from "@better-auth/cimd";
 import { oauthProvider } from "@better-auth/oauth-provider";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { APIError, createAuthMiddleware } from "better-auth/api";
+import { APIError } from "better-auth/api";
 import { betterAuth } from "better-auth/minimal";
 import { emailOTP, oAuthProxy, twoFactor } from "better-auth/plugins";
 import {
@@ -28,26 +29,13 @@ import {
 	readInviteCookie,
 } from "@/server/usecases/signup";
 import { googleCredentials, resolveAuthMethods } from "./auth-methods";
+import { fetchClientMetadataResource } from "./cimd";
 import { sendOtpEmail } from "./email";
 import { env, getAppUrl } from "./env";
 
 export interface AuthOptions {
 	/** ALLOW_SIGNUP; the tests pass it explicitly. */
 	allowSignup: "true" | "false";
-}
-
-/** `http://localhost:*`, `http://127.0.0.1:*` or `http://[::1]:*` (RFC 8252 §7.3). */
-function isLoopbackHttpRedirect(value: unknown): boolean {
-	if (typeof value !== "string") return false;
-	try {
-		const url = new URL(value);
-		return (
-			url.protocol === "http:" &&
-			["localhost", "127.0.0.1", "[::1]"].includes(url.hostname)
-		);
-	} catch {
-		return false;
-	}
 }
 
 /**
@@ -151,28 +139,6 @@ export function createAuth(
 			errorURL: "/sign-in",
 		},
 
-		hooks: {
-			before: createAuthMiddleware(async (ctx) => {
-				if (ctx.path !== "/oauth2/register") return;
-				const body = ctx.body as Record<string, unknown> | undefined;
-				if (!body || body.application_type !== undefined) return;
-				// oauth-provider 1.7 classifies a registration without
-				// application_type as "web", and web clients may only redirect to
-				// https. Local MCP clients (Claude Code and friends) register with a
-				// loopback http callback and no application_type; that is a native
-				// client in RFC 8252 terms, so label it as one instead of turning
-				// it away.
-				const uris = Array.isArray(body.redirect_uris)
-					? (body.redirect_uris as unknown[])
-					: [];
-				if (uris.length > 0 && uris.every(isLoopbackHttpRedirect)) {
-					return {
-						context: { body: { ...body, application_type: "native" } },
-					};
-				}
-			}),
-		},
-
 		account: {
 			storeStateStrategy: "cookie",
 		},
@@ -246,13 +212,6 @@ export function createAuth(
 				// Native app stays signed in for a year; a revoked/expired refresh
 				// token simply sends the user back to the sign-in screen.
 				refreshTokenExpiresIn: 31_536_000, // 1 year
-				// Dynamic client registration — required for MCP clients (RFC 7591).
-				// MCP clients register before any user signs in, so allow it
-				// unauthenticated. Since 1.7 a registration without
-				// token_endpoint_auth_method is confidential (secret issued); MCP
-				// clients and the macOS app register with `none` explicitly.
-				allowDynamicClientRegistration: true,
-				allowUnauthenticatedClientRegistration: true,
 				scopes: ["openid", "profile", "email", "offline_access"],
 				disableJwtPlugin: true, // opaque tokens verified via /oauth2/userinfo
 				// MCP clients send `resource=<origin>/api/mcp` (RFC 8707). Since 1.7
@@ -268,6 +227,7 @@ export function createAuth(
 				// client may use every listed resource instead.
 				enforcePerClientResources: false,
 			}),
+			cimd({ fetchClientMetadataResource, metadataProfile: "mcp-2026-07-28" }),
 			apiKey({
 				// v1.6.28 renamed the owner column to referenceId; our table keeps
 				// the original userId column (uuid FK), so map the field onto it.

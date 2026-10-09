@@ -5,7 +5,7 @@
  * Tools call usecases directly — no HTTP round-trip to oRPC.
  *
  * Auth: bearer tokens (OAuth access tokens or API keys) via lib/bearer.
- * MCP clients authenticate via OIDC (dynamic client registration + PKCE).
+ * MCP clients authenticate via OIDC (Client ID Metadata Documents + PKCE).
  * API keys are also supported for scripts/automation.
  */
 
