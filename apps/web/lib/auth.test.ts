@@ -141,7 +141,7 @@ describe("OAuth client discovery (CIMD)", () => {
 				redirect_uris: ["http://localhost:6274/callback"],
 			}),
 		});
-		expect(res.ok).toBe(false);
+		expect(res.status).toBe(403);
 	});
 
 	it("resolves a metadata-document client_id at authorize", async () => {
