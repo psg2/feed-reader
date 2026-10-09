@@ -41,19 +41,20 @@ export function instrumentMcpServer(server: unknown, userId: string): void {
 }
 
 /**
- * Flushes queued events once the response body has been fully sent: a tool
- * result may still be streaming when the handler returns, and a serverless
- * function never sees SIGTERM to flush on.
+ * Flushes queued events once the response body is done, sent or cancelled by
+ * the client: a tool result may still be streaming when the handler returns,
+ * and a serverless function never sees SIGTERM to flush on.
  */
 export function flushMcpAnalyticsAfter(response: Response): Response {
 	const client = posthog;
 	if (!client || !response.body) return response;
-	const body = response.body.pipeThrough(
-		new TransformStream({
-			flush() {
-				waitUntil(client.flush());
-			},
-		}),
-	);
+	const flush = () => waitUntil(client.flush());
+	// `cancel` (client went away mid-stream) is in the Streams spec and in
+	// Node, but not yet in TypeScript's Transformer type.
+	const transformer: Transformer & { cancel: () => void } = {
+		flush,
+		cancel: flush,
+	};
+	const body = response.body.pipeThrough(new TransformStream(transformer));
 	return new Response(body, response);
 }
