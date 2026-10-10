@@ -1,6 +1,7 @@
 /**
  * PostHog MCP Analytics: tool calls, agent intent, latency, errors and the
- * capabilities agents asked for but the server lacks (`get_more_tools`).
+ * feedback agents send through `send_feedback`, above all capabilities the
+ * server lacks.
  * Off when `VITE_PUBLIC_POSTHOG_KEY` is unset.
  */
 
@@ -22,7 +23,7 @@ export function instrumentMcpServer(server: unknown, userId: string): void {
 	if (!posthog) return;
 	instrument(server, posthog, {
 		identify: { distinctId: userId },
-		reportMissing: true,
+		collectFeedback: true,
 		// Its schema tells agents not to call tools in parallel until the first
 		// reply arrives; the user id already ties a client's calls together.
 		enableConversationId: false,
@@ -35,6 +36,10 @@ export function instrumentMcpServer(server: unknown, userId: string): void {
 			delete event.properties.$mcp_parameters;
 			delete event.properties.$mcp_response;
 			delete event.properties.$mcp_error_message;
+			// send_feedback's schema asks for exact parameter values and error
+			// text in these two fields; the summary and suggestion are enough.
+			delete event.properties.$mcp_feedback_details;
+			delete event.properties.$mcp_feedback_friction_points;
 			return event;
 		},
 	});
