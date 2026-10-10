@@ -16,6 +16,7 @@ import { getAppUrl } from "@/lib/env";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import { isInitializeRequest } from "@modelcontextprotocol/sdk/types.js";
+import { flushMcpAnalyticsAfter, instrumentMcpServer } from "./analytics";
 import { registerPrompts } from "./prompts";
 import { registerAllTools } from "./tools/index";
 import type { McpContext } from "./types";
@@ -74,6 +75,7 @@ function createMcpServer(getCtx: () => McpContext): McpServer {
 		name: "feedreader",
 		version: "1.0.0",
 	});
+	instrumentMcpServer(server, getCtx().userId);
 
 	registerAllTools(server, getCtx);
 	registerPrompts(server);
@@ -147,13 +149,19 @@ export async function handleMcpRequest(request: Request): Promise<Response> {
 				{ status: 400 },
 			);
 		}
-		return session.transport.handleRequest(request);
+		return flushMcpAnalyticsAfter(
+			await session.transport.handleRequest(request),
+		);
 	}
 
 	// ── POST: initialize or tool call ────────────────────────────────────
 	if (method === "POST") {
 		// Existing session
-		if (session) return session.transport.handleRequest(request);
+		if (session) {
+			return flushMcpAnalyticsAfter(
+				await session.transport.handleRequest(request),
+			);
+		}
 
 		// New session — must be initialize
 		const body = await request.json();
@@ -184,7 +192,9 @@ export async function handleMcpRequest(request: Request): Promise<Response> {
 		const server = createMcpServer(getCtx);
 		await server.connect(transport);
 
-		return transport.handleRequest(request, { parsedBody: body });
+		return flushMcpAnalyticsAfter(
+			await transport.handleRequest(request, { parsedBody: body }),
+		);
 	}
 
 	return new Response("Method not allowed", { status: 405 });
