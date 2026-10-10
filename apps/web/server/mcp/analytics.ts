@@ -40,6 +40,10 @@ export function instrumentMcpServer(server: unknown, userId: string): void {
 			// text in these two fields; the summary and suggestion are enough.
 			delete event.properties.$mcp_feedback_details;
 			delete event.properties.$mcp_feedback_friction_points;
+			// The SDK also appends details to a feedback event's intent.
+			if ("$mcp_feedback_type" in event.properties) {
+				event.properties.$mcp_intent = event.properties.$mcp_feedback_summary;
+			}
 			return event;
 		},
 	});
