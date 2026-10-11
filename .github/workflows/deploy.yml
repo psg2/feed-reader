@@ -20,6 +20,7 @@ jobs:
   deploy:
     name: Vercel (production)
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     if: vars.VERCEL_ORG_ID != '' && vars.VERCEL_PROJECT_ID != ''
     permissions:
       contents: read
