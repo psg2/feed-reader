@@ -1,5 +1,11 @@
 {
 	"$schema": "https://openapi.vercel.sh/vercel.json",
+	"git": {
+		"deploymentEnabled": {
+			"dependabot/**": false,
+			"renovate/**": false
+		}
+	},
 	"installCommand": "corepack enable && pnpm install --frozen-lockfile",
 	"buildCommand": "cd ../.. && if [ \"$VERCEL_ENV\" = \"production\" ]; then pnpm db:migrate; fi && pnpm build",
 	"rewrites": [
