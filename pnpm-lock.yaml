@@ -65,9 +65,9 @@ importers:
       '@feedreader/tailwind-config':
         specifier: workspace:*
         version: link:../../tooling/tailwind
-      '@modelcontextprotocol/sdk':
-        specifier: ^1.30.1
-        version: 1.30.1(supports-color@7.2.0)(zod@4.6.5)
+      '@modelcontextprotocol/server':
+        specifier: ^2.2.0
+        version: 2.3.0
       '@orpc/client':
         specifier: ^1.15.4
         version: 1.15.4(@opentelemetry/api@1.9.1)
@@ -88,7 +88,7 @@ importers:
         version: 1.15.4(@opentelemetry/api@1.9.1)(@orpc/contract@1.15.4(@opentelemetry/api@1.9.1))(@orpc/server@1.15.4(@opentelemetry/api@1.9.1)(crossws@0.4.10(srvx@0.12.7))(ws@8.21.3))(crossws@0.4.10(srvx@0.12.7))(ws@8.21.3)(zod@4.6.5)
       '@posthog/mcp':
         specifier: 0.21.3
-        version: 0.21.3(@modelcontextprotocol/sdk@1.30.1(supports-color@7.2.0)(zod@4.6.5))(posthog-node@5.55.0)
+        version: 0.21.3(@modelcontextprotocol/sdk@1.30.1(supports-color@7.2.0)(zod@4.6.5))(@modelcontextprotocol/server@2.3.0)(posthog-node@5.55.0)
       '@sentry/tanstackstart-react':
         specifier: ^10.75.3
         version: 10.75.3(@opentelemetry/core@2.10.0(@opentelemetry/api@1.9.1))(@opentelemetry/exporter-trace-otlp-http@0.221.0(@opentelemetry/api@1.9.1))(react@19.3.0)(supports-color@7.2.0)
@@ -1022,6 +1022,10 @@ packages:
     peerDependencies:
       solid-js: ^1.8.8
 
+  '@modelcontextprotocol/core@2.3.0':
+    resolution: {integrity: sha512-09BHFaNVBe5pB2AhzCfLj0cqmsKLERvZQ4FblzP90UMGLaXVqdZPByFjURwsUYCmxonUW2yAwgTTvle+8O2/8w==}
+    engines: {node: '>=20'}
+
   '@modelcontextprotocol/sdk@1.30.1':
     resolution: {integrity: sha512-H2HxLvC3HDNybePJaLdSrU1hhUK5iQw+WvV1b01myFyI7sdVGe1u/IPTE5D9fGCiJDVtgMV/lmFkQXLmQyIFYA==}
     engines: {node: '>=18'}
@@ -1031,6 +1035,10 @@ packages:
     peerDependenciesMeta:
       '@cfworker/json-schema':
         optional: true
+
+  '@modelcontextprotocol/server@2.3.0':
+    resolution: {integrity: sha512-+6b0LdsQLmHsvS7J6sQJ4weTpzUn61fU1JKS+321/+IyDYoHW5CR2Tgqcs6GgAAQvlesCo6yX3xttgmx+XGtJw==}
+    engines: {node: '>=20'}
 
   '@mswjs/interceptors@0.41.9':
     resolution: {integrity: sha512-VVPPgHyQ6ShqnrmDWuxjmUIsO9gWyOZFmuOfLd9LfBGQJwZfy0gvv9pbHSJuoFNIYC7ZDX9aoFwowjcdSC4E8w==}
@@ -7109,6 +7117,10 @@ snapshots:
       '@solid-primitives/utils': 6.4.1(solid-js@1.9.15)
       solid-js: 1.9.15
 
+  '@modelcontextprotocol/core@2.3.0':
+    dependencies:
+      zod: 4.6.5
+
   '@modelcontextprotocol/sdk@1.30.1(supports-color@7.2.0)(zod@3.25.76)':
     dependencies:
       '@hono/node-server': 2.1.0(hono@4.13.1)
@@ -7152,6 +7164,12 @@ snapshots:
       zod-to-json-schema: 3.25.2(zod@4.6.5)
     transitivePeerDependencies:
       - supports-color
+    optional: true
+
+  '@modelcontextprotocol/server@2.3.0':
+    dependencies:
+      '@modelcontextprotocol/core': 2.3.0
+      zod: 4.6.5
 
   '@mswjs/interceptors@0.41.9':
     dependencies:
@@ -7799,12 +7817,13 @@ snapshots:
     dependencies:
       '@posthog/types': 1.413.0
 
-  '@posthog/mcp@0.21.3(@modelcontextprotocol/sdk@1.30.1(supports-color@7.2.0)(zod@4.6.5))(posthog-node@5.55.0)':
+  '@posthog/mcp@0.21.3(@modelcontextprotocol/sdk@1.30.1(supports-color@7.2.0)(zod@4.6.5))(@modelcontextprotocol/server@2.3.0)(posthog-node@5.55.0)':
     dependencies:
       '@posthog/core': 1.55.3
       posthog-node: 5.55.0
     optionalDependencies:
       '@modelcontextprotocol/sdk': 1.30.1(supports-color@7.2.0)(zod@4.6.5)
+      '@modelcontextprotocol/server': 2.3.0
 
   '@posthog/types@1.412.4': {}
 
@@ -12208,6 +12227,7 @@ snapshots:
   zod-to-json-schema@3.25.2(zod@4.6.5):
     dependencies:
       zod: 4.6.5
+    optional: true
 
   zod@3.25.76: {}
 
