@@ -53,11 +53,13 @@ function postModern(method: string, params: object = {}) {
 	);
 }
 
-/** The body, or a marker when the server is still holding it open. */
+/** The body; fails when the server is still holding it open after `ms`. */
 async function bodyWithin(res: Response, ms: number): Promise<string> {
 	return Promise.race([
 		res.text(),
-		new Promise<string>((done) => setTimeout(() => done('"held open"'), ms)),
+		new Promise<never>((_, fail) =>
+			setTimeout(() => fail(new Error(`body still open after ${ms} ms`)), ms),
+		),
 	]);
 }
 
@@ -125,7 +127,8 @@ describe("MCP handler", () => {
 		);
 		expect(init.status).toBe(200);
 		expect(init.headers.get("mcp-session-id")).toBeNull();
-		await init.body?.cancel();
+		const { result: initResult } = rpcResult(await bodyWithin(init, 1000));
+		expect(initResult.protocolVersion).toBe(LEGACY_VERSION);
 
 		const list = await post(
 			{ jsonrpc: "2.0", id: 2, method: "tools/list" },
@@ -149,5 +152,8 @@ describe("MCP handler", () => {
 			"bogus",
 		);
 		expect(invalid.status).toBe(401);
+		expect(invalid.headers.get("www-authenticate")).toContain(
+			"resource_metadata",
+		);
 	});
 });
