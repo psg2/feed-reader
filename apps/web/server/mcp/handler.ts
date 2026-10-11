@@ -1,87 +1,62 @@
 /**
  * MCP request handler for TanStack Start.
  *
- * Uses the Streamable HTTP transport (Web Standards) — no Node.js adapter needed.
+ * Serves the 2026-07-28 protocol revision (stateless core: no initialize
+ * handshake, no sessions; every request carries its version in `_meta`) via
+ * the SDK v2 `createMcpHandler`, which also answers 2025-era clients with the
+ * per-request stateless fallback. Nothing is kept between requests, so any
+ * serverless instance can serve any request.
+ *
  * Tools call usecases directly — no HTTP round-trip to oRPC.
  *
- * Auth: bearer tokens (OAuth access tokens or API keys) via lib/bearer.
- * MCP clients authenticate via OIDC (Client ID Metadata Documents + PKCE).
- * API keys are also supported for scripts/automation.
+ * Auth: bearer tokens (OAuth access tokens or API keys) via lib/bearer,
+ * verified before the request reaches the SDK (which performs no token
+ * verification itself). MCP clients authenticate via OIDC (Client ID Metadata
+ * Documents + PKCE). API keys are also supported for scripts/automation.
  */
 
-import { randomUUID } from "node:crypto";
 import { db } from "@feedreader/db/client";
+import { createMcpHandler, McpServer } from "@modelcontextprotocol/server";
 import { verifyBearer } from "@/lib/bearer";
 import { getAppUrl } from "@/lib/env";
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
-import { isInitializeRequest } from "@modelcontextprotocol/sdk/types.js";
 import { flushMcpAnalyticsAfter, instrumentMcpServer } from "./analytics";
 import { registerPrompts } from "./prompts";
 import { registerAllTools } from "./tools/index";
 import type { McpContext } from "./types";
 
-// ── Session tracking ──────────────────────────────────────────────────────
-
-interface Session {
-	transport: WebStandardStreamableHTTPServerTransport;
-	/** The user the session was initialised for; other tokens may not reuse it. */
-	userId: string;
-	lastSeen: number;
-}
-
-const SESSION_IDLE_MS = 30 * 60_000;
-const MAX_SESSIONS = 500;
-
-const sessions = new Map<string, Session>();
-
-async function dropSession(id: string) {
-	const session = sessions.get(id);
-	sessions.delete(id);
-	await session?.transport.close().catch(() => {});
-}
-
-/** Idle sessions go first; if still over the cap, the least recently seen. */
-async function evictSessions() {
-	const now = Date.now();
-	for (const [id, s] of sessions) {
-		if (now - s.lastSeen > SESSION_IDLE_MS) await dropSession(id);
-	}
-	if (sessions.size < MAX_SESSIONS) return;
-	const oldest = [...sessions.entries()].sort(
-		(a, b) => a[1].lastSeen - b[1].lastSeen,
-	);
-	for (const [id] of oldest.slice(0, sessions.size - MAX_SESSIONS + 1)) {
-		await dropSession(id);
-	}
-}
-
-/** Looks up a session for this user, touching it; a foreign session is reported as such. */
-function claimSession(
-	sessionId: string | null,
-	userId: string,
-): Session | "forbidden" | null {
-	const session = sessionId ? sessions.get(sessionId) : undefined;
-	if (!session) return null;
-	if (session.userId !== userId) return "forbidden";
-	session.lastSeen = Date.now();
-	return session;
-}
-
 // ── Server factory ────────────────────────────────────────────────────────
 
-function createMcpServer(getCtx: () => McpContext): McpServer {
-	const server = new McpServer({
-		name: "feedreader",
-		version: "1.0.0",
-	});
-	instrumentMcpServer(server, getCtx().userId);
+// One factory backs both protocol eras; each request gets a fresh server
+// bound to the user resolved from its bearer token.
+//
+// No `subscriptions/listen`: that stream stays open until the client leaves,
+// and on a serverless function nothing ever pushes on it, so each one runs
+// into the platform timeout (300 s on Vercel). The tool list is fixed, so
+// nothing is advertised as changing and a listen that still arrives is
+// refused at once instead of held.
+export const mcp = createMcpHandler(
+	({ authInfo }) => {
+		const userId = authInfo?.extra?.userId;
+		if (typeof userId !== "string")
+			throw new Error("Unauthenticated MCP request");
+		const getCtx = (): McpContext => ({ db, userId });
 
-	registerAllTools(server, getCtx);
-	registerPrompts(server);
-
-	return server;
-}
+		const server = new McpServer(
+			{ name: "feedreader", version: "1.0.0" },
+			{
+				capabilities: {
+					tools: { listChanged: false },
+					prompts: { listChanged: false },
+				},
+			},
+		);
+		instrumentMcpServer(server, userId);
+		registerAllTools(server, getCtx);
+		registerPrompts(server);
+		return server;
+	},
+	{ maxSubscriptions: 0 },
+);
 
 // ── Request handler ───────────────────────────────────────────────────────
 
@@ -104,9 +79,6 @@ function unauthorized(message: string): Response {
 }
 
 export async function handleMcpRequest(request: Request): Promise<Response> {
-	const method = request.method;
-
-	// ── Auth ──────────────────────────────────────────────────────────────
 	const authHeader = request.headers.get("authorization");
 	if (!authHeader?.startsWith("Bearer ")) {
 		return unauthorized("Missing bearer token");
@@ -118,84 +90,9 @@ export async function handleMcpRequest(request: Request): Promise<Response> {
 		return unauthorized("Invalid or expired token");
 	}
 
-	const getCtx = (): McpContext => ({ db, userId });
-	const sessionId = request.headers.get("mcp-session-id");
-	await evictSessions();
-	const session = claimSession(sessionId, userId);
-	if (session === "forbidden") {
-		return Response.json(
-			{ error: "Session belongs to another user" },
-			{ status: 403 },
-		);
-	}
-
-	// ── DELETE: close session ────────────────────────────────────────────
-	if (method === "DELETE") {
-		if (!session || !sessionId) {
-			return Response.json(
-				{ error: "Invalid or missing session ID" },
-				{ status: 400 },
-			);
-		}
-		await dropSession(sessionId);
-		return new Response(null, { status: 204 });
-	}
-
-	// ── GET: SSE stream ──────────────────────────────────────────────────
-	if (method === "GET") {
-		if (!session) {
-			return Response.json(
-				{ error: "Invalid or missing session ID" },
-				{ status: 400 },
-			);
-		}
-		return flushMcpAnalyticsAfter(
-			await session.transport.handleRequest(request),
-		);
-	}
-
-	// ── POST: initialize or tool call ────────────────────────────────────
-	if (method === "POST") {
-		// Existing session
-		if (session) {
-			return flushMcpAnalyticsAfter(
-				await session.transport.handleRequest(request),
-			);
-		}
-
-		// New session — must be initialize
-		const body = await request.json();
-		if (!isInitializeRequest(body)) {
-			return Response.json(
-				{
-					jsonrpc: "2.0",
-					error: {
-						code: -32000,
-						message: "Bad Request: No valid session ID provided",
-					},
-					id: null,
-				},
-				{ status: 400 },
-			);
-		}
-
-		const transport = new WebStandardStreamableHTTPServerTransport({
-			sessionIdGenerator: () => randomUUID(),
-			onsessioninitialized: (id) => {
-				sessions.set(id, { transport, userId, lastSeen: Date.now() });
-			},
-			onsessionclosed: (id) => {
-				sessions.delete(id);
-			},
-		});
-
-		const server = createMcpServer(getCtx);
-		await server.connect(transport);
-
-		return flushMcpAnalyticsAfter(
-			await transport.handleRequest(request, { parsedBody: body }),
-		);
-	}
-
-	return new Response("Method not allowed", { status: 405 });
+	return flushMcpAnalyticsAfter(
+		await mcp.fetch(request, {
+			authInfo: { token, clientId: "", scopes: [], extra: { userId } },
+		}),
+	);
 }

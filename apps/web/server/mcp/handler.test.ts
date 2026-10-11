@@ -1,25 +1,28 @@
 import { describe, expect, it, vi } from "vitest";
 import { handleMcpRequest } from "./handler";
 
-// Tokens map straight to user ids; the DB is never touched by initialize.
+// Tokens map straight to user ids; listing tools and prompts never touches the DB.
 vi.mock("@/lib/bearer", () => ({
 	verifyBearer: async (token: string) =>
 		token.startsWith("user-") ? token : null,
 }));
 vi.mock("@feedreader/db/client", () => ({ db: {} }));
 
-const initialize = {
-	jsonrpc: "2.0",
-	id: 1,
-	method: "initialize",
-	params: {
-		protocolVersion: "2025-03-26",
-		capabilities: {},
-		clientInfo: { name: "test", version: "0" },
-	},
+const LEGACY_VERSION = "2025-03-26";
+
+// 2026-07-28 drops the initialize handshake: every request carries its
+// protocol version and client info in `_meta`.
+const MODERN_META = {
+	"io.modelcontextprotocol/protocolVersion": "2026-07-28",
+	"io.modelcontextprotocol/clientCapabilities": {},
+	"io.modelcontextprotocol/clientInfo": { name: "test", version: "0" },
 };
 
-function post(token: string, body: unknown, sessionId?: string) {
+function post(
+	body: unknown,
+	headers: Record<string, string> = {},
+	token = "user-a",
+) {
 	return handleMcpRequest(
 		new Request("http://localhost/api/mcp", {
 			method: "POST",
@@ -27,52 +30,124 @@ function post(token: string, body: unknown, sessionId?: string) {
 				authorization: `Bearer ${token}`,
 				"content-type": "application/json",
 				accept: "application/json, text/event-stream",
-				...(sessionId ? { "mcp-session-id": sessionId } : {}),
+				...headers,
 			},
 			body: JSON.stringify(body),
 		}),
 	);
 }
 
-describe("MCP sessions", () => {
-	it("binds a session to the user who opened it", async () => {
-		const res = await post("user-a", initialize);
+function postModern(method: string, params: object = {}) {
+	return post(
+		{
+			jsonrpc: "2.0",
+			id: 1,
+			method,
+			params: { _meta: MODERN_META, ...params },
+		},
+		{
+			"mcp-protocol-version":
+				MODERN_META["io.modelcontextprotocol/protocolVersion"],
+			"mcp-method": method,
+		},
+	);
+}
+
+/** The body, or a marker when the server is still holding it open. */
+async function bodyWithin(res: Response, ms: number): Promise<string> {
+	return Promise.race([
+		res.text(),
+		new Promise<string>((done) => setTimeout(() => done('"held open"'), ms)),
+	]);
+}
+
+/** A JSON-RPC result from either a JSON or a single-event SSE body. */
+function rpcResult(body: string) {
+	const json = body.startsWith("{")
+		? body
+		: (body
+				.split("\n")
+				.find((line) => line.startsWith("data: "))
+				?.slice(6) ?? "{}");
+	return JSON.parse(json);
+}
+
+describe("MCP handler", () => {
+	it("serves a client on the 2026-07-28 protocol revision", async () => {
+		const res = await postModern("tools/list");
+
 		expect(res.status).toBe(200);
-		const sessionId = res.headers.get("mcp-session-id");
-		expect(sessionId).toBeTruthy();
-		await res.body?.cancel();
-
-		const ping = { jsonrpc: "2.0", id: 2, method: "ping" };
-		const foreign = await post("user-b", ping, sessionId!);
-		expect(foreign.status).toBe(403);
-
-		const own = await post("user-a", ping, sessionId!);
-		expect(own.status).toBe(200);
-		await own.body?.cancel();
-
-		const del = await handleMcpRequest(
-			new Request("http://localhost/api/mcp", {
-				method: "DELETE",
-				headers: {
-					authorization: "Bearer user-b",
-					"mcp-session-id": sessionId!,
-				},
-			}),
+		const { result } = rpcResult(await bodyWithin(res, 1000));
+		expect(result.tools.map((t: { name: string }) => t.name)).toContain(
+			"list_items",
 		);
-		expect(del.status).toBe(403);
 	});
 
-	it("rejects unknown sessions and missing tokens", async () => {
+	it("tells clients nothing changes, so they have no reason to subscribe", async () => {
+		const res = await postModern("server/discover");
+		const { result } = rpcResult(await bodyWithin(res, 1000));
+
+		expect(result.capabilities.tools?.listChanged).toBe(false);
+		expect(result.capabilities.prompts?.listChanged ?? false).toBe(false);
+	});
+
+	it("refuses a subscription at once instead of holding it until the function times out", async () => {
+		const res = await postModern("subscriptions/listen", {
+			notifications: { toolsListChanged: true },
+		});
+
+		expect(rpcResult(await bodyWithin(res, 1000))).toHaveProperty("error");
+	});
+
+	it("lists the tools with their input schemas", async () => {
+		const res = await postModern("tools/list");
+		const { result } = rpcResult(await bodyWithin(res, 1000));
+		const addNote = result.tools.find(
+			(t: { name: string }) => t.name === "add_note",
+		);
+
+		expect(addNote.inputSchema.required).toEqual(["id", "notes"]);
+	});
+
+	it("still serves 2025-era clients without a session", async () => {
+		const init = await post(
+			{
+				jsonrpc: "2.0",
+				id: 1,
+				method: "initialize",
+				params: {
+					protocolVersion: LEGACY_VERSION,
+					capabilities: {},
+					clientInfo: { name: "test", version: "0" },
+				},
+			},
+			{ "mcp-protocol-version": LEGACY_VERSION },
+		);
+		expect(init.status).toBe(200);
+		expect(init.headers.get("mcp-session-id")).toBeNull();
+		await init.body?.cancel();
+
+		const list = await post(
+			{ jsonrpc: "2.0", id: 2, method: "tools/list" },
+			{ "mcp-protocol-version": LEGACY_VERSION },
+		);
+		expect(list.status).toBe(200);
+		const { result } = rpcResult(await bodyWithin(list, 1000));
+		expect(result.tools.length).toBeGreaterThan(0);
+	});
+
+	it("rejects missing and invalid tokens with the OAuth challenge", async () => {
 		const anon = await handleMcpRequest(
 			new Request("http://localhost/api/mcp", { method: "POST" }),
 		);
 		expect(anon.status).toBe(401);
 		expect(anon.headers.get("www-authenticate")).toContain("resource_metadata");
-		const unknown = await post(
-			"user-a",
+
+		const invalid = await post(
 			{ jsonrpc: "2.0", id: 1, method: "ping" },
-			"nope",
+			{},
+			"bogus",
 		);
-		expect(unknown.status).toBe(400);
+		expect(invalid.status).toBe(401);
 	});
 });

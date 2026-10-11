@@ -1,4 +1,4 @@
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { McpServer } from "@modelcontextprotocol/server";
 import { z } from "zod";
 import { assertPublicUrl, FeedError } from "@/server/lib/feedfetch";
 import type { ItemFilter } from "@/server/repos/items";
@@ -37,7 +37,7 @@ export function registerReaderTools(
 		{
 			description:
 				"List posts. filter: unread (default), all, starred, feed:<id>, tag:<name>. Optional search over title, text and notes.",
-			inputSchema: {
+			inputSchema: z.object({
 				filter: z
 					.string()
 					.optional()
@@ -47,7 +47,7 @@ export function registerReaderTools(
 					.optional()
 					.describe("Substring to search in title, content and notes"),
 				limit: z.number().int().optional().describe("Max rows, default 50"),
-			},
+			}),
 		},
 		async ({ filter, search, limit }) => {
 			const { db, userId } = getCtx();
@@ -75,14 +75,14 @@ export function registerReaderTools(
 		"get_item",
 		{
 			description: "Full post: plain-text content, notes and tags.",
-			inputSchema: {
+			inputSchema: z.object({
 				id,
 				max_chars: z
 					.number()
 					.int()
 					.optional()
 					.describe("Truncate content to this many characters (default 20000)"),
-			},
+			}),
 		},
 		async ({ id: itemId, max_chars }) => {
 			const { db, userId } = getCtx();
@@ -131,10 +131,10 @@ export function registerReaderTools(
 		"mark_read",
 		{
 			description: "Mark a post read (or unread with read=false).",
-			inputSchema: {
+			inputSchema: z.object({
 				id,
 				read: z.boolean().optional().describe("Default true"),
-			},
+			}),
 		},
 		async ({ id: itemId, read }) => {
 			const { db, userId } = getCtx();
@@ -147,10 +147,10 @@ export function registerReaderTools(
 		"star",
 		{
 			description: "Star or unstar a post.",
-			inputSchema: {
+			inputSchema: z.object({
 				id,
 				starred: z.boolean().optional().describe("Default true"),
-			},
+			}),
 		},
 		async ({ id: itemId, starred }) => {
 			const { db, userId } = getCtx();
@@ -166,11 +166,11 @@ export function registerReaderTools(
 		{
 			description:
 				"Write the user's notes on a post. Appends a paragraph unless replace=true.",
-			inputSchema: {
+			inputSchema: z.object({
 				id,
 				notes: z.string().describe("Markdown text"),
 				replace: z.boolean().optional().describe("Replace instead of append"),
-			},
+			}),
 		},
 		async ({ id: itemId, notes, replace }) => {
 			const { db, userId } = getCtx();
@@ -189,11 +189,11 @@ export function registerReaderTools(
 		{
 			description:
 				"Add tags to a post (union with existing unless replace=true).",
-			inputSchema: {
+			inputSchema: z.object({
 				id,
 				tags: z.array(z.string()).describe("Tags"),
 				replace: z.boolean().optional().describe("Replace instead of add"),
-			},
+			}),
 		},
 		async ({ id: itemId, tags, replace }) => {
 			const { db, userId } = getCtx();
@@ -212,10 +212,10 @@ export function registerReaderTools(
 		{
 			description:
 				"Subscribe to a feed. Accepts a feed URL or a site/post URL (autodiscovery).",
-			inputSchema: {
+			inputSchema: z.object({
 				url: z.string().describe("Feed or site URL"),
 				category: z.string().optional().describe("Optional category"),
-			},
+			}),
 		},
 		async ({ url, category }) => {
 			const { db, userId } = getCtx();
