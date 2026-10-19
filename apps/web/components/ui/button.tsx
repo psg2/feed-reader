@@ -4,30 +4,33 @@ import type * as React from "react";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-	"inline-flex items-center justify-center gap-1.5 rounded-md transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring/40 disabled:cursor-not-allowed disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+	"inline-flex items-center justify-center gap-1.5 rounded-md transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring/40 has-focus-visible:ring-2 has-focus-visible:ring-ring/40 disabled:cursor-not-allowed disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
 	{
 		variants: {
 			variant: {
 				default:
-					"bg-primary font-medium text-primary-foreground hover:bg-primary/90",
-				outline: "border border-input hover:bg-accent",
+					"bg-primary font-medium text-primary-foreground not-disabled:hover:bg-primary/90",
+				outline: "border border-input not-disabled:hover:bg-accent",
 				"outline-muted":
-					"border border-input text-muted-foreground hover:bg-accent hover:text-foreground",
+					"border border-input text-muted-foreground not-disabled:hover:bg-accent not-disabled:hover:text-foreground",
 				"outline-primary":
-					"border border-primary/40 font-medium text-primary hover:bg-primary/10",
-				ghost: "text-muted-foreground hover:bg-accent hover:text-foreground",
+					"border border-primary/40 font-medium text-primary not-disabled:hover:bg-primary/10",
+				ghost:
+					"text-muted-foreground not-disabled:hover:bg-accent not-disabled:hover:text-foreground",
 				"ghost-destructive":
-					"text-muted-foreground hover:bg-accent hover:text-destructive",
+					"text-muted-foreground not-disabled:hover:bg-accent not-disabled:hover:text-destructive",
 				sidebar:
-					"text-muted-foreground hover:bg-sidebar-accent hover:text-foreground",
-				"sidebar-outline": "border border-input hover:bg-sidebar-accent",
-				floating: "rounded-full border bg-popover shadow-md hover:bg-accent",
+					"text-muted-foreground not-disabled:hover:bg-sidebar-accent not-disabled:hover:text-foreground",
+				"sidebar-outline":
+					"border border-input not-disabled:hover:bg-sidebar-accent",
+				floating:
+					"rounded-full border bg-popover shadow-md not-disabled:hover:bg-accent",
 				"floating-primary":
-					"rounded-full border border-dashed border-primary/50 bg-background/80 font-medium text-primary shadow-md backdrop-blur hover:bg-primary/10",
-				text: "text-muted-foreground hover:text-foreground disabled:hover:text-muted-foreground",
-				link: "underline underline-offset-2 hover:text-foreground",
+					"rounded-full border border-dashed border-primary/50 bg-background/80 font-medium text-primary shadow-md backdrop-blur not-disabled:hover:bg-primary/10",
+				text: "text-muted-foreground not-disabled:hover:text-foreground",
+				link: "underline underline-offset-2 not-disabled:hover:text-foreground",
 				"link-muted":
-					"text-muted-foreground underline underline-offset-2 hover:text-foreground",
+					"text-muted-foreground underline underline-offset-2 not-disabled:hover:text-foreground",
 				plain: "",
 			},
 			size: {
