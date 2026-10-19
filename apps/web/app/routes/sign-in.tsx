@@ -6,6 +6,9 @@ import { toast } from "sonner";
 import { getAuthConfigFn } from "@/app/server-fns/auth";
 import { useSessionContext } from "@/components/providers/session-provider";
 import { DemoCredentialsHint } from "@/components/shared/demo-credentials-hint";
+import { GoogleIcon } from "@/components/shared/google-icon";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
 	InputOTP,
 	InputOTPGroup,
@@ -208,11 +211,13 @@ function SignInPage() {
 					<>
 						{authConfig.google && (
 							<>
-								<button
+								<Button
 									type="button"
 									onClick={handleGoogleSignIn}
 									disabled={isGoogleLoading}
-									className="flex w-full items-center justify-center gap-2 rounded-md border border-input bg-background px-4 py-2.5 text-sm font-medium hover:bg-accent disabled:opacity-50"
+									variant="outline"
+									size="lg"
+									className="w-full"
 								>
 									{isGoogleLoading ? (
 										<Loader2 className="h-4 w-4 animate-spin" />
@@ -220,7 +225,7 @@ function SignInPage() {
 										<GoogleIcon />
 									)}
 									Continue with Google
-								</button>
+								</Button>
 
 								<Divider />
 							</>
@@ -252,7 +257,7 @@ function SignInPage() {
 										</Link>
 									)}
 								</div>
-								<input
+								<Input
 									id="password"
 									type="password"
 									value={password}
@@ -263,7 +268,6 @@ function SignInPage() {
 											return rest;
 										});
 									}}
-									className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
 									placeholder="••••••••"
 									autoComplete="current-password"
 								/>
@@ -271,31 +275,34 @@ function SignInPage() {
 									<p className="text-xs text-destructive">{errors.password}</p>
 								)}
 							</div>
-							<button
+							<Button
 								type="submit"
 								disabled={isLoading}
-								className="w-full rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+								size="lg"
+								className="w-full"
 							>
 								{isLoading ? (
 									<Loader2 className="mx-auto h-4 w-4 animate-spin" />
 								) : (
 									"Sign In"
 								)}
-							</button>
+							</Button>
 						</form>
 
 						{authConfig.emailOtp && (
-							<button
+							<Button
 								type="button"
 								onClick={() => {
 									setMode("passwordless");
 									setPassword("");
 								}}
-								className="flex w-full items-center justify-center gap-2 rounded-md border border-input bg-background px-4 py-2.5 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground"
+								variant="outline-muted"
+								size="lg"
+								className="w-full"
 							>
 								<Mail className="h-4 w-4" />
 								Sign in with an email code
-							</button>
+							</Button>
 						)}
 					</>
 				)}
@@ -314,24 +321,27 @@ function SignInPage() {
 							}
 							autoFocus
 						/>
-						<button
+						<Button
 							type="submit"
 							disabled={isLoading}
-							className="w-full rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+							size="lg"
+							className="w-full"
 						>
 							{isLoading ? (
 								<Loader2 className="mx-auto h-4 w-4 animate-spin" />
 							) : (
 								"Send code"
 							)}
-						</button>
-						<button
+						</Button>
+						<Button
 							type="button"
 							onClick={() => setMode("password")}
-							className="w-full text-sm text-muted-foreground hover:underline"
+							variant="text"
+							size="inline-sm"
+							className="w-full"
 						>
 							Back to password
-						</button>
+						</Button>
 					</form>
 				)}
 
@@ -361,39 +371,42 @@ function SignInPage() {
 								</InputOTPGroup>
 							</InputOTP>
 						</div>
-						<button
+						<Button
 							id="verify-signin-btn"
 							type="submit"
 							disabled={isLoading || otp.length !== 6}
-							className="w-full rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+							size="lg"
+							className="w-full"
 						>
 							{isLoading ? (
 								<Loader2 className="mx-auto h-4 w-4 animate-spin" />
 							) : (
 								"Verify"
 							)}
-						</button>
+						</Button>
 						<div className="flex items-center justify-between gap-2 text-sm">
-							<button
+							<Button
 								type="button"
 								onClick={() => {
 									setOtp("");
 									setMode("password");
 								}}
-								className="text-muted-foreground hover:text-foreground"
+								variant="text"
+								size="inline"
 							>
 								Change email
-							</button>
-							<button
+							</Button>
+							<Button
 								type="button"
 								onClick={() => handleSendOtp()}
 								disabled={isLoading || resendCooldown.secondsLeft > 0}
-								className="text-muted-foreground hover:text-foreground disabled:cursor-not-allowed disabled:hover:text-muted-foreground"
+								variant="text"
+								size="inline"
 							>
 								{resendCooldown.secondsLeft > 0
 									? `Resend (${resendCooldown.secondsLeft}s)`
 									: "Resend code"}
-							</button>
+							</Button>
 						</div>
 					</form>
 				)}
@@ -435,7 +448,7 @@ function EmailField({
 			<label htmlFor="email" className="text-sm font-medium">
 				Email
 			</label>
-			<input
+			<Input
 				id="email"
 				type="email"
 				value={email}
@@ -443,7 +456,6 @@ function EmailField({
 					setEmail(e.target.value);
 					clearError();
 				}}
-				className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
 				placeholder="you@example.com"
 				autoComplete="email"
 				autoFocus={autoFocus}
@@ -465,29 +477,5 @@ function Divider() {
 				</span>
 			</div>
 		</div>
-	);
-}
-
-function GoogleIcon() {
-	return (
-		<svg className="h-4 w-4" viewBox="0 0 24 24">
-			<title>Google</title>
-			<path
-				d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"
-				fill="#4285F4"
-			/>
-			<path
-				d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-				fill="#34A853"
-			/>
-			<path
-				d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-				fill="#FBBC05"
-			/>
-			<path
-				d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-				fill="#EA4335"
-			/>
-		</svg>
 	);
 }

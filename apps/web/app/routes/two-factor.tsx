@@ -3,6 +3,8 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Loader2, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
 
 export const Route = createFileRoute("/two-factor")({
@@ -67,7 +69,7 @@ function TwoFactorPage() {
 
 				<div className="space-y-4">
 					<div className="flex justify-center">
-						<input
+						<Input
 							type="text"
 							inputMode={method === "totp" ? "numeric" : "text"}
 							pattern={method === "totp" ? "^\\d+$" : undefined}
@@ -80,36 +82,41 @@ function TwoFactorPage() {
 										: e.target.value,
 								)
 							}
-							className="w-48 text-center rounded-md border border-input bg-background px-3 py-2 text-lg tracking-[0.3em] font-mono"
+							variant="code"
+							size="lg"
+							className="w-48"
 							placeholder={method === "totp" ? "000000" : "backup-code"}
 						/>
 					</div>
 
-					<button
+					<Button
 						type="button"
 						onClick={handleVerify}
 						disabled={isLoading || !code.trim()}
-						className="w-full rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+						size="lg"
+						className="w-full"
 					>
 						{isLoading ? (
 							<Loader2 className="mx-auto h-4 w-4 animate-spin" />
 						) : (
 							"Verify"
 						)}
-					</button>
+					</Button>
 
-					<button
+					<Button
 						type="button"
 						onClick={() => {
 							setMethod(method === "totp" ? "backup" : "totp");
 							setCode("");
 						}}
-						className="w-full text-sm text-muted-foreground hover:underline"
+						variant="text"
+						size="inline-sm"
+						className="w-full"
 					>
 						{method === "totp"
 							? "Use a backup code instead"
 							: "Use authenticator app"}
-					</button>
+					</Button>
 				</div>
 			</div>
 		</div>

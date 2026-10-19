@@ -1,7 +1,10 @@
 {
 	"$schema": "./node_modules/oxlint/configuration_schema.json",
 	"plugins": ["import", "typescript", "unicorn", "react"],
-	"jsPlugins": ["./tooling/oxlint-plugin-no-use-effect/index.js"],
+	"jsPlugins": [
+		"./tooling/oxlint-plugin-no-use-effect/index.js",
+		"@shadcn/lint"
+	],
 	"categories": {
 		"correctness": "error",
 		"suspicious": "warn",
@@ -23,9 +26,52 @@
 		"unicorn/no-empty-file": "off",
 		"unicorn/no-new-array": "off",
 		"import/no-named-as-default": "off",
-		"import/no-unassigned-import": ["warn", { "allow": ["**/jest-dom/**"] }],
+		"import/no-unassigned-import": [
+			"warn",
+			{
+				"allow": ["**/jest-dom/**"]
+			}
+		],
 		"typescript/no-explicit-any": "warn",
-		"no-use-effect/no-use-effect": "error"
+		"no-use-effect/no-use-effect": "error",
+		"shadcn/no-restyle": [
+			"error",
+			{
+				"allow": ["layout"]
+			}
+		],
+		"shadcn/no-raw-colors": "error",
+		"shadcn/no-arbitrary-values": "error",
+		"shadcn/no-inline-styles": "error",
+		"shadcn/no-unknown-classes": "error",
+		"shadcn/require-static-classes": "error",
+		"react/forbid-elements": [
+			"error",
+			{
+				"forbid": [
+					{
+						"element": "button",
+						"message": "use <Button> from @/components/ui/button; add a variant or size there when none fits"
+					},
+					{
+						"element": "input",
+						"message": "use <Input>, <Switch> or another @/components/ui primitive"
+					},
+					{
+						"element": "select",
+						"message": "use <Select> from @/components/ui/select"
+					},
+					{
+						"element": "textarea",
+						"message": "use <Textarea> from @/components/ui/textarea"
+					},
+					{
+						"element": "dialog",
+						"message": "use <Dialog> or <AlertDialog> from @/components/ui"
+					}
+				]
+			}
+		]
 	},
 	"overrides": [
 		{
@@ -33,6 +79,15 @@
 			"rules": {
 				"no-unused-vars": "off",
 				"typescript/no-non-null-assertion": "off"
+			}
+		},
+		{
+			"files": ["apps/web/components/ui/**"],
+			"rules": {
+				"react/forbid-elements": "off",
+				"shadcn/no-restyle": "off",
+				"shadcn/no-arbitrary-values": "off",
+				"shadcn/require-static-classes": "off"
 			}
 		}
 	],

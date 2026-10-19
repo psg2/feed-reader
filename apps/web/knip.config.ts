@@ -24,8 +24,6 @@ const config: KnipConfig = {
 	project: ["**/*.{ts,tsx}"],
 	ignoreDependencies: [
 		"@feedreader/tailwind-config",
-		// shadcn/ui component variants
-		"class-variance-authority",
 		// app/globals.css imports shadcn/tailwind.css — knip does not follow CSS
 		"shadcn",
 		// Tailwind toolchain — knip can't trace CSS imports

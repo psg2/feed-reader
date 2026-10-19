@@ -4,6 +4,7 @@ import { Loader2, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useSessionContext } from "@/components/providers/session-provider";
+import { Button } from "@/components/ui/button";
 
 /**
  * OAuth consent page — shown when an MCP client (or other OAuth app)
@@ -119,13 +120,14 @@ function ConsentPage() {
 					<p className="text-muted-foreground">
 						Invalid authorization parameters.
 					</p>
-					<button
+					<Button
 						type="button"
-						className="mt-4 rounded-md border border-input px-4 py-2 text-sm hover:bg-accent"
+						variant="outline"
+						className="mt-4"
 						onClick={() => navigate({ to: "/reader" })}
 					>
 						Go back
-					</button>
+					</Button>
 				</div>
 			</div>
 		);
@@ -201,28 +203,29 @@ function ConsentPage() {
 
 				{/* Actions */}
 				<div className="flex gap-3">
-					<button
+					<Button
 						type="button"
-						className="flex flex-1 items-center justify-center rounded-md border border-input px-4 py-2.5 text-sm font-medium hover:bg-accent disabled:opacity-50"
+						variant="outline"
+						size="lg"
+						className="flex-1"
 						disabled={loading !== null}
 						onClick={() => handleConsent(false)}
 					>
-						{loading === "deny" && (
-							<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-						)}
+						{loading === "deny" && <Loader2 className="h-4 w-4 animate-spin" />}
 						Deny
-					</button>
-					<button
+					</Button>
+					<Button
 						type="button"
-						className="flex flex-1 items-center justify-center rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+						size="lg"
+						className="flex-1"
 						disabled={loading !== null}
 						onClick={() => handleConsent(true)}
 					>
 						{loading === "accept" && (
-							<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+							<Loader2 className="h-4 w-4 animate-spin" />
 						)}
 						Authorize
-					</button>
+					</Button>
 				</div>
 
 				<p className="text-center text-xs text-muted-foreground">

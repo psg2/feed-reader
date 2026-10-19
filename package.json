@@ -42,6 +42,7 @@
 		"outdated": "npx taze -r"
 	},
 	"devDependencies": {
+		"@shadcn/lint": "^0.2.0",
 		"oxfmt": "^0.71.0",
 		"oxlint": "^1.86.0",
 		"playwright-core": "^1.63.0",

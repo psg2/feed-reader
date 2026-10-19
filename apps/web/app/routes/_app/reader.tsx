@@ -11,7 +11,7 @@ import {
 	Layers,
 	LogOut,
 	Mail,
-	Menu as MenuIcon,
+	MenuIcon,
 	Moon,
 	MoreHorizontal,
 	Pause,
@@ -42,7 +42,9 @@ import {
 import { KEYS, ShortcutsHelp, useReaderShortcuts } from "./-reader/shortcuts";
 import { undo } from "./-reader/undo";
 import { FeedIcon, isNewsletter } from "@/components/shared/feed-icon";
+import { Button } from "@/components/ui/button";
 import { ConfirmPopover } from "@/components/ui/confirm-popover";
+import { Input } from "@/components/ui/input";
 import { ContextActions, Menu, type MenuAction } from "@/components/ui/menu";
 import { Tip } from "@/components/ui/tooltip";
 import { useOnline } from "@/hooks/use-online";
@@ -293,7 +295,7 @@ function ReaderPage() {
 					"flex w-full min-w-0 shrink-0 flex-col border-r md:w-(--pane-list)",
 					selectedId && "hidden md:flex",
 				)}
-				style={listWidth}
+				style={{ "--pane-list": `${listWidth}px` } as React.CSSProperties}
 			>
 				<ItemList
 					listInput={listInput}
@@ -334,11 +336,11 @@ function ReaderPage() {
 			{navOpen && (
 				// biome-ignore lint/a11y/noStaticElementInteractions: backdrop dismiss; Esc handled globally
 				<div
-					className="fixed inset-0 z-40 animate-[fade-in_150ms_ease-out] bg-black/40 md:hidden"
+					className="fixed inset-0 z-40 animate-fade-in bg-black/40 md:hidden"
 					onClick={() => setNavOpen(false)}
 				>
 					<div
-						className="h-full w-72 max-w-[85vw] animate-[drawer-in_200ms_cubic-bezier(0.16,1,0.3,1)]"
+						className="h-full w-72 max-w-drawer animate-drawer-in"
 						onClick={(e) => e.stopPropagation()}
 					>
 						<Sidebar
@@ -384,14 +386,10 @@ function EmptyDetail({ onPalette }: { onPalette: () => void }) {
 	return (
 		<div className="flex h-full flex-col items-center justify-center gap-3 text-muted-foreground">
 			<p className="font-serif text-lg">{"Pick a post to read"}</p>
-			<button
-				type="button"
-				onClick={onPalette}
-				className="rounded-md border px-3 py-1.5 text-xs hover:bg-accent"
-			>
+			<Button type="button" onClick={onPalette} variant="outline" size="xs">
 				{"or press "}
 				<kbd className="font-sans font-medium">{KEYS.palette}</kbd>
-			</button>
+			</Button>
 		</div>
 	);
 }
@@ -399,7 +397,7 @@ function EmptyDetail({ onPalette }: { onPalette: () => void }) {
 // ── Sidebar ────────────────────────────────────────────────────────────────
 
 const heading = (label: string) => (
-	<span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/80">
+	<span className="text-2xs font-semibold uppercase tracking-wider text-muted-foreground/80">
 		{label}
 	</span>
 );
@@ -437,7 +435,7 @@ function Sidebar({
 			search={(prev: Search) => ({ ...prev, view, item: undefined })}
 			onClick={onNavigate}
 			className={cn(
-				"flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] text-sidebar-foreground/90 hover:bg-sidebar-accent",
+				"flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-ui text-sidebar-foreground/90 hover:bg-sidebar-accent",
 				activeView === view &&
 					"bg-sidebar-accent font-medium text-sidebar-foreground",
 			)}
@@ -446,7 +444,7 @@ function Sidebar({
 			{icon}
 			<span className="min-w-0 flex-1 truncate">{label}</span>
 			{badge !== undefined && badge > 0 && (
-				<span className="text-[11px] tabular-nums text-muted-foreground">
+				<span className="text-2xs tabular-nums text-muted-foreground">
 					{badge}
 				</span>
 			)}
@@ -460,7 +458,7 @@ function Sidebar({
 				className,
 			)}
 		>
-			<div className="flex items-center gap-2 px-4 pb-2 pt-[max(1rem,env(safe-area-inset-top))]">
+			<div className="flex items-center gap-2 px-4 pb-2 pt-safe-4">
 				<Rss className="h-4 w-4 text-primary" strokeWidth={2.5} />
 				<span className="text-sm font-semibold tracking-tight">
 					{"Feed Reader"}
@@ -495,39 +493,43 @@ function Sidebar({
 						{heading("Feeds")}
 						{onAddFeed && (
 							<Tip label="Add feed" kbd={KEYS.addFeed}>
-								<button
+								<Button
 									type="button"
 									aria-label="Add feed"
 									onClick={onAddFeed}
-									className="rounded p-1 text-muted-foreground/70 hover:bg-sidebar-accent hover:text-foreground"
+									variant="sidebar"
+									size="icon-sm"
 								>
 									<Plus className="h-3.5 w-3.5" />
-								</button>
+								</Button>
 							</Tip>
 						)}
 					</div>
 					{feedsQuery.isError && !feedsQuery.data ? (
 						<div className="px-2.5 py-2 text-xs text-muted-foreground">
 							{"Couldn't reach the server. "}
-							<button
+							<Button
 								type="button"
 								onClick={() => feedsQuery.refetch()}
-								className="underline underline-offset-2 hover:text-foreground"
+								variant="link"
+								size="inline"
 							>
 								{"Try again"}
-							</button>
+							</Button>
 						</div>
 					) : feedsQuery.isSuccess && feeds.length === 0 ? (
 						<div className="px-2.5 py-2 text-xs text-muted-foreground">
 							<p className="font-serif">{"Nothing here yet."}</p>
 							{onAddFeed && (
-								<button
+								<Button
 									type="button"
 									onClick={onAddFeed}
-									className="mt-1.5 rounded-md border border-input px-2 py-1 text-xs hover:bg-sidebar-accent"
+									variant="sidebar-outline"
+									size="2xs"
+									className="mt-1.5"
 								>
 									{"Add your first feed"}
-								</button>
+								</Button>
 							)}
 						</div>
 					) : (
@@ -651,7 +653,7 @@ function FeedRow({
 						})}
 						onClick={onNavigate}
 						className={cn(
-							"flex items-center gap-2.5 rounded-md py-1.5 pl-2.5 pr-8 text-[13px] text-sidebar-foreground/90 hover:bg-sidebar-accent",
+							"flex items-center gap-2.5 rounded-md py-1.5 pl-2.5 pr-8 text-ui text-sidebar-foreground/90 hover:bg-sidebar-accent",
 							active && "bg-sidebar-accent font-medium text-sidebar-foreground",
 							!feed.enabled && "text-muted-foreground",
 						)}
@@ -659,7 +661,7 @@ function FeedRow({
 						<FeedIcon url={feed.url} />
 						<span className="min-w-0 flex-1 truncate">{feed.title}</span>
 						{feed.unread > 0 && (
-							<span className="text-[11px] tabular-nums text-muted-foreground group-focus-within:hidden group-hover:hidden">
+							<span className="text-2xs tabular-nums text-muted-foreground group-focus-within:hidden group-hover:hidden">
 								{feed.unread}
 							</span>
 						)}
@@ -669,13 +671,14 @@ function FeedRow({
 					<Menu
 						actions={actions}
 						trigger={
-							<button
+							<Button
 								type="button"
 								aria-label={`Actions for ${feed.title}`}
-								className="rounded p-1 text-muted-foreground hover:bg-sidebar-accent hover:text-foreground"
+								variant="sidebar"
+								size="icon-sm"
 							>
 								<MoreHorizontal className="h-3.5 w-3.5" />
-							</button>
+							</Button>
 						}
 					/>
 				</div>
@@ -694,56 +697,59 @@ export function SidebarFooter({
 }) {
 	const { resolvedTheme, setTheme } = useTheme();
 	const navigate = useNavigate();
-	const btn =
-		"rounded-md p-2 text-muted-foreground hover:bg-sidebar-accent hover:text-foreground";
 	return (
 		<div
 			className={cn(
-				"flex items-center gap-1 border-t border-sidebar-border p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]",
+				"flex items-center gap-1 border-t border-sidebar-border p-2 pb-safe-2",
 				stacked && "w-full flex-col",
 			)}
 		>
 			<Tip label="Settings" kbd={KEYS.settings} side="top">
-				<Link to="/settings" aria-label="Settings" className={btn}>
-					<SettingsIcon className="h-4 w-4" />
-				</Link>
+				<Button asChild variant="sidebar" size="icon">
+					<Link to="/settings" aria-label="Settings">
+						<SettingsIcon className="h-4 w-4" />
+					</Link>
+				</Button>
 			</Tip>
 			<Tip label="Toggle theme" side="top">
-				<button
+				<Button
 					type="button"
 					aria-label="Toggle theme"
 					onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-					className={btn}
+					variant="sidebar"
+					size="icon"
 				>
 					<Sun className="h-4 w-4 dark:hidden" />
 					<Moon className="hidden h-4 w-4 dark:block" />
-				</button>
+				</Button>
 			</Tip>
 			{onHelp && (
 				<Tip label="Keyboard shortcuts" kbd={KEYS.help} side="top">
-					<button
+					<Button
 						type="button"
 						aria-label="Keyboard shortcuts"
 						onClick={onHelp}
-						className={btn}
+						variant="sidebar"
+						size="icon"
 					>
 						<CircleHelp className="h-4 w-4" />
-					</button>
+					</Button>
 				</Tip>
 			)}
 			<div className="flex-1" />
 			<Tip label="Sign out" side="top">
-				<button
+				<Button
 					type="button"
 					aria-label="Sign out"
 					onClick={async () => {
 						await signOut();
 						navigate({ to: "/sign-in" });
 					}}
-					className={btn}
+					variant="sidebar"
+					size="icon"
 				>
 					<LogOut className="h-4 w-4" />
-				</button>
+				</Button>
 			</Tip>
 		</div>
 	);
@@ -802,22 +808,24 @@ function ItemList({
 
 	return (
 		<>
-			<div className="shrink-0 border-b pt-[env(safe-area-inset-top)]">
+			<div className="shrink-0 border-b pt-safe">
 				<div className="flex h-12 items-center gap-1 pl-3 pr-2">
-					<button
+					<Button
 						type="button"
 						onClick={onOpenNav}
 						aria-label="Open navigation"
-						className="-ml-1 flex min-w-0 flex-1 items-center gap-2.5 rounded-md py-1.5 pl-1 md:hidden"
+						variant="plain"
+						size="nav"
+						className="-ml-1 min-w-0 flex-1 md:hidden"
 					>
 						<MenuIcon className="h-5 w-5 shrink-0 text-muted-foreground" />
-						<span className="truncate text-[15px] font-semibold tracking-tight">
+						<span className="truncate text-title font-semibold tracking-tight">
 							{viewLabel}
 						</span>
 						{unreadBadge}
-					</button>
+					</Button>
 					<div className="hidden min-w-0 flex-1 items-baseline gap-2 md:flex">
-						<h2 className="truncate text-[15px] font-semibold tracking-tight">
+						<h2 className="truncate text-title font-semibold tracking-tight">
 							{viewLabel}
 						</h2>
 						{unreadBadge}
@@ -876,13 +884,14 @@ function ItemList({
 								},
 							]}
 							trigger={
-								<button
+								<Button
 									type="button"
 									aria-label="More actions"
-									className="rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-foreground"
+									variant="ghost"
+									size="icon"
 								>
 									<MoreHorizontal className="h-4 w-4" />
-								</button>
+								</Button>
 							}
 						/>
 					</div>
@@ -900,16 +909,17 @@ function ItemList({
 				<div className="flex shrink-0 items-center gap-2 border-b bg-accent/60 px-3 py-1.5 text-xs text-muted-foreground">
 					<WifiOff className="h-3.5 w-3.5 shrink-0" />
 					<span className="flex-1">{"Offline: showing what was loaded"}</span>
-					<button
+					<Button
 						type="button"
 						onClick={() => itemsQuery.refetch()}
-						className="underline underline-offset-2 hover:text-foreground"
+						variant="link"
+						size="inline"
 					>
 						{"Retry"}
-					</button>
+					</Button>
 				</div>
 			)}
-			<div className="min-h-0 flex-1 overflow-y-auto pb-[env(safe-area-inset-bottom)]">
+			<div className="min-h-0 flex-1 overflow-y-auto pb-safe">
 				{firstRun ? (
 					<FirstRun />
 				) : itemsQuery.isLoading ? (
@@ -920,14 +930,16 @@ function ItemList({
 						<p className="mt-3 font-serif text-base text-muted-foreground">
 							{"Couldn't reach the server"}
 						</p>
-						<button
+						<Button
 							type="button"
 							onClick={() => itemsQuery.refetch()}
 							disabled={itemsQuery.isFetching}
-							className="mt-3 rounded-md border border-input px-3 py-1.5 text-xs hover:bg-accent disabled:opacity-50"
+							variant="outline"
+							size="xs"
+							className="mt-3"
 						>
 							{itemsQuery.isFetching ? "Trying…" : "Try again"}
-						</button>
+						</Button>
 					</div>
 				) : items.length === 0 ? (
 					<div className="px-6 py-16 text-center">
@@ -972,7 +984,7 @@ function FirstRun() {
 	return (
 		<div className="px-5 py-10">
 			<h3 className="font-serif text-lg">{"Add your first feed"}</h3>
-			<p className="mt-1 text-[13px] text-muted-foreground">
+			<p className="mt-1 text-ui text-muted-foreground">
 				{"Paste a site or feed URL. Or start with one of these."}
 			</p>
 			<div className="mt-4">
@@ -980,7 +992,7 @@ function FirstRun() {
 			</div>
 			<div className="mt-4 space-y-1.5">
 				{SUGGESTED_FEEDS.map((s) => (
-					<button
+					<Button
 						key={s.url}
 						type="button"
 						disabled={busy !== null}
@@ -991,19 +1003,21 @@ function FirstRun() {
 								{ onSettled: () => setBusy(null) },
 							);
 						}}
-						className="flex w-full items-center gap-2.5 rounded-md border border-input px-3 py-2 text-left text-[13px] hover:bg-accent disabled:opacity-50"
+						variant="outline"
+						size="row"
+						className="w-full"
 					>
 						<Rss className="h-4 w-4 shrink-0 text-muted-foreground" />
 						<span className="min-w-0 flex-1 truncate">{s.title}</span>
 						<span className="text-xs text-muted-foreground">
 							{busy === s.url ? "Adding…" : "Subscribe"}
 						</span>
-					</button>
+					</Button>
 				))}
 				{inbound?.domain && (
 					<Link
 						to="/settings"
-						className="flex w-full items-center gap-2.5 rounded-md border border-input px-3 py-2 text-left text-[13px] hover:bg-accent"
+						className="flex w-full items-center gap-2.5 rounded-md border border-input px-3 py-2 text-left text-ui hover:bg-accent"
 					>
 						<Mail className="h-4 w-4 shrink-0 text-muted-foreground" />
 						<span className="min-w-0 flex-1">
@@ -1014,14 +1028,14 @@ function FirstRun() {
 				)}
 			</div>
 			<div className="mt-4">
-				<OpmlImportButton className="inline-flex h-8 items-center gap-1.5 rounded-md border border-input px-3 text-xs hover:bg-accent" />
+				<OpmlImportButton />
 			</div>
 		</div>
 	);
 }
 
 /** File picker that reads an OPML client-side and imports it. */
-export function OpmlImportButton({ className }: { className?: string }) {
+export function OpmlImportButton() {
 	const importOpml = api.reader.useImportOpml({
 		onSuccess: (r) => {
 			const res = r as {
@@ -1040,22 +1054,24 @@ export function OpmlImportButton({ className }: { className?: string }) {
 		onError: (e) => toast.error(e.message),
 	});
 	return (
-		<label className={cn(className, "cursor-pointer")}>
-			<FileUp className="h-3.5 w-3.5" />
-			{importOpml.isPending ? "Importing…" : "Import OPML…"}
-			<input
-				type="file"
-				accept=".opml,.xml,text/xml,application/xml,text/x-opml"
-				className="sr-only"
-				disabled={importOpml.isPending}
-				onChange={async (e) => {
-					const file = e.target.files?.[0];
-					e.target.value = "";
-					if (!file) return;
-					importOpml.mutate({ xml: await file.text() });
-				}}
-			/>
-		</label>
+		<Button asChild variant="outline" size="compact">
+			<label className="cursor-pointer">
+				<FileUp className="h-3.5 w-3.5" />
+				{importOpml.isPending ? "Importing…" : "Import OPML…"}
+				<Input
+					type="file"
+					accept=".opml,.xml,text/xml,application/xml,text/x-opml"
+					className="sr-only"
+					disabled={importOpml.isPending}
+					onChange={async (e) => {
+						const file = e.target.files?.[0];
+						e.target.value = "";
+						if (!file) return;
+						importOpml.mutate({ xml: await file.text() });
+					}}
+				/>
+			</label>
+		</Button>
 	);
 }
 
@@ -1098,13 +1114,13 @@ function ItemRow({
 					selected && "bg-accent",
 				)}
 			>
-				<span className="flex w-2.5 shrink-0 justify-center pt-[7px]">
+				<span className="flex w-2.5 shrink-0 justify-center pt-1.75">
 					{unread && <span className="h-2 w-2 rounded-full bg-unread" />}
 				</span>
 				<span className="min-w-0 flex-1">
 					<span
 						className={cn(
-							"block truncate text-[14px] leading-snug",
+							"block truncate text-sm leading-snug",
 							unread ? "font-medium" : "text-muted-foreground",
 						)}
 					>
@@ -1140,25 +1156,28 @@ function SearchForm({ q }: { q?: string }) {
 			className="relative px-3 pb-2.5"
 		>
 			<SearchIcon className="pointer-events-none absolute left-5.5 top-2 h-4 w-4 text-muted-foreground" />
-			<input
+			<Input
 				id="reader-search"
 				value={query}
 				onChange={(e) => setQuery(e.target.value)}
 				placeholder="Search"
-				className="h-8 w-full rounded-md border-none bg-accent/70 pl-8 pr-8 text-sm outline-none placeholder:text-muted-foreground/70 focus-visible:ring-2 focus-visible:ring-ring/40"
+				variant="search"
+				size="sm"
 			/>
 			{q && (
-				<button
+				<Button
 					type="button"
 					aria-label="Clear search"
 					onClick={() => {
 						setQuery("");
 						navigate({ search: (prev: Search) => ({ ...prev, q: undefined }) });
 					}}
-					className="absolute right-5 top-2 text-muted-foreground hover:text-foreground"
+					variant="text"
+					size="inline"
+					className="absolute right-5 top-2"
 				>
 					<X className="h-4 w-4" />
-				</button>
+				</Button>
 			)}
 		</form>
 	);
@@ -1221,21 +1240,23 @@ export function AddFeedForm({ onDone }: { onDone?: () => void }) {
 				subscribe.mutate({ url: parsed.href });
 			}}
 		>
-			<input
+			<Input
 				ref={focusOnMount}
 				value={url}
 				onChange={(e) => setUrl(e.target.value)}
 				placeholder="Feed or site URL"
-				className="h-8 min-w-0 flex-1 rounded-md border border-input bg-background px-3 text-sm"
+				size="sm"
+				className="flex-1"
 				required
 			/>
-			<button
+			<Button
 				type="submit"
 				disabled={subscribe.isPending}
-				className="h-8 shrink-0 rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground disabled:opacity-50"
+				size="sm"
+				className="shrink-0"
 			>
 				{subscribe.isPending ? "Adding…" : "Add"}
-			</button>
+			</Button>
 		</form>
 	);
 }
@@ -1257,15 +1278,16 @@ export function IconButton({
 }) {
 	return (
 		<Tip label={label} kbd={kbd}>
-			<button
+			<Button
 				type="button"
 				aria-label={label}
 				onClick={onClick}
 				disabled={disabled}
-				className="rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 disabled:opacity-50"
+				variant="ghost"
+				size="icon"
 			>
 				{children}
-			</button>
+			</Button>
 		</Tip>
 	);
 }

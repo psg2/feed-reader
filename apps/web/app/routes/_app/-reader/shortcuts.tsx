@@ -162,7 +162,7 @@ const GROUPS: Array<{ title: string; keys: Array<[string, string]> }> = [
 
 export function Kbd({ children }: { children: React.ReactNode }) {
 	return (
-		<kbd className="rounded border bg-accent px-1.5 py-0.5 font-sans text-[11px] font-medium">
+		<kbd className="rounded border bg-accent px-1.5 py-0.5 font-sans text-2xs font-medium">
 			{children}
 		</kbd>
 	);
@@ -185,7 +185,7 @@ export function ShortcutsHelp({
 			<div
 				role="dialog"
 				aria-label="Keyboard shortcuts"
-				className="max-h-[85vh] w-full max-w-sm overflow-y-auto rounded-xl border bg-popover p-5 shadow-xl"
+				className="max-h-dialog w-full max-w-sm overflow-y-auto rounded-xl border bg-popover p-5 shadow-xl"
 				onClick={(e) => e.stopPropagation()}
 			>
 				<h2 className="mb-4 text-sm font-semibold tracking-tight">
@@ -194,14 +194,14 @@ export function ShortcutsHelp({
 				<div className="space-y-4">
 					{GROUPS.map((g) => (
 						<div key={g.title}>
-							<div className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/80">
+							<div className="mb-1.5 text-2xs font-semibold uppercase tracking-wider text-muted-foreground/80">
 								{g.title}
 							</div>
 							<dl className="space-y-1">
 								{g.keys.map(([key, label]) => (
 									<div
 										key={key}
-										className="flex items-center justify-between text-[13px]"
+										className="flex items-center justify-between text-ui"
 									>
 										<dt className="text-muted-foreground">{label}</dt>
 										<dd>
@@ -213,7 +213,7 @@ export function ShortcutsHelp({
 						</div>
 					))}
 				</div>
-				<p className="mt-4 text-[11px] text-muted-foreground">
+				<p className="mt-4 text-2xs text-muted-foreground">
 					{"On Windows and Linux, ⌘ is Ctrl."}
 				</p>
 			</div>

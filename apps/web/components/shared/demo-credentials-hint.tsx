@@ -1,5 +1,6 @@
 import { Sparkles } from "lucide-react";
 import { type RefObject, useEffectEvent, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
 import { useMountEffect } from "@/hooks/use-mount-effect";
 
 /**
@@ -75,47 +76,50 @@ export function DemoCredentialsHint({
 							>
 								<div className="min-w-0 flex-1">
 									<div className="flex items-baseline gap-1.5">
-										<span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+										<span className="text-3xs font-semibold uppercase tracking-wide text-muted-foreground">
 											{account.role}
 										</span>
 										<span className="truncate font-mono text-xs">
 											{account.email}
 										</span>
 									</div>
-									<p className="text-[11px] text-muted-foreground">
+									<p className="text-2xs text-muted-foreground">
 										{account.description}
 									</p>
 								</div>
 								{onFill ? (
-									<button
+									<Button
 										type="button"
 										onClick={() => {
 											onFill(account.email, DEMO_PASSWORD);
 											setOpen(false);
 										}}
-										className="shrink-0 rounded border border-primary/40 px-2 py-0.5 text-[11px] font-medium text-primary transition-colors hover:bg-primary/10"
+										variant="outline-primary"
+										size="chip"
+										className="shrink-0"
 									>
 										Fill
-									</button>
+									</Button>
 								) : null}
 							</li>
 						))}
 					</ul>
-					<p className="mt-2 text-[11px] text-muted-foreground">
+					<p className="mt-2 text-2xs text-muted-foreground">
 						Shared password: <code className="font-mono">{DEMO_PASSWORD}</code>
 					</p>
 				</div>
 			)}
-			<button
+			<Button
 				type="button"
 				aria-label="Demo accounts"
 				aria-expanded={open}
 				onClick={() => setOpen((v) => !v)}
-				className="flex items-center gap-1.5 rounded-full border border-dashed border-primary/50 bg-background/80 px-3 py-2 text-xs font-medium text-primary shadow-md backdrop-blur transition-colors hover:bg-primary/10"
+				variant="floating-primary"
+				size="compact"
 			>
 				<Sparkles className="h-3.5 w-3.5" />
 				Demo accounts
-			</button>
+			</Button>
 		</div>
 	);
 }
