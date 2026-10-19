@@ -4,6 +4,8 @@ import { CheckCircle2, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { getAuthMethodsFn } from "@/app/server-fns/auth";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
 	InputOTP,
 	InputOTPGroup,
@@ -173,7 +175,7 @@ function ForgotPasswordForm() {
 							<label htmlFor="email" className="text-sm font-medium">
 								Email
 							</label>
-							<input
+							<Input
 								id="email"
 								type="email"
 								value={email}
@@ -181,7 +183,6 @@ function ForgotPasswordForm() {
 									setEmail(e.target.value);
 									setErrors({});
 								}}
-								className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
 								placeholder="you@example.com"
 								autoComplete="email"
 								autoFocus
@@ -190,17 +191,18 @@ function ForgotPasswordForm() {
 								<p className="text-xs text-destructive">{errors.email}</p>
 							)}
 						</div>
-						<button
+						<Button
 							type="submit"
 							disabled={isLoading}
-							className="w-full rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+							size="lg"
+							className="w-full"
 						>
 							{isLoading ? (
 								<Loader2 className="mx-auto h-4 w-4 animate-spin" />
 							) : (
 								"Send reset code"
 							)}
-						</button>
+						</Button>
 					</form>
 				)}
 
@@ -231,7 +233,7 @@ function ForgotPasswordForm() {
 							<label htmlFor="new-password" className="text-sm font-medium">
 								New password
 							</label>
-							<input
+							<Input
 								id="new-password"
 								type="password"
 								value={newPassword}
@@ -239,7 +241,6 @@ function ForgotPasswordForm() {
 									setNewPassword(e.target.value);
 									setErrors({});
 								}}
-								className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
 								placeholder="At least 8 characters"
 								autoComplete="new-password"
 							/>
@@ -247,39 +248,42 @@ function ForgotPasswordForm() {
 								<p className="text-xs text-destructive">{errors.password}</p>
 							)}
 						</div>
-						<button
+						<Button
 							type="submit"
 							disabled={isLoading || otp.length !== 6}
-							className="w-full rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+							size="lg"
+							className="w-full"
 						>
 							{isLoading ? (
 								<Loader2 className="mx-auto h-4 w-4 animate-spin" />
 							) : (
 								"Reset password"
 							)}
-						</button>
+						</Button>
 						<div className="flex items-center justify-between gap-2 text-sm">
-							<button
+							<Button
 								type="button"
 								onClick={() => {
 									setStep("email");
 									setOtp("");
 									setNewPassword("");
 								}}
-								className="text-muted-foreground hover:text-foreground"
+								variant="text"
+								size="inline"
 							>
 								Change email
-							</button>
-							<button
+							</Button>
+							<Button
 								type="button"
 								onClick={handleResend}
 								disabled={isLoading || resendCooldown.secondsLeft > 0}
-								className="text-muted-foreground hover:text-foreground disabled:cursor-not-allowed disabled:hover:text-muted-foreground"
+								variant="text"
+								size="inline"
 							>
 								{resendCooldown.secondsLeft > 0
 									? `Resend (${resendCooldown.secondsLeft}s)`
 									: "Resend code"}
-							</button>
+							</Button>
 						</div>
 					</form>
 				)}

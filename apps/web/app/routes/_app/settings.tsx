@@ -16,7 +16,9 @@ import { toast } from "sonner";
 import { getServerUserFn } from "@/app/server-fns/auth";
 import { useSessionContext } from "@/components/providers/session-provider";
 import { FeedIcon } from "@/components/shared/feed-icon";
+import { Button } from "@/components/ui/button";
 import { InlineConfirm } from "@/components/ui/inline-confirm";
+import { Input } from "@/components/ui/input";
 import { Tip } from "@/components/ui/tooltip";
 import { api } from "@/lib/api";
 import { authClient } from "@/lib/auth-client";
@@ -33,7 +35,7 @@ function SettingsPage() {
 	const { data: inbound } = api.reader.useInboundAddress();
 	return (
 		<div className="min-h-dvh bg-background">
-			<div className="mx-auto max-w-2xl px-5 pb-16 pt-[max(1.5rem,env(safe-area-inset-top))] md:pt-10">
+			<div className="mx-auto max-w-2xl px-5 pb-16 pt-safe-6 md:pt-10">
 				<Link
 					to="/reader"
 					className="-ml-1.5 inline-flex items-center gap-0.5 rounded-md py-1 pl-1 pr-2 text-sm text-muted-foreground hover:text-foreground"
@@ -57,20 +59,15 @@ function SettingsPage() {
 function SectionHeader({ title, sub }: { title: string; sub: string }) {
 	return (
 		<>
-			<h2 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/80">
+			<h2 className="text-2xs font-semibold uppercase tracking-wider text-muted-foreground/80">
 				{title}
 			</h2>
-			<p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">
+			<p className="mt-1.5 text-ui leading-relaxed text-muted-foreground">
 				{sub}
 			</p>
 		</>
 	);
 }
-
-const secondaryBtn =
-	"inline-flex h-8 items-center gap-1.5 rounded-md border border-input px-3 text-xs hover:bg-accent disabled:opacity-50";
-const iconBtn =
-	"shrink-0 rounded-md p-2 text-muted-foreground/70 hover:bg-accent hover:text-foreground disabled:opacity-50";
 
 function CopyButton({
 	text,
@@ -81,7 +78,7 @@ function CopyButton({
 }) {
 	const [copied, setCopied] = useState(false);
 	return (
-		<button
+		<Button
 			type="button"
 			onClick={async () => {
 				try {
@@ -93,7 +90,8 @@ function CopyButton({
 				setCopied(true);
 				setTimeout(() => setCopied(false), 2000);
 			}}
-			className={secondaryBtn}
+			variant="outline"
+			size="compact"
 		>
 			{copied ? (
 				<Check className="h-3.5 w-3.5 text-primary" />
@@ -101,7 +99,7 @@ function CopyButton({
 				<Copy className="h-3.5 w-3.5" />
 			)}
 			{copied ? "Copied" : label}
-		</button>
+		</Button>
 	);
 }
 
@@ -126,11 +124,13 @@ function FeedsSection() {
 				<AddFeedForm />
 			</div>
 			<div className="mt-3 flex flex-wrap gap-2">
-				<OpmlImportButton className={secondaryBtn} />
-				<a href="/api/opml" download="feedreader.opml" className={secondaryBtn}>
-					<Download className="h-3.5 w-3.5" />
-					{"Export OPML"}
-				</a>
+				<OpmlImportButton />
+				<Button asChild variant="outline" size="compact">
+					<a href="/api/opml" download="feedreader.opml">
+						<Download className="h-3.5 w-3.5" />
+						{"Export OPML"}
+					</a>
+				</Button>
 			</div>
 			<ul className="mt-2">
 				{isLoading && (
@@ -183,7 +183,7 @@ function FeedsSection() {
 							</span>
 						)}
 						<Tip label={f.enabled ? "Pause syncing" : "Resume syncing"}>
-							<button
+							<Button
 								type="button"
 								aria-label={
 									f.enabled ? `Pause ${f.title}` : `Resume ${f.title}`
@@ -192,14 +192,16 @@ function FeedsSection() {
 								onClick={() =>
 									updateFeed.mutate({ feedId: f.id, enabled: !f.enabled })
 								}
-								className={iconBtn}
+								variant="ghost"
+								size="icon"
+								className="shrink-0"
 							>
 								{f.enabled ? (
 									<Pause className="h-4 w-4" />
 								) : (
 									<Play className="h-4 w-4" />
 								)}
-							</button>
+							</Button>
 						</Tip>
 						<InlineConfirm
 							question="Unsubscribe?"
@@ -209,15 +211,17 @@ function FeedsSection() {
 						>
 							{(arm) => (
 								<Tip label="Unsubscribe (deletes its posts and your notes on them)">
-									<button
+									<Button
 										type="button"
 										aria-label={`Unsubscribe from ${f.title}`}
 										disabled={remove.isPending}
 										onClick={arm}
-										className={`${iconBtn} hover:text-destructive`}
+										variant="ghost-destructive"
+										size="icon"
+										className="shrink-0"
 									>
 										<Trash2 className="h-4 w-4" />
-									</button>
+									</Button>
 								</Tip>
 							)}
 						</InlineConfirm>
@@ -285,7 +289,7 @@ function AccountSection() {
 				sub="Who you are here, and which apps you let in."
 			/>
 			{session?.user && (
-				<dl className="mt-4 grid grid-cols-[auto_1fr] gap-x-6 gap-y-1.5 text-sm">
+				<dl className="mt-4 grid grid-cols-label gap-x-6 gap-y-1.5 text-sm">
 					<dt className="text-muted-foreground">{"Name"}</dt>
 					<dd className="truncate">{session.user.name}</dd>
 					<dt className="text-muted-foreground">{"Email"}</dt>
@@ -297,13 +301,14 @@ function AccountSection() {
 				{apps.isError && (
 					<li className="py-3 text-sm text-muted-foreground">
 						{"Couldn't load connected apps. "}
-						<button
+						<Button
 							type="button"
 							onClick={() => apps.refetch()}
-							className="underline underline-offset-2 hover:text-foreground"
+							variant="link"
+							size="inline"
 						>
 							{"Try again"}
-						</button>
+						</Button>
 					</li>
 				)}
 				{apps.data?.length === 0 && (
@@ -365,14 +370,15 @@ function ConnectedAppRow({
 				onConfirm={onRevoke}
 			>
 				{(arm) => (
-					<button
+					<Button
 						type="button"
 						onClick={arm}
 						disabled={pending}
-						className={secondaryBtn}
+						variant="outline"
+						size="compact"
 					>
 						{"Revoke"}
-					</button>
+					</Button>
 				)}
 			</InlineConfirm>
 		</li>
@@ -420,21 +426,21 @@ function InviteForm() {
 					if (email.trim()) create.mutate({ email: email.trim() });
 				}}
 			>
-				<input
+				<Input
 					type="email"
 					value={email}
 					onChange={(e) => setEmail(e.target.value)}
 					placeholder="friend@example.com"
 					aria-label="E-mail to invite"
-					className="h-9 min-w-0 flex-1 rounded-md border border-input bg-transparent px-3 text-sm outline-none placeholder:text-muted-foreground/70 focus-visible:ring-2 focus-visible:ring-ring/40"
+					className="flex-1"
 				/>
-				<button
+				<Button
 					type="submit"
 					disabled={create.isPending || !email.trim()}
-					className="h-9 shrink-0 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+					className="shrink-0"
 				>
 					{create.isPending ? "Inviting…" : "Invite"}
-				</button>
+				</Button>
 			</form>
 			{created && (
 				<div className="mt-4 rounded-lg border border-star/40 bg-star/10 p-4">
@@ -449,13 +455,15 @@ function InviteForm() {
 						</code>
 						<CopyButton text={created.url} label="Copy link" />
 					</div>
-					<button
+					<Button
 						type="button"
 						onClick={() => setCreated(null)}
-						className="mt-3 text-xs text-muted-foreground underline hover:text-foreground"
+						variant="link-muted"
+						size="inline-xs"
+						className="mt-3"
 					>
 						{"Done, dismiss"}
-					</button>
+					</Button>
 				</div>
 			)}
 		</>
@@ -522,14 +530,15 @@ function InviteRow({
 				onConfirm={onRevoke}
 			>
 				{(arm) => (
-					<button
+					<Button
 						type="button"
 						onClick={arm}
 						disabled={pending}
-						className={secondaryBtn}
+						variant="outline"
+						size="compact"
 					>
 						{"Revoke"}
-					</button>
+					</Button>
 				)}
 			</InlineConfirm>
 		</li>
@@ -550,13 +559,14 @@ function UsersList() {
 				{users.isError && (
 					<li className="py-3 text-sm text-muted-foreground">
 						{"Couldn't load users. "}
-						<button
+						<Button
 							type="button"
 							onClick={() => users.refetch()}
-							className="underline underline-offset-2 hover:text-foreground"
+							variant="link"
+							size="inline"
 						>
 							{"Try again"}
-						</button>
+						</Button>
 					</li>
 				)}
 				{users.data?.map((u) => (
@@ -590,7 +600,7 @@ function UserRow({
 				<div className="flex items-center gap-2 text-sm">
 					<span className="truncate">{user.name || user.email}</span>
 					{user.isAdmin && (
-						<span className="shrink-0 rounded-full border border-primary/40 px-1.5 py-px text-[10px] font-medium uppercase tracking-wider text-primary">
+						<span className="shrink-0 rounded-full border border-primary/40 px-1.5 py-px text-3xs font-medium uppercase tracking-wider text-primary">
 							{"admin"}
 						</span>
 					)}
@@ -615,15 +625,17 @@ function UserRow({
 				>
 					{(arm) => (
 						<Tip label="Remove account (deletes its feeds, notes and keys)">
-							<button
+							<Button
 								type="button"
 								aria-label={`Remove ${user.email}`}
 								onClick={arm}
 								disabled={pending}
-								className={`${iconBtn} hover:text-destructive`}
+								variant="ghost-destructive"
+								size="icon"
+								className="shrink-0"
 							>
 								<Trash2 className="h-4 w-4" />
-							</button>
+							</Button>
 						</Tip>
 					)}
 				</InlineConfirm>
@@ -692,14 +704,11 @@ function DevelopersSection() {
 
 			<div className="mt-6 flex items-center justify-between gap-3">
 				<h3 className="text-sm font-medium">{"API keys"}</h3>
-				<a
-					href="/api/reference"
-					target="_blank"
-					rel="noreferrer"
-					className={secondaryBtn}
-				>
-					{"API reference"}
-				</a>
+				<Button asChild variant="outline" size="compact">
+					<a href="/api/reference" target="_blank" rel="noreferrer">
+						{"API reference"}
+					</a>
+				</Button>
 			</div>
 			<form
 				className="mt-2 flex gap-2"
@@ -708,19 +717,19 @@ function DevelopersSection() {
 					if (name.trim()) create.mutate(name.trim());
 				}}
 			>
-				<input
+				<Input
 					value={name}
 					onChange={(e) => setName(e.target.value)}
 					placeholder="Key name (e.g. scripts)"
-					className="h-9 min-w-0 flex-1 rounded-md border border-input bg-transparent px-3 text-sm outline-none placeholder:text-muted-foreground/70 focus-visible:ring-2 focus-visible:ring-ring/40"
+					className="flex-1"
 				/>
-				<button
+				<Button
 					type="submit"
 					disabled={create.isPending || !name.trim()}
-					className="h-9 shrink-0 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+					className="shrink-0"
 				>
 					{create.isPending ? "Creating…" : "Create"}
-				</button>
+				</Button>
 			</form>
 			{create.isError && (
 				<p className="mt-2 text-sm text-destructive">
@@ -762,15 +771,17 @@ function DevelopersSection() {
 						>
 							{(arm) => (
 								<Tip label="Revoke">
-									<button
+									<Button
 										type="button"
 										aria-label={`Revoke ${k.name ?? "key"}`}
 										onClick={arm}
 										disabled={revoke.isPending}
-										className={`${iconBtn} hover:text-destructive`}
+										variant="ghost-destructive"
+										size="icon"
+										className="shrink-0"
 									>
 										<Trash2 className="h-4 w-4" />
-									</button>
+									</Button>
 								</Tip>
 							)}
 						</InlineConfirm>
@@ -799,13 +810,15 @@ function NewKeyReveal({
 				</code>
 				<CopyButton text={keyValue} />
 			</div>
-			<button
+			<Button
 				type="button"
 				onClick={onDone}
-				className="mt-3 text-xs text-muted-foreground underline hover:text-foreground"
+				variant="link-muted"
+				size="inline-xs"
+				className="mt-3"
 			>
 				{"Saved it, dismiss"}
-			</button>
+			</Button>
 		</div>
 	);
 }

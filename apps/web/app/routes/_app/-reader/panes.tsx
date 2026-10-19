@@ -2,17 +2,13 @@ import { Link } from "@tanstack/react-router";
 import { Inbox, Layers, PanelLeft, Plus, Rss, Star } from "lucide-react";
 import { useRef } from "react";
 import { isNewsletter } from "@/components/shared/feed-icon";
+import { Button } from "@/components/ui/button";
 import { Tip } from "@/components/ui/tooltip";
 import { PANES, type PaneStore, usePaneSizes } from "@/hooks/use-pane-sizes";
 import { api } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { IconButton, type Search, SidebarFooter } from "../reader";
 import { KEYS } from "./shortcuts";
-
-/** Inline width as a CSS variable so the class can scope it to `md:` and the
- * mobile layout keeps its own widths. */
-export const paneWidth = (name: "sidebar" | "list", px: number) =>
-	({ [`--pane-${name}`]: `${px}px` }) as React.CSSProperties;
 
 // ── Drag handle ────────────────────────────────────────────────────────────
 
@@ -60,7 +56,7 @@ function PaneHandle({
 				aria-valuemax={max}
 				aria-valuenow={value}
 				tabIndex={0}
-				className="absolute inset-y-0 -left-[3px] w-1.5 cursor-col-resize touch-none outline-none before:absolute before:inset-y-0 before:left-[2px] before:w-px before:bg-primary/0 hover:before:bg-primary/40 focus-visible:before:bg-primary data-[dragging]:before:bg-primary motion-safe:before:transition-colors motion-safe:before:delay-75"
+				className="absolute inset-y-0 -left-0.75 w-1.5 cursor-col-resize touch-none outline-none before:absolute before:inset-y-0 before:left-0.5 before:w-px before:bg-primary/0 hover:before:bg-primary/40 focus-visible:before:bg-primary data-[dragging]:before:bg-primary motion-safe:before:transition-colors motion-safe:before:delay-75"
 				onPointerDown={(e) => {
 					if (e.button !== 0) return;
 					e.preventDefault();
@@ -120,7 +116,9 @@ export function SidebarPane({
 		<>
 			<div
 				className="hidden shrink-0 md:flex md:w-(--pane-sidebar)"
-				style={paneWidth("sidebar", width)}
+				// A CSS variable so the class can scope the width to `md:` and the
+				// mobile layout keeps its own.
+				style={{ "--pane-sidebar": `${width}px` } as React.CSSProperties}
 			>
 				{collapsed ? (
 					<CompactSidebar
@@ -132,7 +130,7 @@ export function SidebarPane({
 				) : (
 					<div
 						key="full"
-						className="flex min-w-0 flex-1 motion-safe:animate-[fade-in_150ms_ease-out]"
+						className="flex min-w-0 flex-1 motion-safe:animate-fade-in"
 					>
 						{children}
 					</div>
@@ -219,7 +217,7 @@ function CompactSidebar({
 			>
 				{icon}
 				{badge !== undefined && badge > 0 && (
-					<span className="absolute right-0 top-0 min-w-4 rounded-full bg-primary px-1 text-center text-[10px] font-semibold leading-4 text-primary-foreground tabular-nums">
+					<span className="absolute right-0 top-0 min-w-4 rounded-full bg-primary px-1 text-center text-3xs font-semibold leading-4 text-primary-foreground tabular-nums">
 						{badge > 999 ? "999+" : badge}
 					</span>
 				)}
@@ -230,12 +228,12 @@ function CompactSidebar({
 	return (
 		<nav
 			aria-label="Sidebar"
-			className="flex w-full flex-col items-center border-r border-sidebar-border bg-sidebar motion-safe:animate-[fade-in_150ms_ease-out]"
+			className="flex w-full flex-col items-center border-r border-sidebar-border bg-sidebar motion-safe:animate-fade-in"
 		>
-			<div className="flex h-12 items-center pt-[env(safe-area-inset-top)]">
+			<div className="flex h-12 items-center pt-safe">
 				<Rss className="h-4 w-4 text-primary" strokeWidth={2.5} />
 			</div>
-			<div className="flex min-h-0 flex-1 flex-col items-center gap-0.5 overflow-y-auto px-1.5 pt-1 pb-2 [scrollbar-width:none]">
+			<div className="flex min-h-0 flex-1 flex-col items-center gap-0.5 overflow-y-auto px-1.5 pt-1 pb-2 scrollbar-none">
 				{view(
 					"unread",
 					"Unread",
@@ -274,7 +272,7 @@ function CompactSidebar({
 								<span
 									aria-hidden
 									className={cn(
-										"flex h-6 w-6 items-center justify-center rounded-md border border-sidebar-border bg-card text-[11px] font-semibold uppercase leading-none",
+										"flex h-6 w-6 items-center justify-center rounded-md border border-sidebar-border bg-card text-2xs font-semibold uppercase leading-none",
 										isNewsletter(f.url) && "rounded-full",
 										!f.enabled && "opacity-50",
 										f.unread === 0 && "text-muted-foreground",
@@ -287,14 +285,16 @@ function CompactSidebar({
 					);
 				})}
 				<Tip label="Add feed" kbd={KEYS.addFeed} side="right">
-					<button
+					<Button
 						type="button"
 						aria-label="Add feed"
 						onClick={onAddFeed}
-						className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted-foreground/70 hover:bg-sidebar-accent hover:text-foreground"
+						variant="sidebar"
+						size="icon"
+						className="mt-1 shrink-0"
 					>
 						<Plus className="h-4 w-4" />
-					</button>
+					</Button>
 				</Tip>
 			</div>
 			<SidebarFooter onHelp={onHelp} stacked />
@@ -346,10 +346,9 @@ export function ListHandle() {
 	);
 }
 
-/** Width style for the list column; pair with `md:w-(--pane-list)`. */
+/** Stored width of the list column in px; feed it to `--pane-list`. */
 export function useListWidth() {
-	const { list } = usePaneSizes();
-	return paneWidth("list", list);
+	return usePaneSizes().list;
 }
 
 /** Collapse/expand button for the list header (desktop only). */

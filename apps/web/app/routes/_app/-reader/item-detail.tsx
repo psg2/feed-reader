@@ -11,6 +11,9 @@ import {
 	X,
 } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Tip } from "@/components/ui/tooltip";
 import { api } from "@/lib/api";
 import { cn } from "@/lib/utils";
@@ -46,7 +49,7 @@ export function ItemDetail({
 
 	if (isLoading) {
 		return (
-			<div className="mx-auto max-w-[68ch] animate-pulse space-y-4 px-5 pt-14 md:px-8">
+			<div className="mx-auto max-w-measure animate-pulse space-y-4 px-5 pt-14 md:px-8">
 				<div className="h-7 w-4/5 rounded bg-accent" />
 				<div className="h-4 w-2/5 rounded bg-accent/70" />
 				<div className="space-y-3 pt-6">
@@ -67,7 +70,7 @@ export function ItemDetail({
 
 	return (
 		<div className="relative flex h-full flex-col">
-			<div className="flex shrink-0 items-center justify-between border-b border-border/60 px-3 pb-1.5 pt-[max(0.375rem,env(safe-area-inset-top))] md:px-4">
+			<div className="flex shrink-0 items-center justify-between border-b border-border/60 px-3 pb-1.5 pt-safe-1.5 md:px-4">
 				<BackToList />
 				<div className="hidden md:block" />
 				<div className="flex items-center gap-0.5">
@@ -93,22 +96,23 @@ export function ItemDetail({
 					</IconButton>
 					{item.link && (
 						<Tip label="Open in browser" kbd={KEYS.open}>
-							<a
-								href={item.link}
-								target="_blank"
-								rel="noreferrer"
-								aria-label="Open in browser"
-								className="rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-foreground"
-							>
-								<ExternalLink className="h-4 w-4" />
-							</a>
+							<Button asChild variant="ghost" size="icon">
+								<a
+									href={item.link}
+									target="_blank"
+									rel="noreferrer"
+									aria-label="Open in browser"
+								>
+									<ExternalLink className="h-4 w-4" />
+								</a>
+							</Button>
 						</Tip>
 					)}
 				</div>
 			</div>
-			<div className="min-h-0 flex-1 overflow-y-auto pb-24 md:pb-[env(safe-area-inset-bottom)]">
-				<header className="mx-auto max-w-[68ch] px-5 pt-8 md:px-8 md:pt-12">
-					<h1 className="text-balance text-2xl font-semibold leading-tight tracking-tight md:text-[27px]">
+			<div className="min-h-0 flex-1 overflow-y-auto pb-24 md:pb-safe">
+				<header className="mx-auto max-w-measure px-5 pt-8 md:px-8 md:pt-12">
+					<h1 className="text-balance text-2xl font-semibold leading-tight tracking-tight md:text-headline">
 						{item.link ? (
 							<a
 								href={item.link}
@@ -123,7 +127,7 @@ export function ItemDetail({
 						)}
 					</h1>
 					<p
-						className="mt-2.5 text-[13px] text-muted-foreground"
+						className="mt-2.5 text-ui text-muted-foreground"
 						title={item.publishedAt?.toLocaleString()}
 					>
 						{[
@@ -146,16 +150,19 @@ export function ItemDetail({
 				/>
 			</div>
 			{!notesVisible && (
-				<Tip label="Write a note" kbd={KEYS.notes} side="left">
-					<button
-						type="button"
-						onClick={focusNotes}
-						className="absolute bottom-[calc(4.5rem+env(safe-area-inset-bottom))] right-4 z-10 inline-flex items-center gap-1.5 rounded-full border bg-popover px-3 py-2 text-xs shadow-md hover:bg-accent md:bottom-6"
-					>
-						<PenLine className="h-3.5 w-3.5" />
-						{"Add note"}
-					</button>
-				</Tip>
+				<div className="absolute bottom-safe-18 right-4 z-10 md:bottom-6">
+					<Tip label="Write a note" kbd={KEYS.notes} side="left">
+						<Button
+							type="button"
+							onClick={focusNotes}
+							variant="floating"
+							size="compact"
+						>
+							<PenLine className="h-3.5 w-3.5" />
+							{"Add note"}
+						</Button>
+					</Tip>
+				</div>
 			)}
 			<MobileBar
 				hasPrev={hasPrev}
@@ -182,38 +189,39 @@ function MobileBar({
 	onNext: () => void;
 	onReadAndNext: () => void;
 }) {
-	const side =
-		"inline-flex h-10 items-center gap-1 rounded-md border border-input px-3 text-sm hover:bg-accent disabled:opacity-40";
 	return (
-		<div className="absolute inset-x-0 bottom-0 z-10 flex items-center gap-2 border-t bg-card/95 px-3 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur md:hidden">
-			<button
+		<div className="absolute inset-x-0 bottom-0 z-10 flex items-center gap-2 border-t bg-card/95 px-3 pt-2 pb-safe-2 backdrop-blur md:hidden">
+			<Button
 				type="button"
 				onClick={onPrev}
 				disabled={!hasPrev}
-				className={side}
+				variant="outline"
+				size="bar"
 				aria-label="Previous post"
 			>
 				<ChevronLeft className="h-4 w-4" />
 				{"Prev"}
-			</button>
-			<button
+			</Button>
+			<Button
 				type="button"
 				onClick={onReadAndNext}
-				className="inline-flex h-10 flex-1 items-center justify-center gap-1.5 rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+				size="bar"
+				className="flex-1"
 			>
 				<CircleCheck className="h-4 w-4" />
 				{"Mark read & next"}
-			</button>
-			<button
+			</Button>
+			<Button
 				type="button"
 				onClick={onNext}
 				disabled={!hasNext}
-				className={side}
+				variant="outline"
+				size="bar"
 				aria-label="Next post"
 			>
 				{"Next"}
 				<ChevronRight className="h-4 w-4" />
-			</button>
+			</Button>
 		</div>
 	);
 }
@@ -261,21 +269,21 @@ function Content({ html, text }: { html: string | null; text: string | null }) {
 	);
 	if (!clean && !text) {
 		return (
-			<p className="mx-auto max-w-[68ch] px-5 py-8 font-serif italic text-muted-foreground md:px-8">
+			<p className="mx-auto max-w-measure px-5 py-8 font-serif italic text-muted-foreground md:px-8">
 				{"No content in feed."}
 			</p>
 		);
 	}
 	const column =
-		"mx-auto max-w-[68ch] px-5 pb-4 pt-7 font-serif text-[17px] leading-[1.75] md:px-8";
+		"mx-auto max-w-measure px-5 pb-4 pt-7 font-serif text-reading leading-reading md:px-8";
 	return clean ? (
 		<article
 			className={cn(
 				column,
-				"prose prose-neutral dark:prose-invert max-w-[68ch] break-words",
+				"prose prose-neutral dark:prose-invert max-w-measure break-words",
 				"prose-headings:font-sans prose-headings:tracking-tight",
 				"prose-a:text-primary prose-a:decoration-primary/40 prose-a:underline-offset-2",
-				"prose-code:font-normal prose-pre:overflow-x-auto prose-pre:text-[13px]",
+				"prose-code:font-normal prose-pre:overflow-x-auto prose-pre:text-ui",
 				"prose-img:max-w-full prose-img:rounded-md",
 				"prose-blockquote:font-normal prose-blockquote:not-italic prose-blockquote:text-muted-foreground",
 			)}
@@ -356,9 +364,9 @@ function NotesAndTags({
 	return (
 		<div
 			ref={observe}
-			className="mx-auto max-w-[68ch] space-y-2.5 border-t border-border/60 px-5 py-8 md:px-8"
+			className="mx-auto max-w-measure space-y-2.5 border-t border-border/60 px-5 py-8 md:px-8"
 		>
-			<div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/80">
+			<div className="flex items-center gap-1.5 text-2xs font-semibold uppercase tracking-wider text-muted-foreground/80">
 				<CircleCheck className="h-3.5 w-3.5" />
 				{"What did you learn?"}
 				<span className="flex-1" />
@@ -367,13 +375,13 @@ function NotesAndTags({
 					onRetry={() => lastPayload.current && save(lastPayload.current)}
 				/>
 			</div>
-			<textarea
+			<Textarea
 				value={draft}
 				onChange={(e) => onNotesChange(e.target.value)}
 				placeholder="Notes…"
 				rows={4}
 				data-notes
-				className="w-full resize-y rounded-md border border-input bg-background/60 p-3 font-serif text-[15px] leading-relaxed outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+				variant="notes"
 				id={`notes-${itemId}`}
 			/>
 			<TagInput value={chips} onChange={setTags} />
@@ -394,13 +402,9 @@ function SaveIndicator({
 			<span className="flex items-center gap-1 normal-case tracking-normal text-destructive">
 				{"Couldn't save"}
 				<span aria-hidden>{"·"}</span>
-				<button
-					type="button"
-					onClick={onRetry}
-					className="underline underline-offset-2"
-				>
+				<Button type="button" onClick={onRetry} variant="link" size="inline">
 					{"Retry"}
-				</button>
+				</Button>
 			</span>
 		);
 	}
@@ -456,17 +460,18 @@ function TagInput({
 						className="inline-flex items-center gap-1 rounded-md bg-accent px-2 py-0.5 text-xs"
 					>
 						{tag}
-						<button
+						<Button
 							type="button"
 							aria-label={`Remove tag ${tag}`}
 							onClick={() => remove(tag)}
-							className="rounded text-muted-foreground hover:text-foreground"
+							variant="text"
+							size="inline"
 						>
 							<X className="h-3 w-3" />
-						</button>
+						</Button>
 					</span>
 				))}
-				<input
+				<Input
 					value={input}
 					onChange={(e) => setInput(e.target.value)}
 					onFocus={() => setFocused(true)}
@@ -486,24 +491,27 @@ function TagInput({
 					}}
 					placeholder={value.length ? "Add tag" : "Tags"}
 					aria-label="Tags"
-					className="h-6 min-w-24 flex-1 bg-transparent px-1 text-sm outline-none placeholder:text-muted-foreground/70"
+					variant="bare"
+					size="xs"
+					className="min-w-24 flex-1"
 				/>
 			</div>
 			{focused && suggestions.length > 0 && (
 				<ul className="absolute left-0 top-full z-10 mt-1 flex max-w-full flex-wrap gap-1 rounded-md border bg-popover p-1.5 shadow-md">
 					{suggestions.map((t) => (
 						<li key={t}>
-							<button
+							<Button
 								type="button"
 								// Runs before the input's blur so the click isn't lost.
 								onMouseDown={(e) => {
 									e.preventDefault();
 									add(t);
 								}}
-								className="rounded-md px-2 py-0.5 text-xs text-muted-foreground hover:bg-accent hover:text-foreground"
+								variant="ghost"
+								size="chip"
 							>
 								{t}
-							</button>
+							</Button>
 						</li>
 					))}
 				</ul>
