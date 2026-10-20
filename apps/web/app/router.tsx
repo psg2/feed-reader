@@ -37,6 +37,8 @@ export function getRouter() {
 			Sentry.init({
 				dsn,
 				environment: import.meta.env.DEV ? "development" : "production",
+				// Invite links carry a bearer token that can register an account.
+				dataCollection: { urlQueryParams: { deny: ["invite"] } },
 				integrations: [Sentry.tanstackRouterBrowserTracingIntegration(router)],
 				tracesSampleRate: import.meta.env.DEV ? 0 : 0.1,
 				replaysSessionSampleRate: import.meta.env.DEV ? 0 : 0.05,
