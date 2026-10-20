@@ -77,7 +77,7 @@ export interface SignupPageData extends AuthConfig {
  * callback alike. A bad token clears any earlier cookie.
  */
 export const getSignupPageFn = createServerFn({ method: "GET" })
-	.inputValidator(z.object({ invite: z.string().max(512).optional() }))
+	.validator(z.object({ invite: z.string().max(512).optional() }))
 	.handler(async ({ data }): Promise<SignupPageData> => {
 		const config = await authConfig();
 		if (!data.invite) return { ...config, invite: { status: "none" } };

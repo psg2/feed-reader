@@ -36,27 +36,8 @@ pmOnFail: ignore
 # matching Dependabot's cooldown. Enforced against the lockfile on every
 # pnpm command.
 minimumReleaseAge: 10080
-# TEMPORARY: TanStack's 2026-09-30 release patches GHSA-qx66-fv34-fjm8
-# (reflected XSS in server-function responses; Vercel refuses to deploy
-# @tanstack/react-start < 1.168.60). These are the exact versions it pulls
-# in; the newest was published 2026-09-30T17:51Z, so delete this whole list
-# after 2026-10-07 18:00 UTC. Exact versions keep later bumps of the same
-# packages under the floor.
+# TEMPORARY exact-version exceptions to the floor; each entry names its expiry.
 minimumReleaseAgeExclude:
-  - "@tanstack/react-router@1.170.41"
-  - "@tanstack/react-start-client@1.168.39"
-  - "@tanstack/react-start-rsc@0.1.59"
-  - "@tanstack/react-start-server@1.167.46"
-  - "@tanstack/react-start@1.168.60"
-  - "@tanstack/react-store@0.11.2"
-  - "@tanstack/router-core@1.171.34"
-  - "@tanstack/router-generator@1.167.40"
-  - "@tanstack/router-plugin@1.168.42"
-  - "@tanstack/start-client-core@1.170.34"
-  - "@tanstack/start-plugin-core@1.171.49"
-  - "@tanstack/start-server-core@1.169.39"
-  - "@tanstack/start-storage-context@1.167.36"
-  - "@tanstack/store@0.11.2"
   # better-auth 1.7.8 stops a failed oauth_resources seed at startup from
   # breaking auth for the whole function instance (better-auth#10887), which
   # hits us on Neon cold starts. Drop these after 2026-10-22.
