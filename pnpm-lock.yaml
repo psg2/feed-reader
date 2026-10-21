@@ -93,8 +93,8 @@ importers:
         specifier: ^1.15.4
         version: 1.15.4(@opentelemetry/api@1.9.1)(@orpc/contract@1.15.4(@opentelemetry/api@1.9.1))(@orpc/server@1.15.4(@opentelemetry/api@1.9.1)(crossws@0.4.10(srvx@0.12.7))(ws@8.21.3))(crossws@0.4.10(srvx@0.12.7))(ws@8.21.3)(zod@4.6.5)
       '@posthog/mcp':
-        specifier: 0.21.3
-        version: 0.21.3(@modelcontextprotocol/sdk@1.30.1(supports-color@7.2.0)(zod@4.6.5))(@modelcontextprotocol/server@2.3.0)(posthog-node@5.55.0)
+        specifier: 0.22.3
+        version: 0.22.3(@modelcontextprotocol/sdk@1.30.1(supports-color@7.2.0)(zod@4.6.5))(@modelcontextprotocol/server@2.3.0)(posthog-node@5.55.0)
       '@sentry/tanstackstart-react':
         specifier: ^10.75.3
         version: 10.75.3(@opentelemetry/core@2.10.0(@opentelemetry/api@1.9.1))(@opentelemetry/exporter-trace-otlp-http@0.221.0(@opentelemetry/api@1.9.1))(react@19.3.0)(supports-color@7.2.0)
@@ -2008,11 +2008,11 @@ packages:
   '@posthog/core@1.55.2':
     resolution: {integrity: sha512-2mYxGbDmTLUs096VbcZqSWo0lrI48/BrX65r54NynxxFq409BOx9w73HxOAtOKZ1vblkdV6/GxQTe7KDcIQidg==}
 
-  '@posthog/core@1.55.3':
-    resolution: {integrity: sha512-XnmG9jo7WlxTeN4oCNWH4ESLQHR6ZPZ+mcq+8JxU62k5i1BAe3BSrybnmXHjqKp7e3rUvLK2bOzGZGSlfHvlNA==}
+  '@posthog/core@1.59.0':
+    resolution: {integrity: sha512-KRq26v5fXYnwV5wqTAXzPyQLCrBzzhK78QRl7UyEaPFZ4RPmVo1pBObRDbK350ah+8hTfQPanu5mM8c4CaSn5g==}
 
-  '@posthog/mcp@0.21.3':
-    resolution: {integrity: sha512-mgUs/PDex4x8nSF8gI5eWxQMuls5cMTSZ/327xadyAdbENyY0miMVXQKwjHzBVvIPLFVHlpc7edLImGFNWjORg==}
+  '@posthog/mcp@0.22.3':
+    resolution: {integrity: sha512-ZO2+f/PxHdsbVwwtihBTvqMP7dkKDNnZJCxYD/MxS7BT1I6SCSVodwQ5NtaTxmYUdBzJptXQ9kVdbRJtOUaVlg==}
     engines: {node: ^20.20.0 || >=22.22.0}
     peerDependencies:
       '@modelcontextprotocol/sdk': '>=1.26.0'
@@ -2027,8 +2027,8 @@ packages:
   '@posthog/types@1.412.4':
     resolution: {integrity: sha512-Q7lV9O9TbLngjOYw1ucm3bS3tn48xb1B4ZQdDy8gv7yfKe99hCTeWYG4xZ36nJM80VxpTF9TriiJt5hngDOkBg==}
 
-  '@posthog/types@1.413.0':
-    resolution: {integrity: sha512-tYAVzNojWckuG/wxBB0fwE70sFruQQq4xbhkci7eH2ARU3mMfUTkvpN1HwBMpm0AtbxidLiH0IFvagmdJ8opPw==}
+  '@posthog/types@1.416.0':
+    resolution: {integrity: sha512-0/9+02s/0uDyrH4G/qUg1yyl6gXUg8Uuxw/PlDad3KLzo9FFS9zS/kAQaEshx/saVGupj1aAy/4EUBxWisBogw==}
 
   '@psg2/env-sync@1.2.2':
     resolution: {integrity: sha512-VSQe/20R4g+3uqbNULm2nWvzWUHin+ecVZgArarRVlxCPu202DnSB3JwSgsjxZX2GgXvBsl8bAsL22b2nD5mMA==}
@@ -8041,13 +8041,13 @@ snapshots:
     dependencies:
       '@posthog/types': 1.412.4
 
-  '@posthog/core@1.55.3':
+  '@posthog/core@1.59.0':
     dependencies:
-      '@posthog/types': 1.413.0
+      '@posthog/types': 1.416.0
 
-  '@posthog/mcp@0.21.3(@modelcontextprotocol/sdk@1.30.1(supports-color@7.2.0)(zod@4.6.5))(@modelcontextprotocol/server@2.3.0)(posthog-node@5.55.0)':
+  '@posthog/mcp@0.22.3(@modelcontextprotocol/sdk@1.30.1(supports-color@7.2.0)(zod@4.6.5))(@modelcontextprotocol/server@2.3.0)(posthog-node@5.55.0)':
     dependencies:
-      '@posthog/core': 1.55.3
+      '@posthog/core': 1.59.0
       posthog-node: 5.55.0
     optionalDependencies:
       '@modelcontextprotocol/sdk': 1.30.1(supports-color@7.2.0)(zod@4.6.5)
@@ -8055,7 +8055,7 @@ snapshots:
 
   '@posthog/types@1.412.4': {}
 
-  '@posthog/types@1.413.0': {}
+  '@posthog/types@1.416.0': {}
 
   '@psg2/env-sync@1.2.2':
     dependencies:
