@@ -41,7 +41,7 @@
 		"@orpc/tanstack-query": "^1.15.6",
 		"@orpc/zod": "^1.15.6",
 		"@posthog/mcp": "0.22.3",
-		"@sentry/tanstackstart-react": "^10.75.3",
+		"@sentry/tanstackstart-react": "^11.5.0",
 		"@t3-oss/env-core": "^0.13.11",
 		"@tanstack/react-query": "^5.104.2",
 		"@tanstack/react-router": "^1.170.42",
