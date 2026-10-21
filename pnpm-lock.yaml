@@ -17,6 +17,9 @@ importers:
 
   .:
     devDependencies:
+      '@psg2/env-sync':
+        specifier: ^1.2.2
+        version: 1.2.2
       '@shadcn/lint':
         specifier: ^0.2.0
         version: 0.2.1
@@ -2026,6 +2029,11 @@ packages:
 
   '@posthog/types@1.413.0':
     resolution: {integrity: sha512-tYAVzNojWckuG/wxBB0fwE70sFruQQq4xbhkci7eH2ARU3mMfUTkvpN1HwBMpm0AtbxidLiH0IFvagmdJ8opPw==}
+
+  '@psg2/env-sync@1.2.2':
+    resolution: {integrity: sha512-VSQe/20R4g+3uqbNULm2nWvzWUHin+ecVZgArarRVlxCPu202DnSB3JwSgsjxZX2GgXvBsl8bAsL22b2nD5mMA==}
+    engines: {node: '>=24'}
+    hasBin: true
 
   '@radix-ui/number@1.1.3':
     resolution: {integrity: sha512-Road2bidD0uu/1BGDOWNdPI06g0lIRy6IF9GZcIrDK2KGItfor8IQwQa+yM2ERgHM1MmHxaxpTzk0/Jp42lNfA==}
@@ -8048,6 +8056,10 @@ snapshots:
   '@posthog/types@1.412.4': {}
 
   '@posthog/types@1.413.0': {}
+
+  '@psg2/env-sync@1.2.2':
+    dependencies:
+      yaml: 2.9.1
 
   '@radix-ui/number@1.1.3': {}
 

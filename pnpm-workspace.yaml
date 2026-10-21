@@ -43,6 +43,8 @@ minimumReleaseAge: 10080
 # after 2026-10-07 18:00 UTC. Exact versions keep later bumps of the same
 # packages under the floor.
 minimumReleaseAgeExclude:
+  # Our own package (psg2/env-sync); no waiting period for its releases.
+  - "@psg2/env-sync"
   - "@tanstack/react-router@1.170.41"
   - "@tanstack/react-start-client@1.168.39"
   - "@tanstack/react-start-rsc@0.1.59"
