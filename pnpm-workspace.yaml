@@ -38,6 +38,8 @@ pmOnFail: ignore
 minimumReleaseAge: 10080
 # TEMPORARY exact-version exceptions to the floor; each entry names its expiry.
 minimumReleaseAgeExclude:
+  # Our own package (psg2/env-sync); no waiting period for its releases.
+  - "@psg2/env-sync"
   # better-auth 1.7.8 stops a failed oauth_resources seed at startup from
   # breaking auth for the whole function instance (better-auth#10887), which
   # hits us on Neon cold starts. Drop these after 2026-10-22.

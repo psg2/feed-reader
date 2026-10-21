@@ -12,7 +12,7 @@
 #
 # Setup:
 #   1. Install 1Password CLI: https://1password.com/downloads/command-line/
-#   2. Install env-sync: https://github.com/psg2/env-sync
+#   2. pnpm install (env-sync is a devDependency; run it with `pnpm env:sync`)
 #   3. Create the vault items referenced below
 #   4. cp env-sync.example.yaml env-sync.yaml && env-sync local
 #
@@ -95,11 +95,15 @@ targets:
 
   preview:
     type: vercel
+    # Vercel CLI profile to use (drop it to use the default ~/.config/vercel login)
+    globalConfig: ~/.config/vercel-personal
     environments: [preview]
     groups: [preview]
 
   production:
     type: vercel
+    # Vercel CLI profile to use (drop it to use the default ~/.config/vercel login)
+    globalConfig: ~/.config/vercel-personal
     environments: [production]
     groups: [production]
 

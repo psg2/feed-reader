@@ -11,19 +11,19 @@ cloc: ## Count lines of code (excludes build artifacts and node_modules)
 # env-sync (https://github.com/psg2/env-sync) reads env-sync.yaml, which is
 # gitignored: copy env-sync.example.yaml and fill in your vault/app names.
 env: ## Sync all env targets (local + Vercel preview + production)
-	@env-sync
+	@pnpm exec env-sync
 
 env-local: ## Sync local .env.local from 1Password
-	@env-sync local
+	@pnpm exec env-sync local
 
 env-preview: ## Push env vars to Vercel preview
-	@env-sync preview
+	@pnpm exec env-sync preview
 
 env-production: ## Push env vars to Vercel production
-	@env-sync production
+	@pnpm exec env-sync production
 
 env-dry-run: ## Preview env sync without changes
-	@env-sync --dry-run
+	@pnpm exec env-sync --dry-run
 
 scan-secrets: ## Scan for leaked secrets (requires gitleaks: brew install gitleaks)
 	@gitleaks detect --source . -v
