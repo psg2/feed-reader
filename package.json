@@ -27,6 +27,7 @@
 		"dev:attach": "tmux attach -t app-web",
 		"dev:logs": "tmux capture-pane -t app-web -p -S -100",
 		"dev:stop": "tmux kill-session -t app-web 2>/dev/null && echo '✓ web stopped'",
+		"env:sync": "env-sync",
 		"deps:up": "docker compose up -d && bash scripts/sync-deps-env.sh",
 		"deps:down": "docker compose down && rm -f .env.docker",
 		"deps:status": "docker compose ps && echo && (cat .env.docker 2>/dev/null || echo '(no .env.docker — run pnpm deps:up)')",
@@ -42,12 +43,13 @@
 		"outdated": "npx taze -r"
 	},
 	"devDependencies": {
+		"@psg2/env-sync": "^1.2.2",
 		"@shadcn/lint": "^0.2.0",
-		"oxfmt": "^0.71.0",
-		"oxlint": "^1.86.0",
-		"playwright-core": "^1.63.0",
+		"oxfmt": "^0.73.0",
+		"oxlint": "^1.87.0",
+		"playwright-core": "^1.64.0",
 		"sharp": "^0.35.5",
-		"turbo": "^2.11.5"
+		"turbo": "^2.11.7"
 	},
 	"engines": {
 		"node": ">=24"
