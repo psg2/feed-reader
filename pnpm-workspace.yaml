@@ -4,10 +4,10 @@ packages:
   - "tooling/*"
 
 overrides:
-  "@better-auth/core": "1.7.9"
+  "@better-auth/core": "1.7.10"
   "@better-auth/utils": "0.5.0"
-  "react": "19.3.0"
-  "react-dom": "19.3.0"
+  "react": "19.3.1"
+  "react-dom": "19.3.1"
   "esbuild": ">=0.25.0"
   "srvx": ">=0.11.13"
   # GHSA-qx66-fv34-fjm8: better-auth's optional peer otherwise keeps a
