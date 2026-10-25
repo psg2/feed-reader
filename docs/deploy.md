@@ -48,7 +48,7 @@ Notes:
 
 4. Do not deploy yet — add the database and environment variables first (steps 4 and 5), then trigger the first deploy. If Vercel already kicked off a build, it will fail on the missing `POSTGRES_URL`; just redeploy afterwards.
 
-Every push to `main` deploys to production and every pull request gets a preview deployment once the GitHub integration is connected. Preview deployments share the production database unless you give them their own `POSTGRES_URL` (a Neon branch works well).
+Every push to `main` deploys to production once the GitHub integration is connected; previews are opt-in, built only for `preview/*` branches (`git.deploymentEnabled` in `apps/web/vercel.json`). Preview deployments share the production database unless you give them their own `POSTGRES_URL` (a Neon branch works well).
 
 ## 4. Neon Postgres
 
