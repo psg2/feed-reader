@@ -18,13 +18,11 @@ const link = new RPCLink({
 	},
 	// A screen fires its queries together; one request lands on one function
 	// instance (one cold start at most) so the parts don't arrive out of order.
-	// Buffered so the handler answers once every procedure ran, before it
-	// flushes the logs. The path names the procedures, so request logs still
-	// tell the calls apart. A file or event-iterator output can't ride a
-	// batch: keep such a procedure out with `exclude`.
+	// The path names the procedures, so request logs still tell the calls
+	// apart. A file or event-iterator output can't ride a batch: keep such a
+	// procedure out with `exclude`.
 	plugins: [
 		new BatchLinkPlugin({
-			mode: "buffered",
 			url: (calls) => batchUrl(calls),
 			groups: [{ condition: () => true, context: {} }],
 		}),
