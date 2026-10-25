@@ -2,8 +2,9 @@
 	"$schema": "https://openapi.vercel.sh/vercel.json",
 	"git": {
 		"deploymentEnabled": {
-			"dependabot/**": false,
-			"renovate/**": false
+			"**": false,
+			"main": true,
+			"preview/**": true
 		}
 	},
 	"installCommand": "corepack enable && pnpm install --frozen-lockfile",
