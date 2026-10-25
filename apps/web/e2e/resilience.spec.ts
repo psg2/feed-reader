@@ -1,13 +1,17 @@
 import { FEEDS } from "./env";
 import { expect, openReader, rows, test } from "./fixtures";
 
+// The list call alone, or the batch it rides with the screen's other queries.
+const LIST_ITEMS =
+	/\/api\/rpc\/(reader\/listItems|__batch__\/.*\breader\.listItems\b)/;
+
 test.describe("Resilience", () => {
 	test("a failing server shows an error with a retry, never an empty inbox", async ({
 		page,
 		seed,
 	}) => {
 		await seed.subscribe(FEEDS.lethain);
-		await page.route("**/api/rpc/reader/listItems*", (route) =>
+		await page.route(LIST_ITEMS, (route) =>
 			route.fulfill({ status: 500, body: "boom" }),
 		);
 
@@ -18,7 +22,7 @@ test.describe("Resilience", () => {
 		});
 		await expect(page.getByText("Inbox zero")).toHaveCount(0);
 
-		await page.unroute("**/api/rpc/reader/listItems*");
+		await page.unroute(LIST_ITEMS);
 		await page.getByRole("button", { name: "Try again" }).click();
 		await expect(rows(page)).toHaveCount(5);
 	});

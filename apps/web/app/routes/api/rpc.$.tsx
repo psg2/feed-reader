@@ -1,10 +1,12 @@
 import { onError } from "@orpc/server";
 import { RPCHandler } from "@orpc/server/fetch";
+import { BatchHandlerPlugin } from "@orpc/server/plugins";
 import { createFileRoute } from "@tanstack/react-router";
 import { logger } from "@/lib/axiom/server";
 import { router } from "@/server/routes";
 
 const handler = new RPCHandler(router, {
+	plugins: [new BatchHandlerPlugin()],
 	interceptors: [
 		onError((error) => {
 			console.error("[oRPC]", error);
