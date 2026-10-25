@@ -89,15 +89,4 @@ Adding a domain: schema in `packages/db/src/schema/<domain>.ts` → `pnpm db:gen
 
 Migrations run only on production builds; previews share the production database unless given their own `POSTGRES_URL`. Crons (`/api/cron/refresh`, authenticated with `CRON_SECRET`) are declared in the same file. CI (`.github/workflows/ci.yml`) runs secrets scan, lint/format/type-check/knip, unit + frontend tests against Postgres, Playwright e2e and a build; `macos.yml` runs swift-format and `swift test`.
 
-### Preview deploys are opt-in
-
-Only `main` (production) and `preview/*` branches deploy on Vercel (`git.deploymentEnabled` in `apps/web/vercel.json`). PR branches get no preview, and no Neon branch, because most PRs are merged without anyone opening one and each preview is a second paid build.
-
-When a change needs checking on a real deployment before merge (OAuth, webhooks, crons, Vercel-only behavior, a UI Pedro wants to try on his phone), push it to a `preview/` branch too, and do it before the PR branch gets that commit: Vercel deploys a commit only the first time it sees it, so a SHA already pushed elsewhere needs a new commit on top.
-
-```bash
-git push origin HEAD:preview/<short-name>       # builds a preview; later pushes there update it
-git push origin --delete preview/<short-name>   # when done; then delete its Neon branch preview/preview/<short-name>
-```
-
-Otherwise validate locally and merge.
+Vercel deploys only `main` and `preview/*` branches; to preview a PR, push it to `preview/<name>` before the PR branch (Vercel builds each commit only once).
