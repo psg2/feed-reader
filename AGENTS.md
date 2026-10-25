@@ -93,7 +93,7 @@ Migrations run only on production builds; previews share the production database
 
 Only `main` (production) and `preview/*` branches deploy on Vercel (`git.deploymentEnabled` in `apps/web/vercel.json`). PR branches get no preview, and no Neon branch, because most PRs are merged without anyone opening one and each preview is a second paid build.
 
-When a change needs checking on a real deployment before merge (OAuth, webhooks, crons, Vercel-only behavior, a UI Pedro wants to try on his phone), push the PR's commits to a `preview/` branch as well:
+When a change needs checking on a real deployment before merge (OAuth, webhooks, crons, Vercel-only behavior, a UI Pedro wants to try on his phone), push it to a `preview/` branch too, and do it before the PR branch gets that commit: Vercel deploys a commit only the first time it sees it, so a SHA already pushed elsewhere needs a new commit on top.
 
 ```bash
 git push origin HEAD:preview/<short-name>       # builds a preview; later pushes there update it
