@@ -21,8 +21,8 @@ importers:
         specifier: ^1.2.2
         version: 1.2.2
       '@shadcn/lint':
-        specifier: ^0.2.0
-        version: 0.2.1
+        specifier: ^0.2.3
+        version: 0.2.3
       oxfmt:
         specifier: ^0.73.0
         version: 0.73.0
@@ -3284,8 +3284,8 @@ packages:
     resolution: {integrity: sha512-ixlZ9gWCjPrYOGPqz/FuHPXEtjeVcBPlmko84Gq3ACljAR1eqzvQYwSaGd8FtOwNvUGI4ZvizI7+t7lSWsn9Xw==}
     engines: {node: '>=20.19.0 <22.0.0 || >=22.12.0 <23.0.0 || >=23.2.0'}
 
-  '@shadcn/lint@0.2.1':
-    resolution: {integrity: sha512-sDgmh/lb4yiPJMJZe5/jE6Vq5mgBzaIvKcdQ98faZk4c99WKTqASEhUqR6XCp7DDc29LwqTRIsula7kfhhDQnQ==}
+  '@shadcn/lint@0.2.3':
+    resolution: {integrity: sha512-N/eAXidyPYXpbUOzPCf6uX5UN/hhObMZbrURrHe71CLNvPio78agqBt4EW/V89KQyS1NTxXcqMsNfiLxsBh8sA==}
     engines: {node: '>=20.19'}
     peerDependencies:
       '@typescript-eslint/parser': '>=8.40.0'
@@ -9192,7 +9192,7 @@ snapshots:
       - rollup
       - webpack
 
-  '@shadcn/lint@0.2.1':
+  '@shadcn/lint@0.2.3':
     dependencies:
       '@eslint/core': 0.17.0
       cn: 0.4.0

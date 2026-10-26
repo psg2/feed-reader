@@ -44,7 +44,7 @@
 	},
 	"devDependencies": {
 		"@psg2/env-sync": "^1.2.2",
-		"@shadcn/lint": "^0.2.0",
+		"@shadcn/lint": "^0.2.3",
 		"oxfmt": "^0.73.0",
 		"oxlint": "^1.87.0",
 		"playwright-core": "^1.64.1",
