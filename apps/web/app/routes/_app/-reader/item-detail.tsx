@@ -228,18 +228,21 @@ function MobileBar({
 
 /**
  * Feed HTML is untrusted. Links open in a new tab without a referrer or an
- * opener; images load lazily and never send a referrer either.
+ * opener; images load lazily and never send a referrer either. Without a DOM
+ * (SSR) DOMPurify is a stub with no addHook, so the hook is client-only.
  */
-DOMPurify.addHook("afterSanitizeAttributes", (node) => {
-	if (node.tagName === "A") {
-		node.setAttribute("target", "_blank");
-		node.setAttribute("rel", "noopener noreferrer");
-		node.setAttribute("referrerpolicy", "no-referrer");
-	} else if (node.tagName === "IMG") {
-		node.setAttribute("loading", "lazy");
-		node.setAttribute("referrerpolicy", "no-referrer");
-	}
-});
+if (DOMPurify.isSupported) {
+	DOMPurify.addHook("afterSanitizeAttributes", (node) => {
+		if (node.tagName === "A") {
+			node.setAttribute("target", "_blank");
+			node.setAttribute("rel", "noopener noreferrer");
+			node.setAttribute("referrerpolicy", "no-referrer");
+		} else if (node.tagName === "IMG") {
+			node.setAttribute("loading", "lazy");
+			node.setAttribute("referrerpolicy", "no-referrer");
+		}
+	});
+}
 
 const SANITIZE: Config = {
 	FORBID_TAGS: [
