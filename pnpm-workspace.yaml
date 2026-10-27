@@ -40,3 +40,5 @@ minimumReleaseAge: 10080
 minimumReleaseAgeExclude:
   # Our own package (psg2/env-sync); no waiting period for its releases.
   - "@psg2/env-sync"
+  # Renovate security update: happy-dom@21.0.4
+  - happy-dom@21.0.4
