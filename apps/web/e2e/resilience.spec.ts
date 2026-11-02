@@ -17,15 +17,18 @@ test.describe("Resilience", () => {
 
 		await openReader(page);
 		// TanStack Query retries three times with backoff before settling.
-		await expect(
-			page.getByText("Couldn't reach the server", { exact: true }),
-		).toBeVisible({
-			timeout: 20_000,
-		});
+		// The sidebar can share the failing batch and show its own error and retry.
+		const listError = page
+			.locator("div")
+			.filter({
+				has: page.getByText("Couldn't reach the server", { exact: true }),
+			})
+			.last();
+		await expect(listError).toBeVisible({ timeout: 20_000 });
 		await expect(page.getByText("Inbox zero")).toHaveCount(0);
 
 		await page.unroute(LIST_ITEMS);
-		await page.getByRole("button", { name: "Try again" }).click();
+		await listError.getByRole("button", { name: "Try again" }).click();
 		await expect(rows(page)).toHaveCount(5);
 	});
 
