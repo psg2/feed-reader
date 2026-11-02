@@ -33,7 +33,7 @@
 		"@feedreader/db": "workspace:*",
 		"@feedreader/query": "workspace:*",
 		"@feedreader/tailwind-config": "workspace:*",
-		"@modelcontextprotocol/server": "^2.3.1",
+		"@modelcontextprotocol/server": "^2.4.0",
 		"@orpc/client": "^1.16.1",
 		"@orpc/contract": "^1.16.1",
 		"@orpc/openapi": "^1.16.1",
