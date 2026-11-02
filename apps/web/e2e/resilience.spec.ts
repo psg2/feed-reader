@@ -17,7 +17,9 @@ test.describe("Resilience", () => {
 
 		await openReader(page);
 		// TanStack Query retries three times with backoff before settling.
-		await expect(page.getByText("Couldn't reach the server")).toBeVisible({
+		await expect(
+			page.getByText("Couldn't reach the server", { exact: true }),
+		).toBeVisible({
 			timeout: 20_000,
 		});
 		await expect(page.getByText("Inbox zero")).toHaveCount(0);
