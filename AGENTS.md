@@ -84,7 +84,7 @@ Adding a domain: schema in `packages/db/src/schema/<domain>.ts` → `pnpm db:gen
 
 ```json
 "installCommand": "corepack enable && pnpm install --frozen-lockfile",
-"buildCommand": "cd ../.. && if [ \"$VERCEL_ENV\" = \"production\" ]; then pnpm db:migrate; fi && pnpm build"
+"buildCommand": "cd ../.. && if [ \"$VERCEL_ENV\" = \"production\" ]; then pnpm db:migrate; fi && pnpm build && rm -rf node_modules .pnpm-store apps/*/node_modules packages/*/node_modules tooling/*/node_modules"
 ```
 
 Migrations run only on production builds; previews share the production database unless given their own `POSTGRES_URL`. Crons (`/api/cron/refresh`, authenticated with `CRON_SECRET`) are declared in the same file. CI (`.github/workflows/ci.yml`) runs secrets scan, lint/format/type-check/knip, unit + frontend tests against Postgres, Playwright e2e and a build; `macos.yml` runs swift-format and `swift test`.
