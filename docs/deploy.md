@@ -41,7 +41,7 @@ Notes:
 
    ```json
    "installCommand": "corepack enable && pnpm install --frozen-lockfile",
-   "buildCommand": "cd ../.. && if [ \"$VERCEL_ENV\" = \"production\" ]; then pnpm db:migrate; fi && pnpm build"
+   "buildCommand": "cd ../.. && if [ \"$VERCEL_ENV\" = \"production\" ]; then pnpm db:migrate; fi && pnpm build && rm -rf node_modules .pnpm-store apps/*/node_modules packages/*/node_modules tooling/*/node_modules"
    ```
 
    On **production** builds the Drizzle migrations run against `POSTGRES_URL` **before** the build, so every production deploy leaves the database at the schema the code expects. Preview builds skip the migration step (they usually share the production database; see the note at the end of this guide). Migration `0004_seed_macos_oauth_client.sql` also seeds the first-party `feedreader-macos` OAuth client the native app relies on.
