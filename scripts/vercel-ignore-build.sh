@@ -6,9 +6,11 @@
 # diff exits 128, which Vercel reports as a failed deployment instead of
 # building, so every non-zero status becomes 1.
 # Redeploying the same commit is how changed environment variables reach a
-# deployment, so it always builds.
+# deployment, and a branch with no successful deployment yet has no previous
+# SHA, so both always build.
 cd "$(dirname "$0")/.." || exit 1
-base="${VERCEL_GIT_PREVIOUS_SHA:-HEAD^}"
+base="${VERCEL_GIT_PREVIOUS_SHA:-}"
+[ -n "$base" ] || exit 1
 [ "$(git rev-parse "$base" 2>/dev/null)" = "$(git rev-parse HEAD)" ] && exit 1
 git diff --quiet "$base" HEAD -- . \
 	':(exclude)*.md' \
