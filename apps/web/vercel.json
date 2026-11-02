@@ -7,6 +7,7 @@
 			"preview/**": true
 		}
 	},
+	"ignoreCommand": "sh ../../scripts/vercel-ignore-build.sh",
 	"installCommand": "corepack enable && pnpm install --frozen-lockfile",
 	"buildCommand": "cd ../.. && if [ \"$VERCEL_ENV\" = \"production\" ]; then pnpm db:migrate; fi && pnpm build",
 	"rewrites": [

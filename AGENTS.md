@@ -90,3 +90,4 @@ Adding a domain: schema in `packages/db/src/schema/<domain>.ts` → `pnpm db:gen
 Migrations run only on production builds; previews share the production database unless given their own `POSTGRES_URL`. Crons (`/api/cron/refresh`, authenticated with `CRON_SECRET`) are declared in the same file. CI (`.github/workflows/ci.yml`) runs secrets scan, lint/format/type-check/knip, unit + frontend tests against Postgres, Playwright e2e and a build; `macos.yml` runs swift-format and `swift test`.
 
 Vercel deploys only `main` and `preview/*` branches; to preview a PR, push it to `preview/<name>` before the PR branch (Vercel builds each commit only once).
+Commits that only touch docs, tests, CI or agent files skip the Vercel build (`scripts/vercel-ignore-build.sh`).
