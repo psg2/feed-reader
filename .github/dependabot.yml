@@ -54,7 +54,9 @@ updates:
       prefix: "deps"
       include: "scope"
     ignore:
-      # Nitro is pinned to a pre-release on purpose; do not chase new betas.
+      # Nitro 3 has no stable release yet and is pinned to an exact
+      # pre-release (beta/rc). Each bump needs a smoke test of the built
+      # Vercel function, so it is moved by hand, not by Dependabot.
       - dependency-name: "nitro"
     groups:
       tanstack:
