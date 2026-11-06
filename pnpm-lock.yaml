@@ -162,8 +162,8 @@ importers:
         specifier: 19.3.1
         version: 19.3.1(react@19.3.1)
       resend:
-        specifier: ^6.35.0
-        version: 6.35.0(@react-email/render@2.0.6(react-dom@19.3.1(react@19.3.1))(react@19.3.1))
+        specifier: ^6.36.1
+        version: 6.36.1(@react-email/render@2.0.6(react-dom@19.3.1(react@19.3.1))(react@19.3.1))
       rss-parser:
         specifier: ^3.13.0
         version: 3.13.0
@@ -3721,9 +3721,6 @@ packages:
   '@types/node@26.2.0':
     resolution: {integrity: sha512-5IviulTZeRNp2vAJ514cc/HUlY5nZ9fCbq9DMyC52BrhFZACo3nI0R7qBxhQmo/d27NFe96ur/b7Wwxklda+kg==}
 
-  '@types/node@26.6.5':
-    resolution: {integrity: sha512-uMzsv9stDdofIZBx4UGh4Z9ZgXnGC9seRDscilBcTHAeOFk67MZg/k9bWVfO+bk4qZmG+l52hRnLwUiH2LnJTg==}
-
   '@types/node@26.6.6':
     resolution: {integrity: sha512-MzQj+8Kx3XI40OmUAE6Qoh58ZMNstNNMwn2nfd3qWsfe7nDNSqJNzes4njhz6AHwrSHOffSLwXU6yb474Q4aog==}
 
@@ -4261,14 +4258,6 @@ packages:
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
     engines: {node: '>= 8'}
-
-  crossws@0.4.10:
-    resolution: {integrity: sha512-pz3oubH/dt12KjqsUB0IuXW4nwRDQ583iDsP4555Cpdqx0NoU7pGlWBcayyFI8f/l/idRpgjMEfwuOxSWJYlIA==}
-    peerDependencies:
-      srvx: '>=0.11.13'
-    peerDependenciesMeta:
-      srvx:
-        optional: true
 
   crossws@0.4.17:
     resolution: {integrity: sha512-YG2kyfafNXKmu7e6k64yrj6whrw7m5sBIsOSXOlJ/72X3TQWRQuw8DhvXFDcBk8HF77PnTSygnm7xpYCTnFpow==}
@@ -5723,8 +5712,8 @@ packages:
     resolution: {integrity: sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==}
     engines: {node: '>=0.10.0'}
 
-  resend@6.35.0:
-    resolution: {integrity: sha512-sScNQHunU2Np7oICQ/44GXif8cQ0lp2WPEo9nDtTnM1koPvgJwH/SEee8mJwYRwyIfi+uj7IetKiYspfyYBYaA==}
+  resend@6.36.1:
+    resolution: {integrity: sha512-SpMt1DXX13sCF3+y+Dq+ECXGxFZWORc9JaMTeEWP5hPjX7W1bzkju7KMp9bum24Gy5S090qasOppRWDGEc0s+Q==}
     engines: {node: '>=20'}
     peerDependencies:
       '@react-email/render': '*'
@@ -9505,18 +9494,13 @@ snapshots:
       undici-types: 8.3.0
     optional: true
 
-  '@types/node@26.6.5':
-    dependencies:
-      undici-types: 8.9.0
-    optional: true
-
   '@types/node@26.6.6':
     dependencies:
       undici-types: 8.9.0
 
   '@types/pg@8.15.6':
     dependencies:
-      '@types/node': 26.6.5
+      '@types/node': 26.6.6
       pg-protocol: 1.16.0
       pg-types: 2.2.0
     optional: true
@@ -9531,7 +9515,7 @@ snapshots:
 
   '@types/set-cookie-parser@2.4.10':
     dependencies:
-      '@types/node': 26.6.5
+      '@types/node': 26.6.6
     optional: true
 
   '@types/statuses@2.0.6':
@@ -9976,10 +9960,6 @@ snapshots:
       path-key: 3.1.1
       shebang-command: 2.0.0
       which: 2.0.2
-
-  crossws@0.4.10(srvx@0.12.7):
-    optionalDependencies:
-      srvx: 0.12.7
 
   crossws@0.4.17(srvx@0.12.7):
     optionalDependencies:
@@ -11444,7 +11424,7 @@ snapshots:
 
   require-from-string@2.0.2: {}
 
-  resend@6.35.0(@react-email/render@2.0.6(react-dom@19.3.1(react@19.3.1))(react@19.3.1)):
+  resend@6.36.1(@react-email/render@2.0.6(react-dom@19.3.1(react@19.3.1))(react@19.3.1)):
     dependencies:
       postal-mime: 2.7.6
       standardwebhooks: 1.1.1
