@@ -1,13 +1,15 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { Rss } from "lucide-react";
-import { getAuthConfigFn, getAuthUserIdFn } from "@/app/server-fns/auth";
+import { getAuthConfigFn } from "@/app/server-fns/auth";
+import { loadGate } from "@/lib/load-gate";
+import { authUserIdGate } from "@/lib/route-gates";
 
 const REPO_URL = "https://github.com/psg2/feed-reader";
 
 export const Route = createFileRoute("/")({
-	beforeLoad: async () => {
+	beforeLoad: async ({ context: { queryClient } }) => {
 		// Signed-in users live in the reader; the landing is for strangers.
-		const userId = await getAuthUserIdFn();
+		const userId = await loadGate(queryClient, authUserIdGate);
 		if (userId) throw redirect({ to: "/reader" });
 	},
 	loader: () => getAuthConfigFn(),

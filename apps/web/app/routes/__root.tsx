@@ -22,6 +22,8 @@ import {
 } from "@/components/shared/route-fallbacks";
 import globalsCss from "../globals.css?url";
 
+import { NavigationProgress } from "@/components/shell/navigation-progress";
+
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 	{
 		errorComponent: DefaultErrorComponent,
@@ -117,6 +119,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 					<PostHogProvider>
 						<SessionProvider>
 							<TipProvider>
+								<NavigationProgress />
 								<SessionAnalyticsSync />
 								<PostHogPageViewClient />
 								{children}

@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import type { ReaderFeed, ReaderFilter, ReaderItem } from "@feedreader/api";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import {
@@ -697,6 +698,7 @@ export function SidebarFooter({
 }) {
 	const { resolvedTheme, setTheme } = useTheme();
 	const navigate = useNavigate();
+	const queryClient = useQueryClient();
 	return (
 		<div
 			className={cn(
@@ -743,6 +745,7 @@ export function SidebarFooter({
 					aria-label="Sign out"
 					onClick={async () => {
 						await signOut();
+						queryClient.clear();
 						navigate({ to: "/sign-in" });
 					}}
 					variant="sidebar"

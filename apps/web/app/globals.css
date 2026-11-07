@@ -177,3 +177,21 @@
 .animate-caret-blink {
 	animation: caret-blink 1.25s ease-out infinite;
 }
+
+/* Route-change bar: hidden for the first 150ms, then creeps toward 90% so a
+ * slow navigation never looks finished. */
+@keyframes nav-progress {
+	from {
+		transform: scaleX(0);
+	}
+	to {
+		transform: scaleX(0.9);
+	}
+}
+@utility animate-nav-progress {
+	transform-origin: left;
+	animation: nav-progress 8s cubic-bezier(0.1, 0.8, 0.2, 1) 150ms both;
+}
+@utility top-safe {
+	top: env(safe-area-inset-top, 0px);
+}
