@@ -1,9 +1,10 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
-import { getAuthUserIdFn } from "@/app/server-fns/auth";
+import { loadGate } from "@/lib/load-gate";
+import { authUserIdGate } from "@/lib/route-gates";
 
 export const Route = createFileRoute("/_app")({
-	beforeLoad: async ({ location }) => {
-		const userId = await getAuthUserIdFn();
+	beforeLoad: async ({ context: { queryClient }, location }) => {
+		const userId = await loadGate(queryClient, authUserIdGate);
 		if (!userId) {
 			// `location.href` keeps path+query+hash so the user lands back where
 			// they were headed after signing in.

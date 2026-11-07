@@ -12,6 +12,10 @@ export function getRouter() {
 			},
 		},
 	});
+	// Nothing observes a route gate, so the default 5 min gcTime would drop it
+	// (hydrated or refreshed) right when it goes stale, and the next navigation
+	// would wait on the server again instead of refreshing in the background.
+	queryClient.setQueryDefaults(["gate"], { gcTime: Number.POSITIVE_INFINITY });
 
 	const router = createRouter({
 		routeTree,

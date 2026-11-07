@@ -330,6 +330,8 @@ importers:
 
   tooling/oxlint-plugin-no-use-effect: {}
 
+  tooling/oxlint-plugin-route-gates: {}
+
   tooling/tailwind: {}
 
   tooling/typescript: {}

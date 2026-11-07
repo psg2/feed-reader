@@ -3,6 +3,7 @@
 	"plugins": ["import", "typescript", "unicorn", "react"],
 	"jsPlugins": [
 		"./tooling/oxlint-plugin-no-use-effect/index.js",
+		"./tooling/oxlint-plugin-route-gates/index.js",
 		"@shadcn/lint"
 	],
 	"categories": {
@@ -34,6 +35,7 @@
 		],
 		"typescript/no-explicit-any": "warn",
 		"no-use-effect/no-use-effect": "error",
+		"route-gates/cached-gate": "error",
 		"shadcn/no-restyle": [
 			"error",
 			{
