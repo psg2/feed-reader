@@ -90,7 +90,7 @@
 		"dotenv-cli": "^11.1.0",
 		"happy-dom": "^21.0.4",
 		"knip": "^6.44.0",
-		"portless": "^0.15.12",
+		"portless": "^0.15.13",
 		"postgres": "^3.4.9",
 		"tailwindcss": "^4.3.3",
 		"tsx": "^4.23.13",
