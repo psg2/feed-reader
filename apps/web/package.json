@@ -91,7 +91,7 @@
 		"happy-dom": "^21.0.4",
 		"knip": "^6.44.1",
 		"portless": "^0.16.0",
-		"postgres": "^3.4.9",
+		"postgres": "^4.1.0",
 		"tailwindcss": "^4.3.4",
 		"tsx": "^4.23.15",
 		"typescript": "^7.0.2",
