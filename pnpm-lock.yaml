@@ -238,8 +238,8 @@ importers:
         specifier: ^6.44.1
         version: 6.44.1
       portless:
-        specifier: ^0.16.0
-        version: 0.16.0
+        specifier: ^0.17.0
+        version: 0.17.0
       postgres:
         specifier: ^4.1.0
         version: 4.1.0
@@ -5487,8 +5487,8 @@ packages:
     engines: {node: '>=20'}
     hasBin: true
 
-  portless@0.16.0:
-    resolution: {integrity: sha512-qklO8w/OhLGLKYoeAi8HOFFnd2JQYenWzbev0rvDcyAZ3xDpMg9tqb/aKlz8qrd6NIEJB5bSiDxGURaq0+YLkA==}
+  portless@0.17.0:
+    resolution: {integrity: sha512-UJdy5sGmNSwi8ETvVniUTqULJht16qvBR9rvsFqsVekEyabMH2xJ5mwIEYBmSSHVCUmQvAmaYAhBcCs8PA7IBA==}
     engines: {node: '>=24'}
     os: [darwin, linux, win32]
     hasBin: true
@@ -11213,7 +11213,7 @@ snapshots:
     dependencies:
       playwright-core: 1.65.0
 
-  portless@0.16.0: {}
+  portless@0.17.0: {}
 
   postal-mime@2.7.6: {}
 
