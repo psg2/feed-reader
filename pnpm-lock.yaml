@@ -94,7 +94,7 @@ importers:
         version: 1.16.2(@opentelemetry/api@1.9.1)(@orpc/contract@1.16.2(@opentelemetry/api@1.9.1))(@orpc/server@1.16.2(@opentelemetry/api@1.9.1)(crossws@0.4.17(srvx@0.12.7))(ws@8.21.3))(crossws@0.4.17(srvx@0.12.7))(ws@8.21.3)(zod@4.6.7)
       '@posthog/mcp':
         specifier: 0.25.2
-        version: 0.25.2(@modelcontextprotocol/sdk@1.32.1(supports-color@7.2.0)(zod@4.6.7))(@modelcontextprotocol/server@2.4.0)(posthog-node@5.63.1(@opentelemetry/api@1.9.1))
+        version: 0.25.2(@modelcontextprotocol/sdk@1.32.1(supports-color@7.2.0)(zod@4.6.7))(@modelcontextprotocol/server@2.4.0)(posthog-node@5.63.2(@opentelemetry/api@1.9.1))
       '@sentry/tanstackstart-react':
         specifier: ^11.11.0
         version: 11.11.0(react@19.3.1)
@@ -150,8 +150,8 @@ importers:
         specifier: ^1.447.2
         version: 1.447.2(@types/react@19.3.0)(react@19.3.1)
       posthog-node:
-        specifier: 5.63.1
-        version: 5.63.1(@opentelemetry/api@1.9.1)
+        specifier: 5.63.2
+        version: 5.63.2(@opentelemetry/api@1.9.1)
       radix-ui:
         specifier: ^1.8.1
         version: 1.8.1(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
@@ -5543,8 +5543,8 @@ packages:
       react:
         optional: true
 
-  posthog-node@5.63.1:
-    resolution: {integrity: sha512-CwJ1JEbFYtXYf8rctJdQy8S61bGNenqf1lBd5xw9z6MGMlfRwtWRrs96D3I3yV5MzKPctyGp0wPtYSTECBcLbQ==}
+  posthog-node@5.63.2:
+    resolution: {integrity: sha512-6BsKi6t1EX7vo8T2KL4MYlTT6pOHeuDD0/7zhLay2cBHOLsow7MEAbCqzhMbMen0PgYR6+X0yRKbvZKEk9NBoQ==}
     engines: {node: ^20.20.0 || >=22.22.0}
     peerDependencies:
       '@opentelemetry/api': ^1.2.0
@@ -7790,10 +7790,10 @@ snapshots:
     dependencies:
       '@posthog/types': 1.421.1
 
-  '@posthog/mcp@0.25.2(@modelcontextprotocol/sdk@1.32.1(supports-color@7.2.0)(zod@4.6.7))(@modelcontextprotocol/server@2.4.0)(posthog-node@5.63.1(@opentelemetry/api@1.9.1))':
+  '@posthog/mcp@0.25.2(@modelcontextprotocol/sdk@1.32.1(supports-color@7.2.0)(zod@4.6.7))(@modelcontextprotocol/server@2.4.0)(posthog-node@5.63.2(@opentelemetry/api@1.9.1))':
     dependencies:
       '@posthog/core': 1.64.1
-      posthog-node: 5.63.1(@opentelemetry/api@1.9.1)
+      posthog-node: 5.63.2(@opentelemetry/api@1.9.1)
     optionalDependencies:
       '@modelcontextprotocol/sdk': 1.32.1(supports-color@7.2.0)(zod@4.6.7)
       '@modelcontextprotocol/server': 2.4.0
@@ -11273,7 +11273,7 @@ snapshots:
     transitivePeerDependencies:
       - preact-render-to-string
 
-  posthog-node@5.63.1(@opentelemetry/api@1.9.1):
+  posthog-node@5.63.2(@opentelemetry/api@1.9.1):
     dependencies:
       '@posthog/core': 1.64.1
     optionalDependencies:
