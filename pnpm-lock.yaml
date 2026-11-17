@@ -93,8 +93,8 @@ importers:
         specifier: ^1.16.2
         version: 1.16.2(@opentelemetry/api@1.9.1)(@orpc/contract@1.16.2(@opentelemetry/api@1.9.1))(@orpc/server@1.16.2(@opentelemetry/api@1.9.1)(crossws@0.4.17(srvx@0.12.7))(ws@8.21.3))(crossws@0.4.17(srvx@0.12.7))(ws@8.21.3)(zod@4.6.7)
       '@posthog/mcp':
-        specifier: 0.26.0
-        version: 0.26.0(@modelcontextprotocol/sdk@1.32.1(supports-color@7.2.0)(zod@4.6.7))(@modelcontextprotocol/server@2.4.0)(posthog-node@5.63.1(@opentelemetry/api@1.9.1))
+        specifier: 0.25.2
+        version: 0.25.2(@modelcontextprotocol/sdk@1.32.1(supports-color@7.2.0)(zod@4.6.7))(@modelcontextprotocol/server@2.4.0)(posthog-node@5.63.1(@opentelemetry/api@1.9.1))
       '@sentry/tanstackstart-react':
         specifier: ^11.11.0
         version: 11.11.0(react@19.3.1)
@@ -2069,8 +2069,8 @@ packages:
   '@posthog/core@1.64.1':
     resolution: {integrity: sha512-2ziryOLWTxftHrTLhGYQzLHDpPughaRRi/+L1vhg4cQFHJfgTevMzAz21R1zR7MKFDkyJ9lCJD/K2jxIkGbnfg==}
 
-  '@posthog/mcp@0.26.0':
-    resolution: {integrity: sha512-FWvI4QA2M8KPXwVw/gjLuUjniBZWkuNnVj/IiJfNef5XX82K/VHk5GCY51bryNAvahjBoMcCJ3vgmHcxDeIidQ==}
+  '@posthog/mcp@0.25.2':
+    resolution: {integrity: sha512-OFH90w9fymoE3A7E+odsGijR3wBycefDLUOFqGvrmQRH/vUQq7hsOTpBAEFg89qYWnyFL7LIF9FhEBXf0LLQ5Q==}
     engines: {node: ^20.20.0 || >=22.22.0}
     peerDependencies:
       '@modelcontextprotocol/sdk': '>=1.26.0'
@@ -7790,7 +7790,7 @@ snapshots:
     dependencies:
       '@posthog/types': 1.421.1
 
-  '@posthog/mcp@0.26.0(@modelcontextprotocol/sdk@1.32.1(supports-color@7.2.0)(zod@4.6.7))(@modelcontextprotocol/server@2.4.0)(posthog-node@5.63.1(@opentelemetry/api@1.9.1))':
+  '@posthog/mcp@0.25.2(@modelcontextprotocol/sdk@1.32.1(supports-color@7.2.0)(zod@4.6.7))(@modelcontextprotocol/server@2.4.0)(posthog-node@5.63.1(@opentelemetry/api@1.9.1))':
     dependencies:
       '@posthog/core': 1.64.1
       posthog-node: 5.63.1(@opentelemetry/api@1.9.1)

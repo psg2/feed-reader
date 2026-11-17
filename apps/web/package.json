@@ -89,8 +89,13 @@
 		"@vitest/coverage-v8": "^5.1.0",
 		"dotenv-cli": "^11.1.0",
 		"happy-dom": "^21.0.4",
+<<<<<<< HEAD
 		"knip": "^6.44.2",
 		"portless": "^0.16.0",
+=======
+		"knip": "^6.44.1",
+		"portless": "^0.17.0",
+>>>>>>> 201f7628cfcc3ef0523f291428b2f97031d7a74e
 		"postgres": "^4.1.0",
 		"tailwindcss": "^4.3.5",
 		"tsx": "^4.23.15",
