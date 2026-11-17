@@ -4,8 +4,8 @@ packages:
   - "tooling/*"
 
 overrides:
-  "@better-auth/core": "1.7.18"
-  "@better-auth/utils": "0.5.0"
+  "@better-auth/core": "1.7.19"
+  "@better-auth/utils": "0.5.1"
   "react": "19.3.1"
   "react-dom": "19.3.1"
   "esbuild": ">=0.25.0"
