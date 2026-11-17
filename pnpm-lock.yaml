@@ -147,8 +147,8 @@ importers:
         specifier: 3.0.261103-rc
         version: 3.0.261103-rc
       posthog-js:
-        specifier: ^1.447.2
-        version: 1.447.2(@types/react@19.3.0)(react@19.3.1)
+        specifier: ^1.447.4
+        version: 1.447.4(@types/react@19.3.0)(react@19.3.1)
       posthog-node:
         specifier: 5.63.1
         version: 5.63.1(@opentelemetry/api@1.9.1)
@@ -5532,8 +5532,8 @@ packages:
     resolution: {integrity: sha512-s+0WH67YAyLdBQUb6XczbziBhY+C9uiQsg9S8R5RHdZhk6sdyK6202E+T2tXpiInSEEjDLRSJ3OpYBe3PN6MsQ==}
     engines: {node: '>=18'}
 
-  posthog-js@1.447.2:
-    resolution: {integrity: sha512-zO/Y6S9KA88PQOS95G/BJNmal2WiNttWc+SRxsmPFTFh8b6ztNW4/+CeCvC/9bh6O52yvsHU7K18u+fYjOpebw==}
+  posthog-js@1.447.4:
+    resolution: {integrity: sha512-TZnQXMpBuOOhH1j7F9BcbTJ9HFTE9uStLeahYeR8C2ZhiqzbX15Eaqln16xVbEC+Fa9g+vSXtt+uhS2V/CyfTQ==}
     peerDependencies:
       '@types/react': '>=16.8.0'
       react: 19.3.1
@@ -11258,7 +11258,7 @@ snapshots:
 
   postgres@4.1.0: {}
 
-  posthog-js@1.447.2(@types/react@19.3.0)(react@19.3.1):
+  posthog-js@1.447.4(@types/react@19.3.0)(react@19.3.1):
     dependencies:
       '@posthog/browser-common': 0.10.7
       '@posthog/core': 1.64.1
