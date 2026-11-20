@@ -20,9 +20,9 @@
 		"clean": "rm -rf node_modules .cache"
 	},
 	"dependencies": {
-		"better-auth": "1.7.19",
+		"better-auth": "1.7.22",
 		"drizzle-orm": "^0.45.4",
-		"postgres": "^4.1.0"
+		"postgres": "^4.1.1"
 	},
 	"devDependencies": {
 		"@types/node": "^26.6.6",
