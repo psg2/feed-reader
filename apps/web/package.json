@@ -59,7 +59,7 @@
 		"next-themes": "^0.4.6",
 		"nitro": "3.0.261103-rc",
 		"posthog-js": "^1.448.0",
-		"posthog-node": "5.73.0",
+		"posthog-node": "5.74.0",
 		"radix-ui": "^1.8.1",
 		"react": "19.3.1",
 		"react-dom": "19.3.1",
